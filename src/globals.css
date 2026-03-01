@@ -1,0 +1,503 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 322 52% 45%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 280 30% 33%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 322 30% 30%;
+    --muted-foreground: 0 0% 75%;
+    --accent: 280 40% 40%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 100% / 0.15;
+    --input: 0 0% 100% / 0.15;
+    --ring: 322 52% 45%;
+    --radius: 1rem;
+
+    --font-poppins: 'Alexandria', sans-serif;
+    --font-space-grotesk: 'Space Grotesk', sans-serif;
+
+    /* Theme gradient colors */
+    --gradient-1: #7E1A57;
+    --gradient-2: #54113C;
+    --gradient-3: #350E48;
+
+    /* Blob colors derived from theme */
+    --blob-1: rgba(126, 26, 87, 0.6);
+    --blob-2: rgba(84, 17, 60, 0.5);
+    --blob-3: rgba(53, 14, 72, 0.5);
+    --blob-4: rgba(160, 40, 100, 0.4);
+    --blob-5: rgba(100, 30, 140, 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    color: white;
+    font-family: var(--font-poppins);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: none;
+  }
+
+  /* Interactive elements show pointer; blob cursor hides itself via JS */
+  a, button, [role="button"] {
+    cursor: pointer !important;
+  }
+  input, textarea, select {
+    cursor: text !important;
+  }
+
+  /* Text elements show I-beam cursor for copy UX */
+  h1, h2, h3, h4, h5, h6, p, span, li, blockquote, label, td, th {
+    cursor: text;
+  }
+  /* Exclude text inside interactive elements */
+  a h1, a h2, a h3, a h4, a h5, a h6, a p, a span,
+  button h1, button h2, button h3, button h4, button h5, button h6, button p, button span,
+  [role="button"] h1, [role="button"] h2, [role="button"] p, [role="button"] span {
+    cursor: pointer !important;
+  }
+}
+
+/* Lava blob keyframes */
+@keyframes blob-float-1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  }
+  25% {
+    transform: translate(80px, -60px) scale(1.1) rotate(45deg);
+    border-radius: 50% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    transform: translate(-40px, 80px) scale(0.95) rotate(90deg);
+    border-radius: 30% 60% 50% 40% / 50% 60% 30% 60%;
+  }
+  75% {
+    transform: translate(60px, 40px) scale(1.05) rotate(135deg);
+    border-radius: 60% 40% 60% 30% / 40% 70% 40% 60%;
+  }
+}
+
+@keyframes blob-float-2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 50% 40% 60% 50% / 60% 50% 40% 50%;
+  }
+  20% {
+    transform: translate(-70px, 50px) scale(1.08) rotate(-30deg);
+    border-radius: 40% 60% 50% 40% / 50% 40% 60% 50%;
+  }
+  40% {
+    transform: translate(50px, -40px) scale(0.92) rotate(-60deg);
+    border-radius: 60% 30% 40% 60% / 40% 60% 50% 40%;
+  }
+  60% {
+    transform: translate(-30px, -70px) scale(1.05) rotate(-90deg);
+    border-radius: 30% 50% 60% 40% / 60% 40% 30% 60%;
+  }
+  80% {
+    transform: translate(40px, 30px) scale(0.98) rotate(-120deg);
+    border-radius: 50% 40% 30% 60% / 40% 50% 60% 40%;
+  }
+}
+
+@keyframes blob-float-3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+  }
+  33% {
+    transform: translate(90px, 60px) scale(1.12) rotate(60deg);
+    border-radius: 40% 50% 60% 40% / 60% 40% 50% 50%;
+  }
+  66% {
+    transform: translate(-60px, -50px) scale(0.9) rotate(120deg);
+    border-radius: 50% 60% 40% 50% / 40% 50% 60% 40%;
+  }
+}
+
+@keyframes blob-float-4 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%;
+  }
+  25% {
+    transform: translate(-50px, -80px) scale(1.06) rotate(-45deg);
+    border-radius: 55% 45% 55% 45% / 45% 55% 45% 55%;
+  }
+  50% {
+    transform: translate(70px, -20px) scale(0.94) rotate(-90deg);
+    border-radius: 45% 55% 45% 55% / 55% 45% 55% 45%;
+  }
+  75% {
+    transform: translate(-20px, 60px) scale(1.03) rotate(-135deg);
+    border-radius: 55% 45% 50% 50% / 50% 55% 45% 50%;
+  }
+}
+
+@keyframes blob-float-5 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
+  }
+  20% {
+    transform: translate(60px, -70px) scale(1.1) rotate(36deg);
+    border-radius: 40% 60% 50% 50% / 50% 60% 40% 50%;
+  }
+  40% {
+    transform: translate(-80px, 30px) scale(0.92) rotate(72deg);
+    border-radius: 60% 40% 60% 40% / 40% 50% 50% 60%;
+  }
+  60% {
+    transform: translate(30px, 80px) scale(1.08) rotate(108deg);
+    border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%;
+  }
+  80% {
+    transform: translate(-40px, -40px) scale(0.96) rotate(144deg);
+    border-radius: 40% 60% 50% 50% / 50% 50% 50% 50%;
+  }
+}
+
+/* Lava-float keyframes for liquid morph blobs */
+@keyframes lava-float-1 {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(30px, -20px); }
+  50% { transform: translate(-15px, 25px); }
+  75% { transform: translate(20px, 10px); }
+}
+
+@keyframes lava-float-2 {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-25px, 15px); }
+  40% { transform: translate(15px, -25px); }
+  60% { transform: translate(-10px, -10px); }
+  80% { transform: translate(25px, 20px); }
+}
+
+@keyframes lava-float-3 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(35px, 20px); }
+  66% { transform: translate(-20px, -30px); }
+}
+
+@keyframes lava-float-4 {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-20px, -25px); }
+  50% { transform: translate(25px, -10px); }
+  75% { transform: translate(-10px, 30px); }
+}
+
+@keyframes lava-float-5 {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(20px, -30px); }
+  40% { transform: translate(-30px, 10px); }
+  60% { transform: translate(10px, 25px); }
+  80% { transform: translate(-15px, -15px); }
+}
+
+/* Gradient hover for icon buttons - blobby morph + gradient stroke */
+.icon-btn-hover {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.icon-btn-hover:hover svg {
+  stroke: url(#icon-gradient);
+  filter: drop-shadow(0 0 6px rgba(160, 100, 255, 0.4));
+}
+.icon-btn-hover:hover {
+  border-color: rgba(160, 100, 255, 0.4) !important;
+  background: rgba(160, 100, 255, 0.12) !important;
+  border-radius: 38% 62% 55% 45% / 52% 48% 58% 42% !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+}
+.icon-btn-hover:active {
+  border-radius: 55% 45% 42% 58% / 48% 55% 45% 52% !important;
+  transform: scale(0.95);
+  transition: all 0.15s ease;
+}
+
+/* Glassmorphism hover for pill/text buttons - blobby morph + text color only */
+.pill-btn-hover {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+}
+.pill-btn-hover:hover {
+  color: #CEB6FD !important;
+  border-color: rgba(206, 182, 253, 0.35) !important;
+  border-radius: 58% 42% 55% 45% / 48% 56% 44% 52% !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(206, 182, 253, 0.15), 0 0 32px rgba(103, 176, 255, 0.08);
+}
+.pill-btn-hover:active {
+  border-radius: 44% 56% 42% 58% / 55% 45% 58% 42% !important;
+  transform: scale(0.97);
+  transition: all 0.15s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Infinite scroll rows */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 30s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 30s linear infinite;
+}
+
+/* Typing cursor blink */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: '|';
+  animation: blink-cursor 0.7s infinite;
+  color: white;
+  font-weight: 100;
+}
+
+/* Text glow sweep animation for About page hero */
+@keyframes glow-sweep {
+  0% {
+    background-position: -200% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.text-glow-sweep {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0) 35%,
+    rgba(255,255,255,0.6) 50%,
+    rgba(255,255,255,0) 65%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: glow-sweep 2.5s ease-in-out forwards;
+  animation-fill-mode: forwards;
+}
+
+/* Fade in animation for hobby images */
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+/* ── Lava-lamp blob loading animation ──
+   Progression: circle → top-right bubble → 3-corner amoeba → 4-corner rounded square → circle
+   Matches the t_afif CodePen lava-lamp style with organic, liquid-feeling morphs.
+   Uses CSS d: path() animation on SVG for smooth shape interpolation.
+── */
+.lava-blob-loader {
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.lava-blob-loader svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.lava-blob-loader svg path {
+  fill: rgba(255, 255, 255, 0.75);
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.25));
+  animation: lava-morph 3.2s ease-in-out infinite;
+}
+
+@keyframes lava-morph {
+  /* Stage 1: Perfect circle - calm resting state */
+  0% {
+    d: path("M40,12 C56,12 68,24 68,40 C68,56 56,68 40,68 C24,68 12,56 12,40 C12,24 24,12 40,12Z");
+  }
+  /* Stage 2: Bubble pushes out from top-right - asymmetry begins */
+  20% {
+    d: path("M40,12 C52,6 72,10 72,30 C72,50 68,58 58,66 C42,72 24,68 14,54 C6,42 12,22 40,12Z");
+  }
+  /* Stage 3: Two lobes - top-right and bottom-left stretch out, lava-lamp splitting */
+  40% {
+    d: path("M44,6 C62,2 76,14 74,32 C72,46 66,54 52,68 C38,76 18,78 8,60 C0,44 6,24 20,14 C30,8 36,8 44,6Z");
+  }
+  /* Stage 4: Three corners bulge - top-left, top-right, bottom-left form amoeba */
+  60% {
+    d: path("M34,4 C54,0 74,4 76,24 C78,40 72,52 64,66 C52,78 28,80 10,66 C-2,52 -2,32 8,18 C16,6 22,6 34,4Z");
+  }
+  /* Stage 5: All four corners expanded - soft rounded square, maximum spread */
+  80% {
+    d: path("M24,4 C40,0 60,0 72,8 C80,16 80,32 78,48 C76,64 68,76 52,78 C36,80 16,78 6,66 C-2,52 0,28 4,16 C8,6 14,4 24,4Z");
+  }
+  /* Stage 6: Return to circle - contracting back to calm */
+  100% {
+    d: path("M40,12 C56,12 68,24 68,40 C68,56 56,68 40,68 C24,68 12,56 12,40 C12,24 24,12 40,12Z");
+  }
+}
+
+/* ─── 12-Column Grid Layout System ───────────────────────────────────────────
+   PATTERN: Section backgrounds bleed full viewport width.
+            Content inside is constrained to max 1080px via .content-wrap.
+
+   Usage:
+     <section class="py-16">                        ← background bleeds full width
+       <div class="content-wrap">                   ← max 1080px centered
+         <div class="col-grid">                     ← 12 columns (desktop) / 4 (mobile)
+           <div class="col-span-6">left</div>       ← Tailwind col-span-* inside
+           <div class="col-span-6">right</div>
+         </div>
+       </div>
+     </section>
+
+   Full-bleed element inside a content-wrap section:
+     <section class="content-wrap">
+       <div class="full-bleed"> ... </div>  ← stretches beyond 1080px to viewport edge
+     </section>
+──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --content-max-width: 1080px;
+  --site-padding: clamp(1rem, 4vw, 2rem);
+  --col-gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+/* Constrains content to 1080px, centered. Section/background stays full-width */
+.content-wrap {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--site-padding);
+  padding-right: var(--site-padding);
+}
+
+/* 12-column grid (desktop) */
+.col-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--col-gap);
+}
+
+/* 4-column grid on mobile (< 640px) */
+@media (max-width: 639px) {
+  .col-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* 8-column grid on tablet (640px – 1023px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .col-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
+/* Full-bleed: escapes .content-wrap and stretches to viewport edges */
+.full-bleed {
+  width: 100vw;
+  margin-left: calc(-1 * var(--site-padding));
+  margin-right: calc(-1 * var(--site-padding));
+}
+
+/* ─── End Grid System ─────────────────────────────────────────────────────── */
+
+/* Gradient text hover for navbar links */
+.nav-link-gradient {
+  transition: all 0.3s ease;
+}
+.nav-link-gradient:hover {
+  background: linear-gradient(90deg, #67B0FF, #CEB6FD);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(103, 176, 255, 0.3));
+}
+
+/* Navbar glass container hover effect (matches footer icon-btn-hover) */
+.nav-glass-hover {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.nav-glass-hover:hover {
+  border-color: rgba(160, 100, 255, 0.4) !important;
+  background: rgba(160, 100, 255, 0.12) !important;
+  border-radius: 38% 62% 55% 45% / 52% 48% 58% 42% !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+}
+.nav-glass-hover:active {
+  border-radius: 55% 45% 42% 58% / 48% 55% 45% 52% !important;
+  transform: scale(0.95);
+  transition: all 0.15s ease;
+}
+
+
