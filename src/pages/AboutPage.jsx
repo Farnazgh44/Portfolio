@@ -4,6 +4,7 @@ import { Footer } from "../components/footer"
 import { BlobTextContainer } from "../components/blob-text-hover"
 import { AutoBlobText } from "../components/auto-blob-text"
 import { SideBlobs } from "../components/side-blobs"
+import { LogoLoop } from "../components/LogoLoop"
 
 /* ─── Data ─── */
 const STORY_SECTIONS = [
@@ -317,54 +318,45 @@ function MyStorySection() {
   )
 }
 
-/* ─── Section C: Toolkit (infinite scroll with blurred overlay hover) ─── */
+/* ─── Section C: Toolkit — LogoLoop with blob hover tooltip ─── */
 function ToolkitSection() {
-  const doubled = [...TOOLKIT, ...TOOLKIT]
-
   return (
     <section className="relative py-8 sm:py-14 px-4 md:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="rounded-2xl py-4 sm:py-5 px-3 sm:px-4 overflow-hidden" style={glassStyle}>
           <h2 className="text-white text-lg sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 text-center">Toolkits</h2>
-          <div className="overflow-hidden w-full">
-            <div
-              className="flex gap-2 sm:gap-4 animate-scroll-left"
-              style={{ width: "max-content" }}
-            >
-              {doubled.map((tool, i) => (
-                <div
-                  key={`${tool.name}-${i}`}
-                  className="relative group flex-shrink-0"
-                >
-                  <div
-                    className="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl flex items-center justify-center overflow-hidden relative"
-                    style={{
-                      background: "rgba(255,255,255,0.1)",
-                      backdropFilter: "blur(12px)",
-                      border: "1px solid rgba(255,255,255,0.15)",
-                    }}
-                  >
-                    <img
-                      src={tool.image}
-                      alt={tool.name}
-                      className="w-8 h-8 sm:w-14 sm:h-14 md:w-16 md:h-16 object-contain"
-                    />
-                    {/* Blurred overlay with name + description on hover */}
-                    <div
-                      className="absolute inset-0 flex flex-col items-center justify-center px-1.5 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
-                      style={{
-                        background: "rgba(0,0,0,0.55)",
-                        backdropFilter: "blur(8px)",
-                      }}
-                    >
-                      <p className="text-white font-semibold text-[10px] md:text-xs leading-tight mb-0.5">{tool.name}</p>
-                      <p className="text-white/70 text-[7px] md:text-[8px] leading-tight line-clamp-4">{tool.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+
+          {/* LogoLoop — renders each tool as a glass card; blob tooltip pops on hover */}
+          <LogoLoop
+            logos={TOOLKIT}
+            speed={28}
+            logoSize={72}
+            gap={12}
+            fadeOut={true}
+            renderItem={(tool, isHovered) => (
+              <div
+                className="w-full h-full rounded-xl flex items-center justify-center relative overflow-visible"
+                style={{
+                  background: isHovered
+                    ? "rgba(160,100,255,0.25)"
+                    : "rgba(255,255,255,0.10)",
+                  backdropFilter: "blur(12px)",
+                  border: `1px solid ${isHovered ? "rgba(160,100,255,0.5)" : "rgba(255,255,255,0.15)"}`,
+                  transition: "background 0.3s ease, border-color 0.3s ease",
+                }}
+              >
+                <img
+                  src={tool.image}
+                  alt={tool.name}
+                  className="w-[56%] h-[56%] object-contain"
+                  style={{
+                    filter: isHovered ? "brightness(1.2) drop-shadow(0 0 6px rgba(180,100,255,0.6))" : "none",
+                    transition: "filter 0.3s ease",
+                  }}
+                />
+              </div>
+            )}
+          />
         </div>
       </div>
     </section>

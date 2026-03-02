@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { useRouter } from "../lib/router-context"
 import { Footer } from "../components/footer"
 import { SideBlobs } from "../components/side-blobs"
+import { SplitText } from "../components/SplitText"
 
 /* ─── Contact info data ─── */
 const CONTACT_LINKS = [
@@ -257,15 +258,48 @@ function LavaBlobHero() {
         className="absolute inset-0 flex flex-col items-start justify-center pl-8 md:pl-16 lg:pl-24 z-0 pointer-events-none"
         style={{ transform: `translateY(-${textTranslate}px)` }}
       >
-        <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-left italic" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-          Scroll
-        </h1>
-        <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-left italic" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-          To
-        </h1>
-        <h1 className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-left italic" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-          Connect
-        </h1>
+        <SplitText
+          text="Scroll"
+          as="h1"
+          className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-left italic"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          delay={60}
+          baseDelay={200}
+          duration={1.1}
+          ease="power3.out"
+          from={{ opacity: 0, y: 50 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.05}
+          rootMargin="0px"
+        />
+        <SplitText
+          text="To"
+          as="h1"
+          className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-left italic"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          delay={120}
+          baseDelay={700}
+          duration={1.1}
+          ease="power3.out"
+          from={{ opacity: 0, y: 50 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.05}
+          rootMargin="0px"
+        />
+        <SplitText
+          text="Connect"
+          as="h1"
+          className="text-white text-5xl md:text-7xl lg:text-8xl font-bold leading-none text-left italic"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
+          delay={55}
+          baseDelay={1050}
+          duration={1.1}
+          ease="power3.out"
+          from={{ opacity: 0, y: 50 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0.05}
+          rootMargin="0px"
+        />
 
         {/* Join + Message buttons */}
         <div className="flex gap-4 mt-8 pointer-events-auto">
