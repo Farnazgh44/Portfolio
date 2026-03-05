@@ -72,14 +72,10 @@ export function FeaturedWorks() {
   const textOpacity = easedText
   const textY = (1 - easedText) * 40
 
-  /* ── "Work" title: ScrollFloat-style — floats UP while fading in, then fades out ── */
-  const workFadeIn  = Math.min(1, scrollProgress / 0.12)
+  /* ── "Work" title: smooth fade in at start, smooth fade out as laptop rises ── */
+  const workFadeIn = Math.min(1, scrollProgress / 0.12)
   const workFadeOut = scrollProgress > 0.12 ? Math.max(0, 1 - (scrollProgress - 0.12) / 0.20) : 1
   const workOpacity = workFadeIn * workFadeOut
-  /* Float: starts 60px below, rises to 0 as it fades in, then continues up slightly as it fades out */
-  const workFloatIn  = (1 - workFadeIn)  * 60   // 60→0 while fading in
-  const workFloatOut = workFadeOut < 1 ? (1 - workFadeOut) * -24 : 0  // 0→-24 while fading out
-  const workY = workFloatIn + workFloatOut
 
   return (
     <section
@@ -104,30 +100,15 @@ export function FeaturedWorks() {
           {/* Everything happens inside the glass box */}
           <div className="relative w-full h-full flex items-center justify-center">
 
-            {/* "Work" title — ScrollFloat style: floats up while fading in, drifts up while fading out */}
+            {/* "Work" title at top -- same size as "Farnaz", fades in then out */}
             <h2
               className="absolute top-8 md:top-12 left-8 md:left-12 text-5xl md:text-7xl lg:text-8xl font-bold text-white z-20 pointer-events-none font-sans"
               style={{
                 opacity: workOpacity,
-                transform: `translateY(${workY}px)`,
-                transition: "none",
-                willChange: "transform, opacity",
+                transition: "opacity 0.3s ease",
               }}
             >
-              {/* Each letter staggered slightly using inline spans */}
-              {"Work".split("").map((ch, i) => (
-                <span
-                  key={i}
-                  style={{
-                    display: "inline-block",
-                    transform: `translateY(${workFloatIn * (1 + i * 0.15)}px)`,
-                    opacity: Math.max(0, Math.min(1, workFadeIn * (1 + i * 0.3) - i * 0.15)),
-                    transition: "none",
-                  }}
-                >
-                  {ch}
-                </span>
-              ))}
+              Work
             </h2>
 
             {/* LeftSide Reddit composite -- starts behind laptop, slides left */}

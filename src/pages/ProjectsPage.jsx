@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "../lib/router-context"
 import { Footer } from "../components/footer"
 import { SideBlobs } from "../components/side-blobs"
-import { LogoLoop } from "../components/LogoLoop"
 
 /* ─── Tool icon mapping (reuses toolkit images from About page) ─── */
 const TOOL_ICONS = {
@@ -344,47 +343,41 @@ function HeroBlobText({ filter, setFilter }) {
   )
 }
 
-/* ─── Tool Icon Boxes — LogoLoop with blob hover ─── */
+/* ─── Tool Icon Boxes (small glassmorphism with icon) ─── */
 function ToolIcons({ tools }) {
-  /* Build logos array from tool names (repeat to ensure seamless loop) */
-  const logos = tools.map((name) => ({ name, image: TOOL_ICONS[name] || null }))
-
   return (
-    <div className="w-full overflow-visible" style={{ minHeight: 52 }}>
-      <LogoLoop
-        logos={logos}
-        speed={tools.length <= 2 ? 8 : tools.length <= 3 ? 12 : 18}
-        logoSize={38}
-        gap={8}
-        fadeOut={false}
-        renderItem={(logo, isHovered) => (
+    <div className="flex gap-2 flex-wrap">
+      {tools.map((toolName) => {
+        const icon = TOOL_ICONS[toolName]
+        return (
           <div
-            className="w-full h-full rounded-lg flex items-center justify-center relative"
+            key={toolName}
+            className="group relative w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center"
             style={{
-              background: isHovered
-                ? "rgba(160,100,255,0.25)"
-                : "rgba(255,255,255,0.10)",
+              background: "rgba(255,255,255,0.1)",
               backdropFilter: "blur(12px)",
-              border: `1px solid ${isHovered ? "rgba(160,100,255,0.5)" : "rgba(255,255,255,0.15)"}`,
-              transition: "background 0.3s ease, border-color 0.3s ease",
+              border: "1px solid rgba(255,255,255,0.15)",
             }}
           >
-            {logo.image ? (
-              <img
-                src={logo.image}
-                alt={logo.name}
-                className="w-[65%] h-[65%] object-contain"
-                style={{
-                  filter: isHovered ? "brightness(1.2) drop-shadow(0 0 4px rgba(180,100,255,0.6))" : "none",
-                  transition: "filter 0.3s ease",
-                }}
-              />
+            {icon ? (
+              <img src={icon} alt={toolName} className="w-6 h-6 md:w-7 md:h-7 object-contain" />
             ) : (
-              <span className="text-white/60 text-[9px] font-medium">{logo.name.slice(0, 2)}</span>
+              <span className="text-white/60 text-[10px] font-medium">{toolName.slice(0, 2)}</span>
             )}
+            {/* Tooltip on hover -- glassmorphism style matching footer */}
+            <span
+              className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg text-xs font-medium text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none scale-90 group-hover:scale-100 z-20"
+              style={{
+                background: "rgba(255,255,255,0.12)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.2)",
+              }}
+            >
+              {toolName}
+            </span>
           </div>
-        )}
-      />
+        )
+      })}
     </div>
   )
 }
