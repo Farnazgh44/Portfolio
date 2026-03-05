@@ -27,15 +27,65 @@ function useTypingEffect(text, speed = 40, delay = 0) {
   return { displayed, done }
 }
 
+/* Layout / sizing / animation data — colours are injected per-theme below  */
 const INITIAL_BLOBS = [
-  { id: 0, x: 50, y: 45, w: 320, h: 300, color: "linear-gradient(135deg, #4466ff, #cc33ff, #ff3388)", anim: "blob-float-1", dur: 12 },
-  { id: 1, x: 75, y: 15, w: 140, h: 130, color: "linear-gradient(135deg, #6644ff, #ff44aa)", anim: "blob-float-3", dur: 10 },
-  { id: 2, x: 85, y: 30, w: 60, h: 55, color: "linear-gradient(135deg, #ff5588, #ff88aa)", anim: "blob-float-2", dur: 8 },
-  { id: 3, x: 25, y: 65, w: 35, h: 30, color: "linear-gradient(135deg, #8855ff, #5588ff)", anim: "blob-float-4", dur: 9 },
-  { id: 4, x: 70, y: 75, w: 80, h: 75, color: "linear-gradient(135deg, #ff3366, #cc44ff, #5566ff)", anim: "blob-float-5", dur: 11 },
+  { id: 0, x: 50, y: 45, w: 320, h: 300, anim: "blob-float-1", dur: 12 },
+  { id: 1, x: 75, y: 15, w: 140, h: 130, anim: "blob-float-3", dur: 10 },
+  { id: 2, x: 85, y: 30, w: 60,  h: 55,  anim: "blob-float-2", dur: 8  },
+  { id: 3, x: 25, y: 65, w: 35,  h: 30,  anim: "blob-float-4", dur: 9  },
+  { id: 4, x: 70, y: 75, w: 80,  h: 75,  anim: "blob-float-5", dur: 11 },
 ]
 
+/* Hero blob colour gradients — one set per theme.
+   Deliberately DEEPER / RICHER than the background SideBlobs so the two
+   layers read as distinct: vivid bg dots → richer draggable hero blobs.  */
+const HERO_THEME_COLORS = {
+  /* Deep blue-purples, saturated violets, rich roses                        */
+  pink: [
+    "linear-gradient(135deg, #3344cc, #aa22dd, #dd1166)",
+    "linear-gradient(135deg, #5522cc, #cc2299)",
+    "linear-gradient(135deg, #cc3366, #ee5588)",
+    "linear-gradient(135deg, #6633cc, #3366cc)",
+    "linear-gradient(135deg, #cc1144, #aa22dd, #3344cc)",
+  ],
+  /* Deep navy, strong azure, rich cobalt, dark teal                         */
+  blue: [
+    "linear-gradient(135deg, #003399, #0066bb, #0099cc)",
+    "linear-gradient(135deg, #002299, #0055bb)",
+    "linear-gradient(135deg, #005588, #0088aa)",
+    "linear-gradient(135deg, #222299, #004488)",
+    "linear-gradient(135deg, #003388, #0066aa, #004477)",
+  ],
+  /* Dark forest, rich jade, deep olive-lime, dark teal-green                */
+  green: [
+    "linear-gradient(135deg, #006622, #009944, #449900)",
+    "linear-gradient(135deg, #007733, #00aa44)",
+    "linear-gradient(135deg, #006644, #009955)",
+    "linear-gradient(135deg, #335500, #557700)",
+    "linear-gradient(135deg, #005522, #008833, #446600)",
+  ],
+  /* Burnt sienna, deep amber, rich rust, dark tangerine                     */
+  orange: [
+    "linear-gradient(135deg, #992200, #bb5500, #cc8800)",
+    "linear-gradient(135deg, #aa3300, #cc6600)",
+    "linear-gradient(135deg, #993300, #bb6600)",
+    "linear-gradient(135deg, #881100, #aa4400)",
+    "linear-gradient(135deg, #882200, #bb4400, #cc7700)",
+  ],
+}
+
+/* Glow colour used in boxShadow — matches each theme so the filter edge
+   outline is always harmonious rather than a fixed purple.               */
+const HERO_GLOW_COLORS = {
+  pink:   "rgba(150,  80, 255, 0.30)",
+  blue:   "rgba(  0, 110, 220, 0.32)",
+  green:  "rgba(  0, 160,  80, 0.32)",
+  orange: "rgba(200,  80,   0, 0.32)",
+}
+
 function DraggableBlob({ blob, containerRef }) {
+  const { themeName } = useTheme()
+  const glowColor = HERO_GLOW_COLORS[themeName] ?? HERO_GLOW_COLORS.pink
   const blobRef = useRef(null)
   const [dragging, setDragging] = useState(false)
   const [pos, setPos] = useState({ x: 0, y: 0 })
@@ -142,7 +192,7 @@ function DraggableBlob({ blob, containerRef }) {
         top: pos.y,
         background: blob.color,
         borderRadius: "40% 60% 55% 45% / 55% 45% 60% 40%",
-        boxShadow: `0 0 ${blob.w * 0.2}px rgba(150, 80, 255, 0.3)`,
+        boxShadow: `0 0 ${blob.w * 0.2}px ${glowColor}`,
         animation: dragging ? "none" : `${blob.anim} ${blob.dur}s ease-in-out infinite`,
         transform: dragging
           ? `rotate(${stretch.rotate}deg) scaleX(${stretch.scaleX}) scaleY(${stretch.scaleY})`
@@ -158,18 +208,25 @@ function DraggableBlob({ blob, containerRef }) {
 
 /* Desktop blob container — has its own ref so blobs size correctly to the flex column */
 function DesktopBlobs() {
+  const { themeName } = useTheme()
+  const heroColors    = HERO_THEME_COLORS[themeName] ?? HERO_THEME_COLORS.pink
   const ref = useRef(null)
   return (
     <div ref={ref} className="absolute inset-0 w-full h-full">
-      {INITIAL_BLOBS.map((blob) => (
-        <DraggableBlob key={blob.id} blob={blob} containerRef={ref} />
+      {INITIAL_BLOBS.map((blob, i) => (
+        <DraggableBlob
+          key={blob.id}
+          blob={{ ...blob, color: heroColors[i] }}
+          containerRef={ref}
+        />
       ))}
     </div>
   )
 }
 
 export function HeroSection() {
-  const { theme } = useTheme()
+  const { theme, themeName } = useTheme()
+  const heroColors = HERO_THEME_COLORS[themeName] ?? HERO_THEME_COLORS.pink
   const { navigate } = useRouter()
   const blobContainerRef = useRef(null)
 
@@ -199,8 +256,12 @@ export function HeroSection() {
         className="sm:hidden absolute inset-0 w-full h-full"
         style={{ filter: "url(#gooey)", zIndex: 0 }}
       >
-        {INITIAL_BLOBS.map((blob) => (
-          <DraggableBlob key={blob.id} blob={blob} containerRef={blobContainerRef} />
+        {INITIAL_BLOBS.map((blob, i) => (
+          <DraggableBlob
+            key={blob.id}
+            blob={{ ...blob, color: heroColors[i] }}
+            containerRef={blobContainerRef}
+          />
         ))}
       </div>
 
