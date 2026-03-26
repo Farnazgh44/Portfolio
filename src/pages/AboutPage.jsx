@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from "react"
-import { GlassCard } from "../components/glass-card"
-import { Footer } from "../components/footer"
-import { BlobTextContainer } from "../components/blob-text-hover"
-import { AutoBlobText } from "../components/auto-blob-text"
-import { SideBlobs } from "../components/side-blobs"
+import { GlassCard }          from "../components/glass-card"
+import { Footer }             from "../components/footer"
+import { AutoBlobText }       from "../components/auto-blob-text"
+import { SideBlobs }          from "../components/side-blobs"
+import { VariableProximity }  from "../components/variable-proximity"
+import { BlobButton }         from "../components/blob-button"
 
 /* ─── Data ─── */
 const STORY_SECTIONS = [
@@ -18,8 +19,8 @@ const STORY_SECTIONS = [
     title: "What Drives Me",
     text: "I believe great design has the power to make people's lives easier and more enjoyable. Every pixel I place, every interaction I craft, is driven by empathy for the end user. I'm motivated by the challenge of solving real problems through thoughtful, human-centered design.",
     image: "/images/about-whatdrivesme.jpeg",
-    imagePosition: "center 15%",
-    imageScale: "115%",
+    imagePosition: "center 80%",
+    imageScale: "140%",
   },
   {
     title: "Beyond Design",
@@ -40,6 +41,7 @@ const TOOLKIT = [
   { name: "VS Code", image: "/images/toolkit-vscode.png", desc: "Used for writing and editing code" },
   { name: "Dimension", image: "/images/toolkit-dimension.png", desc: "Used for creating simple 3D scenes and mockups" },
   { name: "Tinkercad", image: "/images/toolkit-tinkercad.png", desc: "Used for simple 3D modeling and basic design learning" },
+  { name: "WordPress", image: "/images/wordpress.png", desc: "Used for building and managing websites with customizable themes and plugins" },
 ]
 
 const GOALS_DATA = {
@@ -131,74 +133,175 @@ const glassStyle = {
   border: "1px solid rgba(255,255,255,0.15)",
 }
 
+/* ── Tilt-on-hover wrapper (same as about-preview on home page) ─────────── */
+function TiltWrapper({ children, active, amplitude = 12 }) {
+  const ref = useRef(null)
+  const [rot, setRot] = useState({ x: 0, y: 0 })
+  const [hovered, setHovered] = useState(false)
+
+  const onMove = (e) => {
+    if (!active || !ref.current) return
+    const { left, top, width, height } = ref.current.getBoundingClientRect()
+    const nx = ((e.clientX - left) / width  - 0.5) * 2
+    const ny = ((e.clientY - top)  / height - 0.5) * 2
+    setRot({ x: -ny * amplitude, y: nx * amplitude })
+  }
+
+  const onLeave = () => {
+    setHovered(false)
+    setRot({ x: 0, y: 0 })
+  }
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseEnter={() => active && setHovered(true)}
+      onMouseLeave={onLeave}
+      style={{ perspective: "900px", transformStyle: "preserve-3d" }}
+    >
+      <div
+        style={{
+          transform: active
+            ? `rotateX(${rot.x}deg) rotateY(${rot.y}deg) scale(${hovered ? 1.04 : 1})`
+            : "none",
+          transition: hovered
+            ? "transform 0.08s linear"
+            : "transform 0.55s cubic-bezier(0.23, 1, 0.32, 1)",
+          willChange: "transform",
+          transformStyle: "preserve-3d",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
 /* ─── Section A: Hero ─── */
 function AboutHero() {
+  /* settled → triggers photo slide-in (right) + text slide-in (left) */
+  const [settled, setSettled] = useState(false)
+  /* showButtons → buttons pop up after text has landed */
+  const [showButtons, setShowButtons] = useState(false)
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setSettled(true), 80)
+    const t2 = setTimeout(() => setShowButtons(true), 650)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [])
+
+  /* Container ref for VariableProximity mouse tracking */
+  const proximityRef = useRef(null)
+
+  /* Shared slide-in easing */
+  const slideEase = "transform 0.85s cubic-bezier(0.23, 1, 0.32, 1)"
+
   return (
-    <section className="relative pt-28 pb-16 px-4 md:px-8">
+    <section className="relative h-screen flex items-center px-4 md:px-8 pt-20 overflow-hidden">
       {/* Always side-by-side: text 3/4, photo 1/4 on mobile; text flex-1, photo fixed on desktop */}
-      <div className="max-w-6xl mx-auto flex flex-row items-stretch gap-3 md:gap-8">
-        {/* Text box */}
+      <div className="max-w-6xl mx-auto w-full flex flex-row items-stretch gap-3 md:gap-8">
+        {/* Text — no box, raw layout, capped to <50% screen */}
         <div
-          className="rounded-2xl p-3 sm:p-6 md:p-8 flex-1 flex flex-col justify-between
-                     h-[220px] sm:h-[300px] md:h-[420px]"
-          style={glassStyle}
+          className="p-3 sm:p-4 md:p-5 flex-none flex flex-col justify-between
+                     w-[48%] sm:w-[50%] md:w-[50%] h-[260px] sm:h-[400px] md:h-[560px]"
         >
           <div className="flex flex-col h-full justify-between">
-            <AutoBlobText
-              text="About Me"
-              as="h2"
-              className="text-white text-base sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-4"
-              filterId="goo-about-heading"
-            />
 
-            <BlobTextContainer
-              className="flex-1 min-h-0 overflow-hidden"
-              textItems={[
-                {
-                  text: "I\u2019m a New Media Design and Web Development student at BCIT with a strong background in art and a focus on UI/UX design. I enjoy creating clean, modern digital experiences that are both visually engaging and easy to use.",
-                  as: "p",
-                  className: "text-white/70 text-[9px] sm:text-sm leading-snug sm:leading-relaxed mb-1 sm:mb-3",
-                  splitBy: "word",
-                },
-                {
-                  text: "I\u2019m especially interested in the intersection of design, technology, and storytelling\u2014where thoughtful visuals meet practical, user-centered solutions.",
-                  as: "p",
-                  className: "hidden sm:block text-white/70 text-sm leading-relaxed",
-                  splitBy: "word",
-                },
-              ]}
+            {/* Heading — slides in from left first */}
+            <div
+              style={{
+                fontSize: "clamp(2rem, 4.5vw, 5rem)",
+                lineHeight: 1.1,
+                whiteSpace: "nowrap",
+                transform: settled ? "translateX(0)" : "translateX(-110vw)",
+                opacity: settled ? 1 : 0,
+                transition: `${slideEase}, opacity 0.6s ease`,
+              }}
             >
-              {/* Nav buttons */}
-              <div className="flex items-center gap-1 sm:gap-3 mt-2 sm:mt-6 relative flex-wrap" style={{ zIndex: 10 }}>
-                {["My Story", "Values", "Hobbies"].map((label) => (
-                  <button
-                    key={label}
-                    className="pill-btn-hover px-2 sm:px-8 py-1 sm:py-2.5 rounded-full text-[8px] sm:text-sm font-medium text-white/80 cursor-pointer whitespace-nowrap"
-                    onClick={() => {
-                      const id = label.toLowerCase().replace(" ", "-")
-                      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
-                    }}
-                    style={{
-                      background: "rgba(255,255,255,0.12)",
-                      backdropFilter: "blur(10px)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </BlobTextContainer>
+              <AutoBlobText
+                text="About Me"
+                as="h2"
+                className="text-white font-bold mb-2 sm:mb-5"
+                filterId="goo-about-heading"
+                startDelay={950}
+              />
+            </div>
+
+            {/* Body text — slides in from left slightly after heading */}
+            <div
+              ref={proximityRef}
+              className="flex-1 min-h-0 overflow-visible"
+              style={{
+                transform: settled ? "translateX(0)" : "translateX(-110vw)",
+                opacity: settled ? 1 : 0,
+                transition: `transform 0.85s 0.12s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s 0.12s ease`,
+              }}
+            >
+              <VariableProximity
+                label="I'm a New Media Design and Web Development student at BCIT with a strong background in art and a focus on UI/UX design. I enjoy creating clean, modern digital experiences that are both visually engaging and easy to use."
+                className="text-white/70 text-xs sm:text-base leading-snug sm:leading-relaxed mb-1 sm:mb-3"
+                fromFontVariationSettings="'wght' 300"
+                toFontVariationSettings="'wght' 800"
+                containerRef={proximityRef}
+                radius={120}
+                falloff="linear"
+              />
+              <VariableProximity
+                label="I'm especially interested in the intersection of design, technology, and storytelling—where thoughtful visuals meet practical, user-centered solutions."
+                className="hidden sm:block text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
+                fromFontVariationSettings="'wght' 300"
+                toFontVariationSettings="'wght' 800"
+                containerRef={proximityRef}
+                radius={120}
+                falloff="linear"
+              />
+            </div>
+
+            {/* Buttons — each pops up with a staggered delay */}
+            <div className="flex items-center gap-1 sm:gap-3 mt-2 sm:mt-4 flex-wrap" style={{ zIndex: 10 }}>
+              {["My Story", "Values", "Hobbies"].map((label, i) => (
+                <BlobButton
+                  key={label}
+                  className="pill-btn-hover px-2 sm:px-8 py-1 sm:py-2.5 rounded-full text-[8px] sm:text-sm font-medium text-white/80 cursor-pointer whitespace-nowrap"
+                  onClick={() => {
+                    const id = label.toLowerCase().replace(" ", "-")
+                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+                  }}
+                  style={{
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(10px)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    opacity: showButtons ? 1 : 0,
+                    transform: showButtons ? "translateY(0)" : "translateY(16px)",
+                    transition: `opacity 0.4s ${i * 0.1}s ease, transform 0.4s ${i * 0.1}s cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                  }}
+                >
+                  {label}
+                </BlobButton>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Photo */}
+        {/* Photo — slides in from right, then tilt-on-hover activates */}
         <div
-          className="rounded-2xl overflow-hidden flex-1 md:flex-none md:w-[360px]
-                     h-[220px] sm:h-[300px] md:h-[420px] flex-shrink-0"
-          style={glassStyle}
+          className="flex-none ml-auto"
+          style={{
+            transform: settled ? "translateX(0)" : "translateX(120vw)",
+            transition: "transform 0.9s cubic-bezier(0.23, 1, 0.32, 1)",
+          }}
         >
-          <img src="/images/about-portrait.png" alt="Portrait of Farnaz" className="w-full h-full object-cover" />
+          <TiltWrapper active={settled} amplitude={10}>
+            <div
+              className="rounded-2xl overflow-hidden
+                         w-[42%] sm:w-auto md:w-[560px]
+                         h-[260px] sm:h-[400px] md:h-[600px]"
+              style={glassStyle}
+            >
+              <img src="/images/about-portrait.png" alt="Portrait of Farnaz" className="w-full h-full object-cover" />
+            </div>
+          </TiltWrapper>
         </div>
       </div>
     </section>
@@ -292,11 +395,19 @@ function MyStorySection() {
               translateY = `${(1 - reveal) * 100}%`
             }
 
+            /* Keep future images fully invisible until they start sliding in */
+            const isBeingRevealed = isNext && imageReveal > 0.65
+            const hidden = i > activeIndex && !isBeingRevealed
+
             return (
               <div
                 key={i}
                 className="absolute inset-0 transition-transform duration-500 ease-out"
-                style={{ transform: `translateY(${translateY})`, zIndex: i }}
+                style={{
+                  transform: `translateY(${translateY})`,
+                  zIndex: i,
+                  visibility: hidden ? "hidden" : "visible",
+                }}
               >
                 <img
                   src={section.image}
@@ -320,21 +431,24 @@ function MyStorySection() {
 /* ─── Section C: Toolkit (infinite scroll with blurred overlay hover) ─── */
 function ToolkitSection() {
   const doubled = [...TOOLKIT, ...TOOLKIT]
+  const [paused, setPaused] = useState(false)
 
   return (
     <section className="relative py-8 sm:py-14 px-4 md:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="rounded-2xl py-4 sm:py-5 px-3 sm:px-4 overflow-hidden" style={glassStyle}>
-          <h2 className="text-white text-lg sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 text-center">Toolkits</h2>
+          <h2 className="text-white text-lg sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 text-center">Toolkit</h2>
           <div className="overflow-hidden w-full">
             <div
               className="flex gap-2 sm:gap-4 animate-scroll-left"
-              style={{ width: "max-content" }}
+              style={{ width: "max-content", animationPlayState: paused ? "paused" : "running" }}
             >
               {doubled.map((tool, i) => (
                 <div
                   key={`${tool.name}-${i}`}
                   className="relative group flex-shrink-0"
+                  onMouseEnter={() => setPaused(true)}
+                  onMouseLeave={() => setPaused(false)}
                 >
                   <div
                     className="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl flex items-center justify-center overflow-hidden relative"
@@ -420,6 +534,32 @@ function NavySection() {
             transition: "border-radius 0.3s ease",
           }}
         >
+          {/* "Missions" big hover label — visible when box is small, fades as it grows */}
+          <div
+            style={{
+              position:      "absolute",
+              inset:         0,
+              display:       "flex",
+              alignItems:    "center",
+              justifyContent:"center",
+              pointerEvents: "none",
+              zIndex:        30,
+              opacity:       Math.max(0, 1 - containerScale * 2),
+              transition:    "opacity 0.4s ease",
+            }}
+          >
+            <span
+              style={{
+                fontSize:      "clamp(3rem, 8vw, 7rem)",
+                fontWeight:    700,
+                color:         "white",
+                letterSpacing: "-0.02em",
+                userSelect:    "none",
+              }}
+            >
+              Missions
+            </span>
+          </div>
           {/* Lava lamp blobs - large, vibrant, multi-color */}
           <div
             className="absolute pointer-events-none"
@@ -496,9 +636,10 @@ function NavySection() {
                 <h3 className="text-white text-sm md:text-xl font-bold">Goals</h3>
                 <div className="flex gap-1 md:gap-2 relative z-30 flex-wrap">
                   {Object.keys(GOALS_DATA).map((key) => (
-                    <button
+                    <BlobButton
                       key={key}
-                      onClick={(e) => { e.stopPropagation(); setGoalsTab(key) }}
+                      stopProp
+                      onClick={() => setGoalsTab(key)}
                       className="pill-btn-hover px-2 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-medium transition-all duration-300 cursor-pointer relative z-30"
                       style={{
                         background: goalsTab === key ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.06)",
@@ -507,7 +648,7 @@ function NavySection() {
                       }}
                     >
                       {key}
-                    </button>
+                    </BlobButton>
                   ))}
                 </div>
               </div>
@@ -544,9 +685,10 @@ function NavySection() {
               <h3 className="text-white text-sm md:text-xl font-bold mb-2 md:mb-3">Values</h3>
               <div className="flex gap-1 md:gap-2 mb-2 md:mb-4 relative z-30 flex-wrap">
                 {Object.keys(VALUES_DATA).map((key) => (
-                  <button
+                  <BlobButton
                     key={key}
-                    onClick={(e) => { e.stopPropagation(); setValuesTab(key) }}
+                    stopProp
+                    onClick={() => setValuesTab(key)}
                     className="pill-btn-hover px-2 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-medium transition-all duration-300 cursor-pointer relative z-30"
                     style={{
                       background: valuesTab === key ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.06)",
@@ -555,7 +697,7 @@ function NavySection() {
                     }}
                   >
                     {key}
-                  </button>
+                  </BlobButton>
                 ))}
               </div>
               <p className="text-white/70 text-[10px] md:text-sm leading-relaxed transition-opacity duration-300">{VALUES_DATA[valuesTab]}</p>
@@ -570,6 +712,25 @@ function NavySection() {
 /* ─── Section E: Hobbies ─── */
 function HobbiesSection() {
   const [activeHobby, setActiveHobby] = useState(2) // Default: Drawing
+  const [lightboxImg, setLightboxImg] = useState(null)
+  const [lightboxAlt, setLightboxAlt] = useState("")
+
+  /* Close lightbox on Escape */
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") setLightboxImg(null)
+    }
+    if (lightboxImg) {
+      document.addEventListener("keydown", onKey)
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.removeEventListener("keydown", onKey)
+      document.body.style.overflow = ""
+    }
+  }, [lightboxImg])
 
   return (
     <section className="relative py-10 sm:py-20 px-4 md:px-8" id="hobbies">
@@ -619,13 +780,20 @@ function HobbiesSection() {
                   style={{
                     ...glassStyle,
                     animationDelay: `${i * 80}ms`,
+                    cursor: img ? "zoom-in" : "default",
+                  }}
+                  onClick={() => {
+                    if (img) {
+                      setLightboxImg(img)
+                      setLightboxAlt(`${HOBBIES[activeHobby].label} ${i + 1}`)
+                    }
                   }}
                 >
                   {img ? (
                     <img
                       src={img}
                       alt={`${HOBBIES[activeHobby].label} ${i + 1}`}
-                      className="w-full h-full object-cover animate-fade-in"
+                      className="w-full h-full object-cover animate-fade-in transition-transform duration-300 hover:scale-105"
                     />
                   ) : (
                     <div
@@ -641,6 +809,70 @@ function HobbiesSection() {
           </div>
         </div>
       </div>
+
+      {/* ── Lightbox overlay ── */}
+      {lightboxImg && (
+        <div
+          onClick={() => setLightboxImg(null)}
+          style={{
+            position:        "fixed",
+            inset:           0,
+            zIndex:          1000,
+            display:         "flex",
+            alignItems:      "center",
+            justifyContent:  "center",
+            background:      "rgba(0, 0, 0, 0.82)",
+            backdropFilter:  "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            animation:       "fadeIn 0.25s ease",
+            cursor:          "default",
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setLightboxImg(null)}
+            style={{
+              position:   "absolute",
+              top:        "clamp(12px, 3vh, 28px)",
+              right:      "clamp(12px, 3vw, 28px)",
+              background: "rgba(255,255,255,0.12)",
+              border:     "1px solid rgba(255,255,255,0.2)",
+              borderRadius: "50%",
+              width:      "44px",
+              height:     "44px",
+              display:    "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor:     "pointer",
+              color:      "white",
+              fontSize:   "20px",
+              lineHeight: 1,
+              backdropFilter: "blur(10px)",
+              transition: "background 0.2s",
+              zIndex:     1001,
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.22)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+          >
+            ✕
+          </button>
+
+          {/* Image — click doesn't bubble to backdrop */}
+          <img
+            src={lightboxImg}
+            alt={lightboxAlt}
+            onClick={e => e.stopPropagation()}
+            style={{
+              maxWidth:     "90vw",
+              maxHeight:    "85vh",
+              borderRadius: "16px",
+              boxShadow:    "0 30px 80px rgba(0,0,0,0.6)",
+              objectFit:    "contain",
+              animation:    "lightboxPop 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+            }}
+          />
+        </div>
+      )}
     </section>
   )
 }

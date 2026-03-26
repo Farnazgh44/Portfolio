@@ -64,6 +64,7 @@ export function AutoBlobText({
   filterId = "goo-auto",
   autoDelay = 60,
   autoDuration = 400,
+  startDelay = 0,   // ms to wait before the auto-blob sequence fires
 }) {
   const containerRef = useRef(null)
   const letterRefs = useRef([])
@@ -120,21 +121,21 @@ export function AutoBlobText({
     return () => cancelAnimationFrame(rafId.current)
   }, [totalUnits])
 
-  // Auto-animate on mount: sequentially blob each letter
+  // Auto-animate on mount: sequentially blob each letter, after startDelay
   useEffect(() => {
     if (!ready || autoAnimDone.current) return
     const timers = []
     allLetters.forEach((_, i) => {
-      const showTimer = setTimeout(() => showBlob(i), i * autoDelay)
+      const showTimer = setTimeout(() => showBlob(i), startDelay + i * autoDelay)
       timers.push(showTimer)
       const hideTimer = setTimeout(() => {
         hideBlob(i)
         if (i === allLetters.length - 1) autoAnimDone.current = true
-      }, i * autoDelay + autoDuration)
+      }, startDelay + i * autoDelay + autoDuration)
       timers.push(hideTimer)
     })
     return () => timers.forEach(clearTimeout)
-  }, [ready, allLetters.length, autoDelay, autoDuration])
+  }, [ready, allLetters.length, autoDelay, autoDuration, startDelay])
 
   function showBlob(i) {
     const span = letterRefs.current[i]

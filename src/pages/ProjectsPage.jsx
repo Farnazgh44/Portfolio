@@ -1,628 +1,485 @@
-import { useState, useRef, useEffect } from "react"
-import { useRouter } from "../lib/router-context"
-import { Footer } from "../components/footer"
+import { useState, useRef } from "react"
+import { Footer }    from "../components/footer"
 import { SideBlobs } from "../components/side-blobs"
+import { useRouter }  from "../lib/router-context"
 
-/* ─── Tool icon mapping (reuses toolkit images from About page) ─── */
+/* ─── Toolkit icon map ──────────────────────────────────────────────────────── */
 const TOOL_ICONS = {
-  Figma: "/images/toolkit-figma.png",
-  Photoshop: "/images/toolkit-photoshop.png",
-  Illustrator: "/images/toolkit-illustrator.png",
-  InDesign: "/images/toolkit-indesign.png",
+  Figma:           "/images/toolkit-figma.png",
+  Photoshop:       "/images/toolkit-photoshop.png",
+  Illustrator:     "/images/toolkit-illustrator.png",
+  InDesign:        "/images/toolkit-indesign.png",
   "After Effects": "/images/toolkit-aftereffects.png",
-  Canva: "/images/toolkit-canva.png",
-  "VS Code": "/images/toolkit-vscode.png",
-  Dimension: "/images/toolkit-dimension.png",
-  Tinkercad: "/images/toolkit-tinkercad.png",
-  Maze: "/images/toolkit-maze.png",
+  Canva:           "/images/toolkit-canva.png",
+  "VS Code":       "/images/toolkit-vscode.png",
+  Dimension:       "/images/toolkit-dimension.png",
+  Tinkercad:       "/images/toolkit-tinkercad.png",
+  Maze:            "/images/toolkit-maze.png",
 }
 
-/* ─── Showcase project data ─── */
-const SHOWCASE_PROJECTS = [
+/* ─── Project data ──────────────────────────────────────────────────────────── */
+const PROJECTS = [
   {
-    id: "sugarcloud",
-    name: "SugarCloud Cupcakes",
-    category: "UI/UX Project",
-    label: "Web Design",
-    tools: ["Figma", "Photoshop", "Illustrator"],
-    desc: "A sweet and modern e-commerce website for a premium cupcake bakery brand.",
-    image: "/images/mockup-cupcake-laptop.png",
+    id:          "sugarcloud",
+    pageId:      "project-sugarcloud",
+    image:       "/images/Laptop_Feature.png",
+    logo:        "/images/SugarcloudLogo.png",
+    logoHeight:  "clamp(60px, 7vw, 90px)",
+    nameScript:  "SugarCloud",
+    namePlain:   "Cupcakes",
+    category:    "UI/UX & Product Design",
+    desc:        "SugarCloud Cupcakes is an online cupcake ordering website. Led the design process including UX research, user journey development, UI/UX design, wireframing, responsive layouts for desktop and mobile, and interactive prototyping.",
+    tools:       ["Figma", "Photoshop", "Illustrator"],
   },
   {
-    id: "alpine",
-    name: "Alpine Links",
-    category: "UI/UX Project",
-    label: "UI/UX Design",
-    tools: ["Figma", "After Effects"],
-    desc: "A hiking and outdoor adventure companion app with real-time trail information.",
-    image: "/images/mockup-alpinelink-phone.png",
+    id:          "alpine",
+    pageId:      "project-alpine",
+    image:       "/images/Phone1_feature.png",
+    logo:        "/images/AlpineLogo.png",
+    logoHeight:  "clamp(68px, 8.5vw, 108px)",
+    name:        "AlpineLink",
+    nameStyle:   "upper",
+    category:    "UI/UX & Product Design",
+    desc:        "AlpineLink is an all-season outdoor adventure app designed for hiking, skiing, biking, and snowboarding. Led the design process including UX research, user flows, UI/UX design, and interactive prototyping.",
+    tools:       ["Figma", "After Effects"],
   },
   {
-    id: "reddit",
-    name: "Reddit Redesign",
-    category: "UI/UX Project",
-    label: "UI/UX Design",
-    tools: ["Figma", "Photoshop"],
-    desc: "A fresh visual redesign of Reddit focused on readability and modern aesthetics.",
-    image: "/images/mockup-reddit-phone.png",
+    id:          "reddit",
+    pageId:      "project-reddit",
+    image:       "/images/Phone2_feature.png",
+    logo:        null,
+    name:        "Reddit Redesign",
+    category:    "Mobile App Design",
+    desc:        "A Reddit mobile app redesign focused on improving user experience and visual clarity across key screens including the feed, post detail, and profile views.",
+    tools:       ["Figma", "Photoshop"],
   },
   {
-    id: "craigslist",
-    name: "Craigslist Redesign",
-    category: "UI/UX Project",
-    label: "Web Design",
-    tools: ["Figma", "Illustrator"],
-    desc: "A complete UX overhaul bringing Craigslist into the modern design era.",
-    image: "/images/mockup-craigslist-imac.png",
+    id:          "cat-holder",
+    pageId:      "project-cat-holder",
+    image:       "/images/Cat_feature.png",
+    logo:        null,
+    name:        "Cat Phone Holder",
+    category:    "3D Design",
+    desc:        "A practical 3D-printed phone holder shaped like a sitting cat. Designed in Tinkercad and tested for real-world usability — a fun blend of product design and everyday utility.",
+    tools:       ["Tinkercad"],
   },
   {
-    id: "phone-holder",
-    name: "Phone Holder",
-    category: "Digital Design",
-    label: "Digital Design",
-    tools: ["Tinkercad"],
-    desc: "A custom 3D-printed phone holder designed in Tinkercad.",
-    image: "/images/project-phoneholder-pro.png",
-  },
-  {
-    id: "lighthouse",
-    name: "3D Lighthouse",
-    category: "Digital Design",
-    label: "Digital Design",
-    tools: ["Dimension"],
-    desc: "A detailed 3D lighthouse scene created with Adobe Dimension.",
-    image: "/images/project-lighthouse-pro.png",
-  },
-  {
-    id: "seattle",
-    name: "Seattle Illustration",
-    category: "Digital Design",
-    label: "Digital Design",
-    tools: ["Illustrator"],
-    desc: "A stylized vector illustration of Seattle's iconic skyline.",
-    image: "/images/project-seattle-pro.png",
+    id:          "perfume",
+    pageId:      "project-perfume",
+    image:       "/images/Perfume_featured.png",
+    logo:        null,
+    name:        "3D Perfume Bottle",
+    category:    "Product Visualisation",
+    desc:        "A high-fidelity product visualisation of a perfume bottle created in Adobe Dimension with Photoshop compositing — demonstrating 3D rendering, lighting, and brand presentation.",
+    tools:       ["Dimension", "Photoshop"],
   },
 ]
 
-const FILTERS = [
-  { label: "All", value: "all" },
-  { label: "UI/UX", value: "UI/UX Project" },
-  { label: "Digital Design", value: "Digital Design" },
-]
+const N = PROJECTS.length
 
-/* ─── Blob helpers ─── */
-const COLORS = [
-  "#f472b6", "#fb923c", "#34d399", "#38bdf8",
-  "#a78bfa", "#f9a8d4", "#6ee7b7", "#fbbf24",
-]
+/* ─── Card transform / filter based on offset ──────────────────────────────── */
+function getCardStyle(offset) {
+  const abs = Math.abs(offset)
 
-function lerp(a, b, t) { return a + (b - a) * t }
-function lerpAngle(a, b, t) {
-  const d = ((b - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI
-  return a + d * t
-}
-
-function buildBlobPath(cx, cy, rx, ry, phase, wobble, rotation) {
-  const pts = 18
-  const cosR = Math.cos(rotation)
-  const sinR = Math.sin(rotation)
-  const coords = []
-  for (let i = 0; i < pts; i++) {
-    const angle = (i / pts) * Math.PI * 2
-    const r1 = 1 + wobble * 0.35 * Math.sin(2 * angle + phase * 1.3)
-    const r2 = 1 + wobble * 0.22 * Math.sin(3 * angle - phase * 0.9)
-    const r3 = 1 + wobble * 0.15 * Math.sin(5 * angle + phase * 0.6)
-    const rFactor = r1 * r2 * r3
-    const lx = rx * rFactor * Math.cos(angle)
-    const ly = ry * rFactor * Math.sin(angle)
-    coords.push([
-      cx + lx * cosR - ly * sinR,
-      cy + lx * sinR + ly * cosR,
-    ])
-  }
-  const n = coords.length
-  let d = ""
-  for (let i = 0; i < n; i++) {
-    const p0 = coords[(i - 1 + n) % n]
-    const p1 = coords[i]
-    const p2 = coords[(i + 1) % n]
-    const p3 = coords[(i + 2) % n]
-    if (i === 0) d += `M ${p1[0].toFixed(1)},${p1[1].toFixed(1)} `
-    const cp1x = p1[0] + (p2[0] - p0[0]) / 6
-    const cp1y = p1[1] + (p2[1] - p0[1]) / 6
-    const cp2x = p2[0] - (p3[0] - p1[0]) / 6
-    const cp2y = p2[1] - (p3[1] - p1[1]) / 6
-    d += `C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)} `
-  }
-  return d + "Z"
-}
-
-/* ─── Stacked auto-blob hero text: "Scroll" / "To" / "Browse Projects" ─── */
-function HeroBlobText({ filter, setFilter }) {
-  const containerRef = useRef(null)
-  const letterRefs = useRef([])
-  const pathRefs = useRef([])
-  const blobState = useRef([])
-  const colorIdx = useRef(0)
-  const rafId = useRef(null)
-  const autoAnimDone = useRef(false)
-  const [ready, setReady] = useState(false)
-
-  // Each line of text, split by letter
-  const lines = ["Scroll", "To", "Browse Projects"]
-  const allLetters = lines.flatMap((line) => line.split("").filter((ch) => ch !== " "))
-  const totalUnits = allLetters.length
-
-  useEffect(() => {
-    if (totalUnits === 0) return
-
-    blobState.current = Array.from({ length: totalUnits }, (_, i) => ({
-      curX: -999, curY: -999, curRx: 0, curRy: 0,
-      tarX: -999, tarY: -999, tarRx: 0, tarRy: 0,
-      phase: Math.random() * Math.PI * 2,
-      wobble: 0, tarWobble: 0,
-      rotation: 0, tarRotation: Math.random() * Math.PI * 2,
-      color: COLORS[i % COLORS.length],
-      visible: false,
-    }))
-
-    function animate() {
-      blobState.current.forEach((b, i) => {
-        b.phase += 0.045
-        b.curX = lerp(b.curX, b.tarX, 0.14)
-        b.curY = lerp(b.curY, b.tarY, 0.14)
-        b.curRx = lerp(b.curRx, b.tarRx, 0.10)
-        b.curRy = lerp(b.curRy, b.tarRy, 0.10)
-        b.wobble = lerp(b.wobble, b.tarWobble, 0.08)
-        b.rotation = lerpAngle(b.rotation, b.tarRotation, 0.07)
-
-        const pathEl = pathRefs.current[i]
-        if (!pathEl) return
-
-        if (b.curRx < 0.5) {
-          pathEl.setAttribute("d", "")
-          return
-        }
-        pathEl.setAttribute(
-          "d",
-          buildBlobPath(b.curX, b.curY, b.curRx, b.curRy, b.phase, b.wobble, b.rotation)
-        )
-      })
-      rafId.current = requestAnimationFrame(animate)
+  if (abs === 0) {
+    return {
+      transform: "translate(-50%, -50%) scale(1)",
+      filter:    "none",
+      opacity:   1,
+      zIndex:    10,
     }
+  }
 
-    rafId.current = requestAnimationFrame(animate)
-    setReady(true)
-    return () => cancelAnimationFrame(rafId.current)
-  }, [totalUnits])
-
-  // Auto-animate on mount: sequentially blob each letter
-  useEffect(() => {
-    if (!ready || autoAnimDone.current) return
-    const timers = []
-    allLetters.forEach((_, i) => {
-      const showTimer = setTimeout(() => showBlob(i), i * 60)
-      timers.push(showTimer)
-      const hideTimer = setTimeout(() => {
-        hideBlob(i)
-        if (i === allLetters.length - 1) autoAnimDone.current = true
-      }, i * 60 + 400)
-      timers.push(hideTimer)
-    })
-    return () => timers.forEach(clearTimeout)
-  }, [ready])
-
-  function showBlob(i) {
-    const span = letterRefs.current[i]
-    const container = containerRef.current
-    if (!span || !container) return
-    const b = blobState.current[i]
-    if (!b) return
-    const r = span.getBoundingClientRect()
-    const cr = container.getBoundingClientRect()
-    const cx = r.left - cr.left + r.width / 2
-    const cy = r.top - cr.top + r.height / 2
-
-    if (!b.visible) {
-      b.curX = cx; b.curY = cy
-      b.curRx = r.width * 0.3; b.curRy = r.height * 0.3
+  if (abs === 1) {
+    const dir = offset > 0 ? 1 : -1
+    return {
+      transform: `translate(calc(-50% + ${dir * 20}vw), -50%) scale(0.70)`,
+      filter:    "blur(4px)",           /* visible but softly blurred */
+      opacity:   1,
+      zIndex:    6,
     }
-
-    b.tarX = cx; b.tarY = cy
-    b.tarRx = r.width * 0.82
-    b.tarRy = r.height * 0.68
-    b.tarWobble = 1
-    b.tarRotation = b.rotation + (Math.random() * Math.PI - Math.PI / 2)
-
-    b.color = COLORS[colorIdx.current % COLORS.length]
-    colorIdx.current++
-    if (pathRefs.current[i]) pathRefs.current[i].setAttribute("fill", b.color)
-    b.visible = true
   }
 
-  function hideBlob(i) {
-    const b = blobState.current[i]
-    if (!b) return
-    b.tarRx = 0; b.tarRy = 0
-    b.tarWobble = 0; b.visible = false
+  /* abs === 2 — hidden behind front */
+  return {
+    transform: "translate(-50%, -50%) scale(0.62)",
+    filter:    "blur(16px)",
+    opacity:   0,
+    zIndex:    2,
   }
+}
 
-  // Build letter spans per line
-  let unitIdx = 0
-  const renderedLines = lines.map((line, lineIdx) => {
-    const chars = line.split("").map((ch, charIdx) => {
-      if (ch === " ") {
-        return (
-          <span key={`s-${lineIdx}-${charIdx}`} className="inline-block w-[0.25em]">
-            {"\u00A0"}
-          </span>
-        )
+/* ─── Tool icon chip ────────────────────────────────────────────────────────── */
+function ToolChip({ toolName }) {
+  const icon = TOOL_ICONS[toolName]
+  return (
+    <div style={{
+      width:                "46px",
+      height:               "46px",
+      borderRadius:         "10px",
+      background:           "rgba(255,255,255,0.14)",
+      backdropFilter:       "blur(10px)",
+      WebkitBackdropFilter: "blur(10px)",
+      border:               "1px solid rgba(255,255,255,0.22)",
+      display:              "flex",
+      alignItems:           "center",
+      justifyContent:       "center",
+      flexShrink:           0,
+    }}>
+      {icon
+        ? <img src={icon} alt={toolName} style={{ width: 28, height: 28, objectFit: "contain" }} />
+        : <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.65rem", fontWeight: 600 }}>{toolName.slice(0,2)}</span>
       }
-      const capturedIdx = unitIdx
-      unitIdx++
-      return (
-        <span
-          key={`l-${lineIdx}-${charIdx}`}
-          className="inline-block relative"
-          style={{ zIndex: 10 }}
-          data-blob-text-letter
-          ref={(el) => { letterRefs.current[capturedIdx] = el }}
-          onMouseEnter={() => showBlob(capturedIdx)}
-          onMouseLeave={() => hideBlob(capturedIdx)}
-        >
-          {ch}
-        </span>
-      )
-    })
-
-    return (
-      <h1
-        key={lineIdx}
-        className="text-white text-4xl md:text-6xl lg:text-7xl font-bold leading-none whitespace-nowrap"
-        style={{ fontFamily: "var(--font-space-grotesk)" }}
-      >
-        {chars}
-      </h1>
-    )
-  })
-
-  return (
-    <div className="text-left max-w-4xl px-6 md:px-16 lg:px-24 pt-28 pb-0">
-      <div ref={containerRef} className="relative">
-        {/* Blob SVG layer */}
-        <svg
-          className="pointer-events-none absolute inset-0 w-full h-full"
-          style={{ zIndex: 5, overflow: "visible" }}
-        >
-          <defs>
-            <filter id="goo-projects" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
-                result="goo"
-              />
-            </filter>
-          </defs>
-          <g filter="url(#goo-projects)">
-            {Array.from({ length: totalUnits }).map((_, i) => (
-              <path
-                key={i}
-                ref={(el) => { pathRefs.current[i] = el }}
-                fill={COLORS[i % COLORS.length]}
-              />
-            ))}
-          </g>
-        </svg>
-
-        {/* Stacked lines */}
-        <div className="flex flex-col gap-1">
-          {renderedLines}
-        </div>
-      </div>
-
-      {/* Filter buttons -- more spacing from title */}
-      <div className="flex gap-3 flex-wrap mt-12">
-        {FILTERS.map((f) => (
-          <button
-            key={f.value}
-            onClick={() => setFilter(f.value)}
-            className="pill-btn-hover px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer"
-            style={{
-              background: filter === f.value ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)",
-              color: filter === f.value ? "white" : "rgba(255,255,255,0.6)",
-              border: `1px solid ${filter === f.value ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.12)"}`,
-            }}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
     </div>
   )
 }
 
-/* ─── Tool Icon Boxes (small glassmorphism with icon) ─── */
-function ToolIcons({ tools }) {
+/* ─── Hover overlay ─────────────────────────────────────────────────────────── */
+function CardOverlay({ project, onViewProject }) {
   return (
-    <div className="flex gap-2 flex-wrap">
-      {tools.map((toolName) => {
-        const icon = TOOL_ICONS[toolName]
-        return (
-          <div
-            key={toolName}
-            className="group relative w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center"
-            style={{
-              background: "rgba(255,255,255,0.1)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
-          >
-            {icon ? (
-              <img src={icon} alt={toolName} className="w-6 h-6 md:w-7 md:h-7 object-contain" />
-            ) : (
-              <span className="text-white/60 text-[10px] font-medium">{toolName.slice(0, 2)}</span>
-            )}
-            {/* Tooltip on hover -- glassmorphism style matching footer */}
-            <span
-              className="absolute -top-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg text-xs font-medium text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none scale-90 group-hover:scale-100 z-20"
-              style={{
-                background: "rgba(255,255,255,0.12)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.2)",
-              }}
-            >
-              {toolName}
-            </span>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-/* ─── Scroll-Driven Project Showcase (horizontal, no rise) ─── */
-function ProjectShowcase({ projects }) {
-  const { navigate } = useRouter()
-  const sectionRef = useRef(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
-
-  const numProjects = projects.length
-
-  useEffect(() => {
-    function handleScroll() {
-      if (!sectionRef.current) return
-      const rect = sectionRef.current.getBoundingClientRect()
-      const sectionHeight = sectionRef.current.offsetHeight - window.innerHeight
-      if (sectionHeight <= 0) return
-      const scrolled = -rect.top
-      const progress = Math.max(0, Math.min(1, scrolled / sectionHeight))
-      setScrollProgress(progress)
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [numProjects])
-
-  // Horizontal cycling (full range, no rise phase)
-  const cycleEnd = 0.92
-  const cycleProgress = Math.min(1, scrollProgress / cycleEnd)
-
-  const currentProjectFloat = cycleProgress * (numProjects - 1)
-  const currentProject = Math.min(
-    Math.round(currentProjectFloat),
-    numProjects - 1
-  )
-
-  return (
-    <section
-      ref={sectionRef}
-      className="relative w-full mt-16"
-      style={{ height: `${Math.max(300, numProjects * 100 + 50)}vh` }}
-    >
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center">
-        {/* Full-screen glass box */}
-        <div
-          className="absolute rounded-3xl border border-white/15 shadow-lg overflow-hidden"
+    <div className="proj-overlay">
+      {/* Logo */}
+      {project.logo && (
+        <img
+          src={project.logo}
+          alt="logo"
+          draggable="false"
           style={{
-            inset: "16px 0",
-            background: "rgba(255, 255, 255, 0.10)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            boxShadow:
-              "inset 0 1px 0 0 rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.25)",
+            height:        project.logoHeight ?? "clamp(60px, 7vw, 90px)",
+            width:         "auto",
+            maxWidth:      "80%",
+            objectFit:     "contain",
+            marginBottom:  "14px",
+            filter:        "drop-shadow(0 2px 8px rgba(0,0,0,0.4))",
+            pointerEvents: "none",
           }}
-        >
-          {/* Layout: left text, right images */}
-          <div className="relative w-full h-full flex">
-            {/* LEFT: project text info
-                Mobile:  48% wide, compact padding + smaller type
-                Desktop: 32-35% wide, generous padding + full type  */}
-            <div className="relative flex flex-col justify-center w-[48%] md:w-[35%] lg:w-[32%] px-3 md:px-10 lg:px-14 z-10">
-              {projects.map((project, i) => {
-                const projectShare = 1 / (numProjects - 1 || 1)
-                const projectCenter = i * projectShare
-                const dist = Math.abs(cycleProgress - projectCenter)
-                const opacity = Math.max(0, 1 - dist / (projectShare * 0.5))
+        />
+      )}
 
-                const direction = cycleProgress - projectCenter
-                const textOffsetY =
-                  direction < 0
-                    ? Math.min(40, Math.abs(direction) * 100)
-                    : direction > 0
-                      ? Math.max(-40, -direction * 100)
-                      : 0
-
-                return (
-                  <div
-                    key={project.id}
-                    className="absolute left-0 right-0 px-3 md:px-10 lg:px-14"
-                    style={{
-                      opacity: Math.max(0, Math.min(1, opacity)),
-                      transform: `translateY(${textOffsetY}px)`,
-                      transition: "opacity 0.35s ease, transform 0.35s ease",
-                      pointerEvents: currentProject === i ? "auto" : "none",
-                    }}
-                  >
-                    <p className="text-white/50 text-[10px] md:text-sm uppercase tracking-widest mb-3 md:mb-2">
-                      {project.label}
-                    </p>
-                    <h3 className="text-white text-sm sm:text-xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-3 text-balance">
-                      {project.name}
-                    </h3>
-                    {/* Description hidden on very small screens to keep layout clean */}
-                    <p className="hidden sm:block text-white/60 text-sm md:text-base leading-relaxed mb-3 md:mb-4 max-w-xs">
-                      {project.desc}
-                    </p>
-                    {/* Tool icons */}
-                    <div className="mb-5 md:mb-5">
-                      <ToolIcons tools={project.tools} />
-                    </div>
-                    <button
-                      onClick={() => navigate(project.viewHref || "#")}
-                      className="pill-btn-hover px-4 sm:px-7 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium text-white/80 cursor-pointer"
-                      style={{
-                        background: "rgba(255,255,255,0.12)",
-                        backdropFilter: "blur(10px)",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                      }}
-                    >
-                      View Project
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* RIGHT: project images -- horizontal slide, no rise */}
-            <div className="relative flex-1 overflow-hidden">
-              {projects.map((project, i) => {
-                const projectShare = 1 / (numProjects - 1 || 1)
-                const projectCenter = i * projectShare
-                const dist = cycleProgress - projectCenter
-
-                let translateX = 0
-                if (dist < 0) {
-                  // Next project: push far off to the right
-                  translateX = Math.min(150, Math.abs(dist) * 600)
-                } else if (dist > 0) {
-                  // Previous project: push far off to the left
-                  translateX = Math.max(-150, -dist * 600)
-                }
-                const absDist = Math.abs(dist)
-                const isVisible = absDist < projectShare * 0.7
-
-                return (
-                  <div
-                    key={project.id}
-                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                    style={{
-                      opacity: isVisible ? 1 : 0,
-                      transform: `translateX(${translateX}%)`,
-                      transition: "transform 0.35s ease, opacity 0.2s ease",
-                      zIndex: currentProject === i ? 10 : 1,
-                    }}
-                  >
-                    <img
-                      src={project.image}
-                      alt={project.name}
-                      className="object-contain max-h-[80vh] max-w-[90%] drop-shadow-2xl"
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Progress dots — bottom-center horizontal on mobile, right-side vertical on desktop */}
-        {/* Mobile */}
-        <div className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-row gap-2 z-30">
-          {projects.map((project, i) => (
-            <div
-              key={project.id}
-              className="rounded-full transition-all duration-300"
-              style={{
-                height: 7,
-                width: currentProject === i ? 24 : 7,
-                background: currentProject === i ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.25)",
-              }}
-            />
-          ))}
-        </div>
-        {/* Desktop */}
-        <div className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 flex-col gap-2.5 z-30">
-          {projects.map((project, i) => (
-            <div
-              key={project.id}
-              className="rounded-full transition-all duration-300"
-              style={{
-                width: 8,
-                height: currentProject === i ? 28 : 8,
-                background: currentProject === i ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.25)",
-              }}
-            />
-          ))}
-        </div>
+      {/* Name */}
+      <div style={{ marginBottom: "8px", lineHeight: 1.15, textAlign: "center" }}>
+        {project.nameScript ? (
+          /* Mixed-font name: "SugarCloud Cupcakes" */
+          <p style={{ margin: 0, color: "#fff" }}>
+            <span style={{
+              fontFamily:  "'Dancing Script', cursive",
+              fontSize:    "clamp(1.5rem, 2.6vw, 2.2rem)",
+              fontWeight:  600,
+              letterSpacing: "0.01em",
+            }}>
+              {project.nameScript}
+            </span>
+            {" "}
+            <span style={{
+              fontFamily:  "inherit",
+              fontSize:    "clamp(1.3rem, 2.2vw, 1.9rem)",
+              fontWeight:  600,
+              letterSpacing: "0.02em",
+            }}>
+              {project.namePlain}
+            </span>
+          </p>
+        ) : (
+          /* Regular / uppercase name */
+          <p style={{
+            margin:        0,
+            color:         "#fff",
+            fontSize:      "clamp(1.3rem, 2.4vw, 2rem)",
+            fontWeight:    700,
+            letterSpacing: project.nameStyle === "upper" ? "0.14em" : "0.02em",
+            textTransform: project.nameStyle === "upper" ? "uppercase" : "none",
+          }}>
+            {project.name}
+          </p>
+        )}
       </div>
-    </section>
-  )
-}
 
-/* ─── Floating Rocket ─── */
-function FloatingRocket() {
-  const [scrollY, setScrollY] = useState(0)
+      {/* Category */}
+      <p style={{
+        margin:        "0 0 14px",
+        color:         "rgba(255,255,255,0.70)",
+        fontSize:      "clamp(0.78rem, 1.1vw, 0.95rem)",
+        fontWeight:    500,
+        letterSpacing: "0.04em",
+        textAlign:     "center",
+      }}>
+        {project.category}
+      </p>
 
-  useEffect(() => {
-    function handleScroll() { setScrollY(window.scrollY) }
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  const yOffset = Math.sin(scrollY * 0.003) * 30
-  const rotation = Math.sin(scrollY * 0.002) * 8
-
-  return (
-    <div className="relative py-20 flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute w-48 h-48 opacity-25 blur-[60px] pointer-events-none"
-        style={{ top: "10%", left: "10%", background: "var(--blob-1)", borderRadius: "50% 40% 60% 50%", animation: "blob-float-3 22s ease-in-out infinite" }}
-      />
-      <div
-        className="absolute w-40 h-40 opacity-20 blur-[50px] pointer-events-none"
-        style={{ bottom: "15%", right: "15%", background: "var(--blob-4)", borderRadius: "40% 60% 50% 50%", animation: "blob-float-5 25s ease-in-out infinite" }}
-      />
-      <img
-        src="/images/rocket-3d.jpg"
-        alt="3D Rocket ship"
-        className="w-48 md:w-64 lg:w-72 h-auto object-contain drop-shadow-2xl relative z-10"
-        style={{ transform: `translateY(${yOffset}px) rotate(${rotation}deg)`, transition: "transform 0.15s ease-out" }}
-      />
+      {/* View Project button */}
+      <button
+        className="proj-view-btn"
+        onClick={e => { e.stopPropagation(); onViewProject() }}
+        style={{
+          marginTop:            "28px",
+          padding:              "12px 34px",
+          borderRadius:         "999px",
+          background:           "rgba(255,255,255,0.15)",
+          backdropFilter:       "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          border:               "1px solid rgba(255,255,255,0.35)",
+          color:                "#fff",
+          fontSize:             "0.88rem",
+          fontWeight:           600,
+          letterSpacing:        "0.07em",
+          textTransform:        "uppercase",
+          cursor:               "pointer",
+          transition:           "background 0.25s ease, transform 0.2s ease",
+          flexShrink:           0,
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = "rgba(255,255,255,0.28)"
+          e.currentTarget.style.transform  = "scale(1.04)"
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = "rgba(255,255,255,0.15)"
+          e.currentTarget.style.transform  = "scale(1)"
+        }}
+      >
+        View Project →
+      </button>
     </div>
   )
 }
 
-/* ─── Main Projects Page ─── */
-export function ProjectsPage() {
-  const [filter, setFilter] = useState("all")
+/* ─── Arrow button ──────────────────────────────────────────────────────────── */
+function ArrowBtn({ onClick, dir }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        position:             "absolute",
+        [dir === "left" ? "left" : "right"]: "2.5vw",
+        top:                  "50%",
+        transform:            "translateY(-50%)",
+        zIndex:               20,
+        width:                "54px",
+        height:               "54px",
+        borderRadius:         "50%",
+        background:           "rgba(255,255,255,0.12)",
+        backdropFilter:       "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        border:               "1px solid rgba(255,255,255,0.24)",
+        color:                "rgba(255,255,255,0.88)",
+        fontSize:             "1.8rem",
+        cursor:               "pointer",
+        display:              "flex",
+        alignItems:           "center",
+        justifyContent:       "center",
+        lineHeight:           1,
+        transition:           "background 0.2s ease, border-color 0.2s ease",
+        flexShrink:           0,
+        userSelect:           "none",
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background  = "rgba(255,255,255,0.22)"
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.40)"
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background  = "rgba(255,255,255,0.12)"
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.24)"
+      }}
+    >
+      {dir === "left" ? "‹" : "›"}
+    </button>
+  )
+}
 
-  const filteredProjects = filter === "all"
-    ? SHOWCASE_PROJECTS
-    : SHOWCASE_PROJECTS.filter((p) => p.category === filter)
+/* ─── Main page ─────────────────────────────────────────────────────────────── */
+export function ProjectsPage() {
+  const [current, setCurrent] = useState(0)
+  const dragRef  = useRef(null)
+  const touchRef = useRef(null)
+  const { navigate } = useRouter()
+
+  const prev = () => setCurrent(i => (i - 1 + N) % N)
+  const next = () => setCurrent(i => (i + 1) % N)
+
+  function getOffset(i) {
+    let d = i - current
+    if (d >  Math.floor(N / 2)) d -= N
+    if (d < -Math.floor(N / 2)) d += N
+    return d
+  }
+
+  /* Mouse drag — skip when the user is clicking on the overlay / its buttons */
+  function onPointerDown(e) {
+    if (e.target.closest(".proj-overlay")) return
+    dragRef.current = { startX: e.clientX, moved: false }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+  function onPointerMove(e) {
+    if (!dragRef.current) return
+    if (Math.abs(e.clientX - dragRef.current.startX) > 6) dragRef.current.moved = true
+  }
+  function onPointerUp(e) {
+    if (!dragRef.current) return
+    const dx = e.clientX - dragRef.current.startX
+    if (dragRef.current.moved) {
+      if (dx < -60) next()
+      else if (dx > 60) prev()
+    }
+    dragRef.current = null
+  }
+
+  /* Touch swipe */
+  function onTouchStart(e) { touchRef.current = e.touches[0].clientX }
+  function onTouchEnd(e) {
+    if (touchRef.current === null) return
+    const dx = e.changedTouches[0].clientX - touchRef.current
+    if (dx < -60) next()
+    else if (dx > 60) prev()
+    touchRef.current = null
+  }
 
   return (
     <>
+      {/* ── Scoped CSS for overlay hover ── */}
+      <style>{`
+        @keyframes projFloat {
+          0%   { transform: translateY(0px)   rotate(0deg);   }
+          30%  { transform: translateY(-10px) rotate(0.4deg); }
+          60%  { transform: translateY(-5px)  rotate(-0.3deg);}
+          100% { transform: translateY(0px)   rotate(0deg);   }
+        }
+        .proj-img-float {
+          animation: projFloat 4s ease-in-out infinite;
+        }
+        /* Pause float when overlay is visible so it doesn't look jittery */
+        .proj-card:hover .proj-img-float {
+          animation-play-state: paused;
+        }
+
+        .proj-card { position: relative; }
+        .proj-overlay {
+          position:             absolute;
+          inset:                0;
+          opacity:              0;
+          pointer-events:       none;
+          transition:           opacity 0.35s ease;
+          background:           rgba(18, 6, 30, 0.72);
+          backdrop-filter:      blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border-radius:        inherit;
+          display:              flex;
+          flex-direction:       column;
+          align-items:          center;
+          justify-content:      center;
+          padding:              clamp(20px, 3vw, 44px) clamp(24px, 4vw, 56px);
+          z-index:              3;
+          overflow:             hidden;
+        }
+        .proj-card:hover .proj-overlay {
+          opacity:        1;
+          pointer-events: auto;
+        }
+      `}</style>
+
       <main>
         <SideBlobs />
 
-        {/* Hero: Stacked blob text + filter buttons */}
-        <HeroBlobText filter={filter} setFilter={setFilter} />
+        <section
+          className="relative w-full overflow-hidden"
+          style={{ height: "100vh" }}
+        >
+          {/* ── Card deck ── */}
+          {PROJECTS.map((project, i) => {
+            const offset  = getOffset(i)
+            const style   = getCardStyle(offset)
+            const isFront = offset === 0
 
-        {/* Scroll-driven project showcase */}
-        <ProjectShowcase projects={filteredProjects} />
+            return (
+              <div
+                key={project.id}
+                className="proj-card"
+                style={{
+                  position:             "absolute",
+                  left:                 "50%",
+                  top:                  "50%",
+                  width:                "clamp(480px, 62vw, 880px)",
+                  height:               "clamp(380px, 76vh, 760px)",
+                  borderRadius:         "28px",
+                  background:           "rgba(255,255,255,0.07)",
+                  backdropFilter:       "blur(24px)",
+                  WebkitBackdropFilter: "blur(24px)",
+                  border:               "1px solid rgba(255,255,255,0.15)",
+                  boxShadow:            isFront
+                    ? "0 28px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.14)"
+                    : "0 10px 30px rgba(0,0,0,0.22)",
+                  overflow:             "hidden",
+                  ...style,
+                  transition:   "transform 0.6s cubic-bezier(0.4,0,0.2,1), filter 0.55s ease, opacity 0.5s ease, box-shadow 0.5s ease",
+                  willChange:   "transform, filter, opacity",
+                  cursor:       isFront ? "default" : "default",
+                  userSelect:   "none",
+                  pointerEvents: offset === 0 ? "auto" : "none",
+                }}
+                onPointerDown={isFront ? onPointerDown : undefined}
+                onPointerMove={isFront ? onPointerMove : undefined}
+                onPointerUp={isFront   ? onPointerUp   : undefined}
+                onTouchStart={isFront  ? onTouchStart  : undefined}
+                onTouchEnd={isFront    ? onTouchEnd    : undefined}
+              >
+                {/* Project image — floats gently on the front card */}
+                <img
+                  src={project.image}
+                  alt={project.name || project.nameScript}
+                  draggable="false"
+                  className={isFront ? "proj-img-float" : ""}
+                  style={{
+                    width:         "100%",
+                    height:        "100%",
+                    objectFit:     "contain",
+                    objectPosition:"center center",
+                    display:       "block",
+                    userSelect:    "none",
+                    pointerEvents: "none",
+                  }}
+                />
 
-        {/* Rocket removed */}
+                {/* Hover overlay — project info */}
+                <CardOverlay
+                  project={project}
+                  onViewProject={() => navigate(project.pageId)}
+                />
+              </div>
+            )
+          })}
+
+          {/* ── Navigation arrows ── */}
+          <ArrowBtn onClick={prev} dir="left"  />
+          <ArrowBtn onClick={next} dir="right" />
+
+          {/* ── Dot indicators ── */}
+          <div style={{
+            position:  "absolute",
+            bottom:    "3.5vh",
+            left:      "50%",
+            transform: "translateX(-50%)",
+            display:   "flex",
+            gap:       "10px",
+            zIndex:    20,
+          }}>
+            {PROJECTS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                style={{
+                  width:        current === i ? "28px" : "8px",
+                  height:       "8px",
+                  borderRadius: "999px",
+                  background:   current === i
+                    ? "rgba(255,255,255,0.88)"
+                    : "rgba(255,255,255,0.30)",
+                  border:       "none",
+                  cursor:       "pointer",
+                  padding:      0,
+                  transition:   "width 0.3s ease, background 0.3s ease",
+                }}
+              />
+            ))}
+          </div>
+        </section>
       </main>
       <Footer />
     </>

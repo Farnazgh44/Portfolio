@@ -1,31 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react"
-import { useTheme } from "../lib/theme-context"
-import { useRouter } from "../lib/router-context"
-
-function useTypingEffect(text, speed = 40, delay = 0) {
-  const [displayed, setDisplayed] = useState("")
-  const [done, setDone] = useState(false)
-  const [started, setStarted] = useState(false)
-
-  useEffect(() => {
-    const delayTimer = setTimeout(() => setStarted(true), delay)
-    return () => clearTimeout(delayTimer)
-  }, [delay])
-
-  useEffect(() => {
-    if (!started) return
-    if (displayed.length < text.length) {
-      const timer = setTimeout(() => {
-        setDisplayed(text.slice(0, displayed.length + 1))
-      }, speed)
-      return () => clearTimeout(timer)
-    } else {
-      setDone(true)
-    }
-  }, [displayed, text, speed, started])
-
-  return { displayed, done }
-}
+import { useTheme }    from "../lib/theme-context"
+import { useRouter }   from "../lib/router-context"
+import { SplitText }   from "./split-text"
+import { BlobButton }  from "./blob-button"
 
 /* Layout / sizing / animation data — colours are injected per-theme below  */
 const INITIAL_BLOBS = [
@@ -225,32 +202,44 @@ function DesktopBlobs() {
 }
 
 export function HeroSection() {
-  const { theme, themeName } = useTheme()
+  const { themeName } = useTheme()
   const heroColors = HERO_THEME_COLORS[themeName] ?? HERO_THEME_COLORS.pink
   const { navigate } = useRouter()
   const blobContainerRef = useRef(null)
 
-  const line1 = useTypingEffect("Hello, I'm", 50, 300)
-  const line2 = useTypingEffect("Farnaz", 60, 900)
-  const line3 = useTypingEffect("UI/UX & Digital Designer", 35, 1600)
-  const line4 = useTypingEffect(
-    "Based in Vancouver, creating visually engaging and user-centered digital experiences.",
-    20,
-    2600
-  )
+  /* 1920px detection — drives inline-style overrides */
+  const [isWide, setIsWide] = useState(() => window.innerWidth >= 1920)
+  useEffect(() => {
+    const check = () => setIsWide(window.innerWidth >= 1920)
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  /* Animation phase:
+     0 = waiting  1 = "Hello, I'm"  2 = "Farnaz"
+     3 = subtitle  4 = description  5 = buttons visible */
+  const [phase, setPhase] = useState(0)
   const [showButtons, setShowButtons] = useState(false)
 
+  /* Kick off the chain shortly after mount.
+     Hero only mounts after intro completes, so no extra delay needed. */
   useEffect(() => {
-    if (line4.done) {
-      const timer = setTimeout(() => setShowButtons(true), 200)
-      return () => clearTimeout(timer)
+    const t = setTimeout(() => setPhase(1), 50)
+    return () => clearTimeout(t)
+  }, [])
+
+  /* Show buttons shortly after description fades in */
+  useEffect(() => {
+    if (phase >= 4) {
+      const t = setTimeout(() => setShowButtons(true), 400)
+      return () => clearTimeout(t)
     }
-  }, [line4.done])
+  }, [phase])
 
   return (
     <section className="relative h-screen flex items-center pt-20 overflow-hidden">
 
-      {/* ── Mobile only: blobs float freely behind text as full-section background ── */}
+      {/* ── Mobile only: blobs float freely behind text ── */}
       <div
         ref={blobContainerRef}
         className="sm:hidden absolute inset-0 w-full h-full"
@@ -265,73 +254,120 @@ export function HeroSection() {
         ))}
       </div>
 
-      {/* content-wrap constrains inner content to max 1080px; section bg stays full-bleed */}
-      <div className="content-wrap w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-10 lg:gap-16">
+      {/* content-wrap — shifted up slightly so text sits above the vertical centre */}
+      <div className="content-wrap w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-10 lg:gap-16 -mt-12">
 
-        {/* Left: Text content — full width on mobile so it aligns with the navbar logo */}
-        <div className="relative z-10 min-w-0 w-full sm:flex-1">
-          <p className="text-white/90 text-sm sm:text-base md:text-lg mb-1 min-h-[1.5em]">
-            {line1.displayed}
-            {!line1.done && <span className="typing-cursor" />}
-          </p>
-          {/* Responsive headline: clamp scales smoothly from mobile → 4K */}
-          <h1
-            className="font-bold text-white mb-2 min-h-[1.2em]"
-            style={{ fontSize: "clamp(2.2rem, 7vw, 6rem)" }}
+        {/* ── Left: text column ── */}
+        <div className="hero-text-content relative z-10 min-w-0 w-full sm:flex-1">
+
+          {/* "Hello, I'm" */}
+          <SplitText
+            text="Hello, I'm"
+            className="text-white/90 text-sm sm:text-base md:text-lg mb-0"
+            style={isWide ? { fontSize: "2.5rem", marginBottom: "0" } : { marginBottom: "0" }}
+            delay={22}
+            duration={0.4}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 20 }}
+            to={{ opacity: 1, y: 0 }}
+            trigger={phase >= 1}
+            onLetterAnimationComplete={() => setPhase(p => Math.max(p, 2))}
+          />
+
+          {/* "Farnaz" */}
+          <SplitText
+            text="Farnaz"
+            className="font-bold text-white mb-2"
+            style={isWide
+              ? { fontSize: "10rem", marginBottom: "1.5rem", marginTop: "-0.35em" }
+              : { fontSize: "clamp(2.2rem, 7vw, 6rem)", marginTop: "-0.28em" }
+            }
+            delay={45}
+            duration={0.5}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 35 }}
+            to={{ opacity: 1, y: 0 }}
+            trigger={phase >= 2}
+            onLetterAnimationComplete={() => setPhase(p => Math.max(p, 3))}
+          />
+
+          {/* "UI/UX & Digital Designer" */}
+          <SplitText
+            text="UI/UX & Digital Designer"
+            className="text-base sm:text-lg md:text-xl font-semibold text-white/90 mb-3"
+            style={isWide
+              ? { fontSize: "3rem", marginBottom: "1.5rem", whiteSpace: "nowrap" }
+              : {}
+            }
+            delay={18}
+            duration={0.4}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 18 }}
+            to={{ opacity: 1, y: 0 }}
+            trigger={phase >= 3}
+            onLetterAnimationComplete={() => setPhase(p => Math.max(p, 4))}
+          />
+
+          {/* Description — block fade-in (body text looks best as a unit, not per-char) */}
+          <p
+            className="text-white/70 text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 max-w-[75%] sm:max-w-md"
+            style={{
+              opacity:   phase >= 4 ? 1 : 0,
+              transform: phase >= 4 ? "translateY(0)" : "translateY(14px)",
+              transition: "opacity 0.45s cubic-bezier(0.215,0.61,0.355,1), transform 0.45s cubic-bezier(0.215,0.61,0.355,1)",
+              ...(isWide ? { fontSize: "1.6rem", lineHeight: "2.2", maxWidth: "680px", marginBottom: "3rem" } : {}),
+            }}
           >
-            {line2.displayed}
-            {line1.done && !line2.done && <span className="typing-cursor" />}
-          </h1>
-          <h2 className="text-base sm:text-lg md:text-xl font-semibold text-white/90 mb-3 min-h-[1.5em]">
-            {line3.displayed}
-            {line2.done && !line3.done && <span className="typing-cursor" />}
-          </h2>
-          <p className="text-white/70 text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 min-h-[3em] max-w-[75%] sm:max-w-md">
-            {line4.displayed}
-            {line3.done && !line4.done && <span className="typing-cursor" />}
+            Based in Vancouver, creating visually engaging and user-centered digital experiences.
           </p>
+
+          {/* CTA buttons */}
           <div
             className={`flex gap-3 sm:gap-4 flex-wrap transition-all duration-700 ${
               showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <button
+            <BlobButton
               onClick={() => navigate("projects")}
               className="pill-btn-hover px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-sm font-medium text-white/80"
               style={{
                 background: "rgba(255,255,255,0.12)",
                 backdropFilter: "blur(10px)",
                 border: "1px solid rgba(255,255,255,0.2)",
+                ...(isWide ? { fontSize: "1.3rem", padding: "18px 52px" } : {}),
               }}
             >
               View Projects
-            </button>
-            <button
+            </BlobButton>
+            <BlobButton
               onClick={() => navigate("about")}
               className="pill-btn-hover px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-sm font-medium text-white/80"
               style={{
                 background: "rgba(255,255,255,0.12)",
                 backdropFilter: "blur(10px)",
                 border: "1px solid rgba(255,255,255,0.2)",
+                ...(isWide ? { fontSize: "1.3rem", padding: "18px 52px" } : {}),
               }}
             >
               About Me
-            </button>
+            </BlobButton>
           </div>
         </div>
 
-        {/* Right: Draggable interactive lava blobs — desktop/tablet only (sm+) */}
+        {/* ── Right: draggable lava blobs (desktop/tablet only) ── */}
         <div
           className="hidden sm:block flex-shrink-0 relative
                      sm:flex-1 sm:h-[380px]
                      md:h-[480px] lg:h-[580px]"
           style={{ filter: "url(#gooey)" }}
         >
-          {/* We render a separate desktop blob container; mobile uses the absolute one above */}
           <DesktopBlobs />
         </div>
 
-        {/* SVG gooey filter for blob merging effect */}
+        {/* SVG gooey filter for blob merging */}
         <svg className="absolute w-0 h-0" aria-hidden="true">
           <defs>
             <filter id="gooey">

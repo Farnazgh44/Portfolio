@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { label: "Projects", href: "projects", type: "route" },
   { label: "About", href: "about", type: "route" },
   { label: "Resume", href: "resume", type: "route" },
+  { label: "AI", href: "ai", type: "route" },
   { label: "Contact", href: "contact", type: "route" },
 ]
 
@@ -42,15 +43,15 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 md:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 md:px-8 3xl:px-20 3xl:py-8">
       {/* Logo + Scroll Progress */}
       <div className="flex items-center gap-2">
         <GlassCard
           intensity="medium"
-          className="nav-glass-hover w-12 h-12 flex items-center justify-center rounded-xl cursor-pointer overflow-hidden"
+          className="nav-glass-hover w-12 h-12 3xl:w-24 3xl:h-24 flex items-center justify-center rounded-xl cursor-pointer overflow-hidden"
           onClick={() => navigate("home")}
         >
-          <img src="/images/logo.png" alt="FG Logo" className="w-8 h-8 object-contain" />
+          <img src="/images/logo.png" alt="FG Logo" className="w-8 h-8 3xl:w-16 3xl:h-16 object-contain" />
         </GlassCard>
         <ScrollProgress />
       </div>
@@ -107,7 +108,7 @@ export function Navbar() {
 
             {/* Hamburger button */}
             <button
-              className="icon-btn-hover w-12 h-12 flex flex-col items-center justify-center gap-[5px] shrink-0 cursor-pointer rounded-xl"
+              className="icon-btn-hover w-12 h-12 3xl:w-24 3xl:h-24 flex flex-col items-center justify-center gap-[5px] 3xl:gap-[10px] shrink-0 cursor-pointer rounded-xl"
               style={{ background: "transparent", border: "1px solid transparent" }}
               onMouseEnter={() => setBurgerHovered(true)}
               onMouseLeave={() => setBurgerHovered(false)}
@@ -118,20 +119,20 @@ export function Navbar() {
               aria-label="Toggle menu"
             >
               <span
-                className={`block h-[2px] transition-all duration-300 ${
-                  menuOpen ? "w-4 rotate-45 translate-y-[7px]" : "w-5"
+                className={`hamburger-bar block h-[2px] 3xl:h-[3px] transition-all duration-300 ${
+                  menuOpen ? "w-4 3xl:w-8 rotate-45 translate-y-[7px] 3xl:translate-y-[12px]" : "w-5 3xl:w-10"
                 }`}
                 style={{ background: burgerHovered ? "linear-gradient(90deg, #8B5CF6, #EC4899)" : "white" }}
               />
               <span
-                className={`block h-[2px] transition-all duration-300 ${
-                  menuOpen ? "w-4 opacity-0" : "w-5"
+                className={`hamburger-bar block h-[2px] 3xl:h-[3px] transition-all duration-300 ${
+                  menuOpen ? "w-4 3xl:w-8 opacity-0" : "w-5 3xl:w-10"
                 }`}
                 style={{ background: burgerHovered ? "linear-gradient(90deg, #A855F7, #EC4899)" : "white" }}
               />
               <span
-                className={`block h-[2px] transition-all duration-300 ${
-                  menuOpen ? "w-4 -rotate-45 -translate-y-[7px]" : "w-5"
+                className={`hamburger-bar block h-[2px] 3xl:h-[3px] transition-all duration-300 ${
+                  menuOpen ? "w-4 3xl:w-8 -rotate-45 -translate-y-[7px] 3xl:-translate-y-[12px]" : "w-5 3xl:w-10"
                 }`}
                 style={{ background: burgerHovered ? "linear-gradient(90deg, #EC4899, #8B5CF6)" : "white" }}
               />
@@ -222,7 +223,7 @@ export function Navbar() {
 
             {/* Palette icon button */}
             <button
-              className="icon-btn-hover w-12 h-12 flex items-center justify-center shrink-0 cursor-pointer rounded-xl"
+              className="icon-btn-hover w-12 h-12 3xl:w-24 3xl:h-24 flex items-center justify-center shrink-0 cursor-pointer rounded-xl"
               style={{ background: "transparent", border: "1px solid transparent" }}
               onClick={() => {
                 setPaletteOpen(!paletteOpen)
@@ -230,7 +231,7 @@ export function Navbar() {
               }}
               aria-label="Toggle theme picker"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" className="3xl:!w-12 3xl:!h-12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="13.5" cy="6.5" r="2" />
                 <circle cx="17.5" cy="10.5" r="2" />
                 <circle cx="8.5" cy="7.5" r="2" />

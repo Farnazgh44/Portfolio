@@ -1,4 +1,4 @@
-import { Component, useState, useCallback } from "react"
+import { Component, useState, useCallback, useEffect } from "react"
 import { ThemeProvider } from "./lib/theme-context"
 import { RouterProvider, useRouter } from "./lib/router-context"
 import { LavaBackground } from "./components/lava-background"
@@ -9,7 +9,14 @@ import { HomePage } from "./pages/HomePage"
 import { AboutPage } from "./pages/AboutPage"
 import { ContactPage } from "./pages/ContactPage"
 import { ResumePage } from "./pages/ResumePage"
+import { AIPage }     from "./pages/AIPage"
 import { ProjectsPage } from "./pages/ProjectsPage"
+import { ProjectDetailPage } from "./pages/ProjectDetailPage"
+import { SugarCloudPage }    from "./pages/SugarCloudPage"
+import { AlpineLinkPage }    from "./pages/AlpineLinkPage"
+import { RedditPage }        from "./pages/RedditPage"
+import { CatHolderPage }     from "./pages/CatHolderPage"
+import { PerfumePage }       from "./pages/PerfumePage"
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -46,6 +53,47 @@ function PageRouter() {
     )
   }
 
+  /* ── SugarCloud dedicated page ── */
+  if (page === "project-sugarcloud") {
+    return (
+      <ErrorBoundary>
+        <SugarCloudPage />
+      </ErrorBoundary>
+    )
+  }
+
+  if (page === "project-alpine") {
+    return (
+      <ErrorBoundary>
+        <AlpineLinkPage />
+      </ErrorBoundary>
+    )
+  }
+
+  if (page === "project-reddit") {
+    return (
+      <ErrorBoundary>
+        <RedditPage />
+      </ErrorBoundary>
+    )
+  }
+
+  if (page === "project-cat-holder") {
+    return (
+      <ErrorBoundary>
+        <CatHolderPage />
+      </ErrorBoundary>
+    )
+  }
+
+  if (page === "project-perfume") {
+    return (
+      <ErrorBoundary>
+        <PerfumePage />
+      </ErrorBoundary>
+    )
+  }
+
   if (page === "about") {
     return (
       <ErrorBoundary>
@@ -67,12 +115,29 @@ function PageRouter() {
       </ErrorBoundary>
     )
   }
+  if (page === "ai") {
+    return (
+      <ErrorBoundary>
+        <AIPage />
+      </ErrorBoundary>
+    )
+  }
   return <HomePage />
 }
 
 export default function App() {
   const [introComplete, setIntroComplete] = useState(false)
   const handleIntroDone = useCallback(() => setIntroComplete(true), [])
+
+  // Stamp data-wide on <html> so CSS can target 1920px+ without media query specificity issues
+  useEffect(() => {
+    const update = () => {
+      document.documentElement.dataset.wide = window.innerWidth >= 1920 ? "true" : "false"
+    }
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
 
   return (
     <RouterProvider>
@@ -95,7 +160,9 @@ export default function App() {
         </svg>
         <LavaBackground />
         <Navbar />
-        <PageRouter />
+        {/* Only mount pages after intro finishes so hero text animation
+            plays visibly — not hidden behind the intro overlay */}
+        {introComplete && <PageRouter />}
       </ThemeProvider>
     </RouterProvider>
   )
