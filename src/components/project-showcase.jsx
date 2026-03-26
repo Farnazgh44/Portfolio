@@ -1,24 +1,21 @@
-import { useRouter } from "../lib/router-context"
-import { GlassCard } from "./glass-card"
+import { useRouter }  from "../lib/router-context"
+import { BlobButton } from "./blob-button"
 
+// 5 projects — sized large enough that all 5 together span wider than the
+// viewport, so you never see the same card twice on screen at once.
 const allProjects = [
-  { id: "1", name: "Phone Holder", tools: "3D Printing, Tinkercad", image: "/images/project-phone-holder.png", imageStyle: { transform: "scale(1.15)", objectPosition: "center center" } },
-  { id: "2", name: "AlpineLink App", tools: "Figma, Photoshop, Illustrator", image: "/images/project-alpinelink.png", imageStyle: { objectPosition: "center 60%" } },
-  { id: "3", name: "Reddit Redesign", tools: "Figma, Photoshop", image: "/images/project-reddit.png", imageStyle: {} },
-  { id: "4", name: "Stylized Portrait", tools: "Illustrator", image: "/images/project-stylized-portrait.png", imageStyle: { transform: "scale(0.85)", objectPosition: "center center" } },
-  { id: "5", name: "Saadi Stationery", tools: "Figma, Photoshop, Illustrator, Maze", image: "/images/project-saadi-stationery.png", imageStyle: {} },
-  { id: "6", name: "Seattle Vector", tools: "Illustrator", image: "/images/project-seattle-vector.png", imageStyle: { objectPosition: "center bottom" } },
-  { id: "7", name: "SugarCloud Cupcakes", tools: "Figma, Photoshop, Illustrator", image: "/images/project-sugarcloud.png", imageStyle: {} },
-  { id: "8", name: "3D Lighthouse", tools: "Project Neo", image: "/images/project-3d-lighthouse.png", imageStyle: {} },
-  { id: "9", name: "3D Perfume", tools: "Adobe Dimension, Maya", image: "/images/project-3d-perfume.png", imageStyle: { objectPosition: "center center" } },
-  { id: "10", name: "Craigslist Redesign", tools: "Figma, Photoshop, Illustrator", image: "/images/project-craigslist.png", imageStyle: {} },
+  { id: "1", name: "SugarCloud Cupcakes", tools: "UI/UX & Product Design",     image: "/images/Laptop_Feature.png",    imageStyle: { objectFit: "contain" }                   },
+  { id: "2", name: "AlpineLink",          tools: "Mobile App Design",           image: "/images/Phone1_feature.png",    imageStyle: { objectFit: "contain" }                   },
+  { id: "3", name: "Reddit App Redesign", tools: "Mobile App Design",           image: "/images/Phone2_feature.png",    imageStyle: { objectFit: "contain" }                   },
+  { id: "4", name: "Cat Phone Holder",    tools: "3D Design",                   image: "/images/Cat_feature.png",       imageStyle: { objectFit: "contain" }                   },
+  { id: "5", name: "3D Perfume Bottle",   tools: "Product Visualisation",       image: "/images/Perfume_featured.png",  imageStyle: { objectFit: "contain", objectPosition: "center center" } },
 ]
 
 function ProjectCard({ project }) {
   return (
     <a href={`#project-${project.id}`} className="block shrink-0 group">
       <div
-        className="w-28 h-28 sm:w-44 sm:h-44 md:w-56 md:h-56 overflow-hidden relative cursor-pointer rounded-2xl"
+        className="w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 overflow-hidden relative cursor-pointer rounded-2xl"
         style={{
           background: "rgba(255, 255, 255, 0.08)",
           backdropFilter: "blur(16px)",
@@ -26,13 +23,28 @@ function ProjectCard({ project }) {
           border: "1px solid rgba(255,255,255,0.15)",
         }}
       >
-        <img
-          src={project.image}
-          alt={project.name}
-          className="w-full h-full object-cover"
-          style={project.imageStyle || {}}
-        />
+        {/* Video card */}
+        {project.video ? (
+          <video
+            src={project.video}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full"
+            style={{ objectFit: "cover", display: "block" }}
+          />
+        ) : (
+          /* Image card */
+          <img
+            src={project.image}
+            alt={project.name}
+            className="w-full h-full"
+            style={{ objectFit: "cover", ...project.imageStyle }}
+          />
+        )}
 
+        {/* Hover overlay */}
         <div
           className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
           style={{
@@ -40,8 +52,8 @@ function ProjectCard({ project }) {
             backdropFilter: "blur(8px)",
           }}
         >
-          <p className="text-white font-semibold text-sm mb-1">{project.name}</p>
-          <p className="text-white/60 text-xs text-center px-3">{project.tools}</p>
+          <p className="text-white font-semibold text-base mb-1">{project.name}</p>
+          <p className="text-white/60 text-sm text-center px-4">{project.tools}</p>
         </div>
       </div>
     </a>
@@ -49,12 +61,13 @@ function ProjectCard({ project }) {
 }
 
 function InfiniteRow({ projects, direction }) {
+  // Double the array so the seamless loop has enough content
   const doubled = [...projects, ...projects]
 
   return (
     <div className="overflow-hidden w-full">
       <div
-        className={`flex gap-2 sm:gap-3 ${direction === "left" ? "animate-scroll-left" : "animate-scroll-right"}`}
+        className={`flex gap-4 sm:gap-5 md:gap-6 ${direction === "left" ? "animate-scroll-left" : "animate-scroll-right"}`}
         style={{ width: "max-content" }}
       >
         {doubled.map((project, i) => (
@@ -107,7 +120,7 @@ export function ProjectShowcase() {
       </div>
 
       <div className="relative z-10 text-center mt-8">
-        <button
+        <BlobButton
           onClick={() => navigate("projects")}
           className="pill-btn-hover inline-block px-8 py-2.5 rounded-full text-sm font-medium text-white/80 cursor-pointer"
           style={{
@@ -117,7 +130,7 @@ export function ProjectShowcase() {
           }}
         >
           All Projects
-        </button>
+        </BlobButton>
       </div>
     </section>
   )
