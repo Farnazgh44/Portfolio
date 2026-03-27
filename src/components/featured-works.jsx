@@ -17,9 +17,9 @@ import { BlobButton }  from "./blob-button"
 */
 
 const N                 = 3
-const SECTION_HEIGHT_VH = 118
-const SWIPE_THRESHOLD   = 0.99   // effectively never triggers via scroll — swipe mode is auto-triggered
-const EXIT_THRESHOLD    = 0.03   // deactivates when user scrolls back above the section
+const SECTION_HEIGHT_VH = 400
+const SWIPE_THRESHOLD   = 0.75   // activates after all 3 cards are fully up
+const EXIT_THRESHOLD    = 0.70   // deactivates when user scrolls back — must be past card 2's window end (0.73) so all cards are at translate(-50%,-50%) when Phase 1 resumes, preventing a jump
 const SENSITIVITY       = 80     // px drag to trigger a swipe
 
 /* Card images & labels — index matches card position
@@ -63,6 +63,13 @@ const CARD_POS = [
   { left: "77vw", top: "51vh" },
 ]
 
+/* Each card rises from below during its own scroll window.
+   ~90vh per card ≈ one scroll gesture each.                */
+const CARD_WINDOWS = [
+  [0.05, 0.28],   // SugarCloud
+  [0.28, 0.51],   // AlpineLink
+  [0.51, 0.73],   // Reddit
+]
 
 const easeOut = t => 1 - Math.pow(1 - t, 3)
 const clamp01 = x => Math.max(0, Math.min(1, x))
@@ -90,7 +97,6 @@ export function FeaturedWorks() {
   const swipeModeRef  = useRef(false)      // mirror of swipeMode for RAF closure
   const isDraggingRef = useRef(false)      // true while user is dragging the front card
   const frontIdxRef   = useRef(2)          // index of the current front card (kept in sync)
-  const autoPhase1Ref = useRef(false)      // true after sequential pop-up has been triggered
 
   /* Apply the nudge CSS animation to a card element (clears inline transform first) */
   const applyNudge = el => {
@@ -110,6 +116,7 @@ export function FeaturedWorks() {
      Initialised reversed so card 0 (first project) starts at the front  */
   const [queue, setQueue]         = useState([0, 1, 2])
   const [swipeMode, setSwipeMode] = useState(false)
+  const [showSwipeUI, setShowSwipeUI] = useState(false)  // text + button visibility
   const [showHint, setShowHint]   = useState(false)   // controls arrow hint visibility
 
   // After a swipe, the card that went to back needs a silent transform reset
@@ -148,9 +155,11 @@ export function FeaturedWorks() {
       rafRef.current = requestAnimationFrame(tick)
       const s = scrollRef.current
 
-      /* Title: visible at start, fades out as cards animate in */
+      /* Title: stays in background throughout all card animations, shrinking
+         gradually as each card rises, then disappears exactly when the last
+         card is fully up and swipe mode activates.                         */
       if (titleRef.current) {
-        const t = clamp01(s / 0.08)
+        const t = clamp01(s / SWIPE_THRESHOLD)   // 0 → 1 across entire card range
         titleRef.current.style.transform = `translate(-50%, -50%) scale(${1 - t * 0.6})`
         titleRef.current.style.opacity   = String(0.22 * (1 - t))
       }
@@ -158,91 +167,72 @@ export function FeaturedWorks() {
       /* ── Phase transition: enter swipe mode ── */
       if (s >= SWIPE_THRESHOLD && !swipeModeRef.current) {
         swipeModeRef.current = true
-        /* Snap every card to its exact phase-1 rest position.
-           Explicitly set left/top from CARD_POS[i] so no stale CSS
-           transition can shift cards when swipe mode activates.      */
-        const initialFrontIdx = 2   // queue starts as [0,1,2] so front = 2
+        const initialFrontIdx = 2
         cardRefs.current.forEach((el, i) => {
           if (!el) return
-          el.style.transition = "none"
+          const [, winEnd] = CARD_WINDOWS[i]
+          // If this card already completed its scroll window, snap it (no visible difference).
+          // If the user scrolled fast and the card never animated, use a smooth transition
+          // so it rises into place instead of teleporting.
+          const cardComplete = s >= winEnd
+          el.style.transition = cardComplete
+            ? "none"
+            : "transform 0.50s cubic-bezier(0.34,1.1,0.64,1), opacity 0.35s ease"
           el.style.left       = CARD_POS[i].left
           el.style.top        = CARD_POS[i].top
           el.style.transform  = "translate(-50%, -50%)"
           el.style.opacity    = "1"
           el.style.zIndex     = String(i + 1)
         })
-        /* Start nudge on the front card one rAF later so the
-           neutral transform has already painted before we clear it  */
         requestAnimationFrame(() => {
           frontIdxRef.current = initialFrontIdx
           applyNudge(cardRefs.current[initialFrontIdx])
         })
+        setShowSwipeUI(true)   // text slides in from left, button from right
         setSwipeMode(true)
         return
       }
 
-      /* ── Phase transition: exit swipe mode (user scrolled back above section) ── */
+      /* ── Phase transition: exit swipe mode — text/button slide out, cards go down in reverse ── */
       if (s < EXIT_THRESHOLD && swipeModeRef.current) {
         swipeModeRef.current = false
-        autoPhase1Ref.current = false
+        setShowSwipeUI(false)   // text slides left, button slides right
         const offY = window.innerHeight * 1.15
+        // Pre-set each card to exactly where Phase 1 will place it at the current
+        // scroll position. This prevents a single-frame jump when Phase 1 takes over,
+        // because the transition is "none" and the position is already correct.
         cardRefs.current.forEach((el, i) => {
           if (!el) return
+          el.style.animation  = ""       // kill nudge — CSS animations override style.transform
           el.style.transition = "none"
           el.style.cursor     = "default"
           el.style.left       = CARD_POS[i].left
           el.style.top        = CARD_POS[i].top
-          el.style.opacity    = "0"
-          el.style.transform  = `translate(-50%, calc(-50% + ${offY}px))`
+          // Mirror the Phase 1 formula so there is zero positional discontinuity
+          const [winStart, winEnd] = CARD_WINDOWS[i]
+          const p = clamp01((s - winStart) / (winEnd - winStart))
+          const t = easeOut(p)
+          el.style.transform  = `translate(-50%, calc(-50% + ${(1 - t) * offY}px))`
+          el.style.opacity    = String(Math.min(1, t * 5))
         })
         setSwipeMode(false)
         setQueue([0, 1, 2])
+        // fall through → scroll-driven Phase 1 animates cards back down naturally
       }
 
-      /* ── Phase 1: auto-sequential pop-up ── */
-      if (swipeModeRef.current) return   // swipe phase handles its own visuals
+      /* ── Phase 1: scroll-driven stack animation ── */
+      if (swipeModeRef.current) return
 
-      // Once section scrolls into view, fire the sequential animation once
-      if (s >= 0.04 && !autoPhase1Ref.current) {
-        autoPhase1Ref.current = true
-
-        const STAGGER    = 280   // ms between each card
-        const ANIM_DUR   = 700   // ms for card animation
-
-        // Animate each card up in sequence
-        cardRefs.current.forEach((el, i) => {
-          if (!el) return
-          setTimeout(() => {
-            el.style.transition = `transform ${ANIM_DUR}ms cubic-bezier(0.34,1.2,0.64,1), opacity 0.45s ease`
-            el.style.transform  = "translate(-50%, -50%)"
-            el.style.opacity    = "1"
-          }, i * STAGGER)
-        })
-
-        // Wait for last card animation to fully settle, THEN activate swipe mode
-        // Buffer = last card start + full anim duration + 350ms settle time
-        const swipeDelay = (N - 1) * STAGGER + ANIM_DUR + 350
-        setTimeout(() => {
-          if (swipeModeRef.current) return   // guard against double-fire
-          swipeModeRef.current = true
-          const initialFrontIdx = 2
-          // Strip transitions AFTER animations have settled to avoid jump
-          cardRefs.current.forEach((el, i) => {
-            if (!el) return
-            el.style.transition = "none"
-            el.style.left       = CARD_POS[i].left
-            el.style.top        = CARD_POS[i].top
-            el.style.opacity    = "1"
-            el.style.zIndex     = String(i + 1)
-            // Only set transform if card is fully settled (already at -50%,-50%)
-          })
-          requestAnimationFrame(() => {
-            frontIdxRef.current = initialFrontIdx
-            applyNudge(cardRefs.current[initialFrontIdx])
-          })
-          setSwipeMode(true)
-        }, swipeDelay)
-      }
+      // Each card rises through its own scroll window — one scroll per card
+      cardRefs.current.forEach((el, i) => {
+        if (!el) return
+        const [winStart, winEnd] = CARD_WINDOWS[i]
+        const p   = clamp01((s - winStart) / (winEnd - winStart))
+        const t   = easeOut(p)
+        const offY = window.innerHeight * 1.15
+        el.style.transform = `translate(-50%, calc(-50% + ${(1 - t) * offY}px))`
+        el.style.opacity   = String(Math.min(1, t * 5))
+      })
     }
 
     tick()
@@ -511,12 +501,13 @@ export function FeaturedWorks() {
           top:           "clamp(60px, 10vh, 100px)",
           left:          "clamp(24px, 3vw, 52px)",
           zIndex:        20,
-          opacity:       swipeMode ? 1 : 0,
-          transition:    "opacity 0.4s ease",
+          opacity:       showSwipeUI ? 1 : 0,
+          transform:     showSwipeUI ? "translateX(0)" : "translateX(-70vw)",
+          transition:    "opacity 0.55s ease, transform 0.65s cubic-bezier(0.34,1.1,0.64,1)",
           pointerEvents: "none",
         }}>
           <ScrollFloat
-            triggered={swipeMode}
+            triggered={showSwipeUI}
             animationDuration={1}
             stagger={0.03}
             style={{
@@ -539,10 +530,10 @@ export function FeaturedWorks() {
             bottom:        "clamp(20px, 3.5vh, 44px)",
             right:         "clamp(24px, 3vw, 52px)",
             zIndex:        20,
-            opacity:       swipeMode ? 1 : 0,
-            transform:     swipeMode ? "translateY(0)" : "translateY(10px)",
-            transition:    "opacity 0.6s ease 0.15s, transform 0.6s ease 0.15s",
-            pointerEvents: swipeMode ? "auto" : "none",
+            opacity:       showSwipeUI ? 1 : 0,
+            transform:     showSwipeUI ? "translateX(0)" : "translateX(70vw)",
+            transition:    "opacity 0.55s ease 0.08s, transform 0.65s cubic-bezier(0.34,1.1,0.64,1) 0.08s",
+            pointerEvents: showSwipeUI ? "auto" : "none",
           }}
           style={{
             display:       "flex",
