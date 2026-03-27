@@ -9,9 +9,14 @@ import { BlobButton }         from "../components/blob-button"
 /* ─── Data ─── */
 const STORY_SECTIONS = [
   {
-    title: "My Story",
-    text: "Growing up, I was always the kid who couldn't stop drawing. From sketching on napkins to painting murals in my room, art was my first language. That passion eventually led me to discover the world of digital design, where I found the perfect blend of creativity and technology.",
-    image: "/images/about-mystory.jpeg",
+    title: "Why Liquid Morphism?",
+    paragraphs: [
+      "You might notice the flowing blob shapes throughout my portfolio. They're not just a visual choice — they come from a personal story.",
+      "During a difficult time in my life, I received a lava lamp as a gift. I used to sit and watch it for long moments — the soft movements, shifting colors, and constant transformation. There was something calming and alive about it. It never stayed the same, yet it never stopped moving forward.",
+      "That feeling stayed with me. The liquid, morphing shapes in my design represent that same sense of life, motion, and change — bringing softness and energy into the interface, making it feel more alive and interactive.",
+      "For me, design shouldn't feel static or cold. It should feel engaging, comforting, and human. Something that keeps you curious, present, and connected.",
+    ],
+    video: "/videos/Lava_lamp.mp4",
     imagePosition: "center center",
     imageScale: "100%",
   },
@@ -239,8 +244,8 @@ function AboutHero() {
               }}
             >
               <VariableProximity
-                label="I'm a New Media Design and Web Development student at BCIT with a strong background in art and a focus on UI/UX design. I enjoy creating clean, modern digital experiences that are both visually engaging and easy to use."
-                className="text-white/70 text-xs sm:text-base leading-snug sm:leading-relaxed mb-1 sm:mb-3"
+                label="Welcome to my portfolio — I'm Farnaz Gholami, a UI/UX & Digital Designer based in Vancouver, BC."
+                className="text-white/80 text-xs sm:text-base leading-snug sm:leading-relaxed mb-1 sm:mb-3 font-medium"
                 fromFontVariationSettings="'wght' 300"
                 toFontVariationSettings="'wght' 800"
                 containerRef={proximityRef}
@@ -248,7 +253,16 @@ function AboutHero() {
                 falloff="linear"
               />
               <VariableProximity
-                label="I'm especially interested in the intersection of design, technology, and storytelling—where thoughtful visuals meet practical, user-centered solutions."
+                label="With a strong background in art — something that has been part of my life since childhood — and my education in New Media Design and Web Development at BCIT, I've been able to combine creativity with technology."
+                className="hidden sm:block text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
+                fromFontVariationSettings="'wght' 300"
+                toFontVariationSettings="'wght' 800"
+                containerRef={proximityRef}
+                radius={120}
+                falloff="linear"
+              />
+              <VariableProximity
+                label="I'm passionate about designing user-friendly, visually engaging experiences that are not only beautiful, but meaningful. I enjoy creating designs that balance aesthetics with functionality to truly connect with users."
                 className="hidden sm:block text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
                 fromFontVariationSettings="'wght' 300"
                 toFontVariationSettings="'wght' 800"
@@ -260,14 +274,15 @@ function AboutHero() {
 
             {/* Buttons — each pops up with a staggered delay */}
             <div className="flex items-center gap-1 sm:gap-3 mt-2 sm:mt-4 flex-wrap" style={{ zIndex: 10 }}>
-              {["My Story", "Values", "Hobbies"].map((label, i) => (
+              {[
+                { label: "Why Liquid Morphism?", id: "my-story" },
+                { label: "Values",               id: "values"   },
+                { label: "Hobbies",              id: "hobbies"  },
+              ].map(({ label, id }, i) => (
                 <BlobButton
-                  key={label}
+                  key={id}
                   className="pill-btn-hover px-2 sm:px-8 py-1 sm:py-2.5 rounded-full text-[8px] sm:text-sm font-medium text-white/80 cursor-pointer whitespace-nowrap"
-                  onClick={() => {
-                    const id = label.toLowerCase().replace(" ", "-")
-                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
-                  }}
+                  onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
                   style={{
                     background: "rgba(255,255,255,0.12)",
                     backdropFilter: "blur(10px)",
@@ -362,7 +377,14 @@ function MyStorySection() {
                 </span>
                 <h2 className="text-white text-lg sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-6 text-balance">{section.title}</h2>
                 <div className="w-10 sm:w-16 h-px bg-white/20 mb-2 sm:mb-6" />
-                <p className="text-white/70 text-[10px] sm:text-sm md:text-base leading-snug sm:leading-relaxed max-w-md">{section.text}</p>
+                {Array.isArray(section.paragraphs)
+                  ? <div className="flex flex-col gap-2 sm:gap-3 max-w-md overflow-y-auto" style={{ maxHeight: "55vh" }}>
+                      {section.paragraphs.map((para, pi) => (
+                        <p key={pi} className="text-white/70 text-[10px] sm:text-sm md:text-base leading-snug sm:leading-relaxed">{para}</p>
+                      ))}
+                    </div>
+                  : <p className="text-white/70 text-[10px] sm:text-sm md:text-base leading-snug sm:leading-relaxed max-w-md">{section.text}</p>
+                }
               </div>
             )
           })}
@@ -409,16 +431,27 @@ function MyStorySection() {
                   visibility: hidden ? "hidden" : "visible",
                 }}
               >
-                <img
-                  src={section.image}
-                  alt={section.title}
-                  className="w-full h-full object-cover"
-                  style={{
-                    objectPosition: section.imagePosition || "center center",
-                    transform: section.imageScale ? `scale(${parseInt(section.imageScale) / 100})` : undefined,
-                    transformOrigin: section.imagePosition || "center center",
-                  }}
-                />
+                {section.video ? (
+                  <video
+                    src={section.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={section.image}
+                    alt={section.title}
+                    className="w-full h-full object-cover"
+                    style={{
+                      objectPosition: section.imagePosition || "center center",
+                      transform: section.imageScale ? `scale(${parseInt(section.imageScale) / 100})` : undefined,
+                      transformOrigin: section.imagePosition || "center center",
+                    }}
+                  />
+                )}
               </div>
             )
           })}

@@ -76,26 +76,28 @@ export function AboutPreview() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // With min-h-[200vh], range = 300vh. Sticky phase runs from s≈0.333 to s≈0.667
-  // giving ~100vh of sticky scroll (≈5 scrolls at 20vh each).
+  // With min-h-[300vh], total range = 400vh. Sticky phase runs from s≈0.25 to s≈0.75
+  // giving ~200vh of sticky scroll (≈10 scrolls at 20vh each).
   //
   // Timeline:
-  //  0.333–0.39  "Behind the design" fades in  (~1 scroll)
-  //  0.39–0.46   title fully visible / stable  (~1 scroll)
-  //  0.37–0.63   cards slide in from ±90vw     (~3 scrolls of visible movement)
-  //  0.63–0.667  everything settled, 1 scroll to exit
+  //  0.25–0.32   "Behind the design" fades in   (~1.5 scrolls)
+  //  0.32–0.42   title fully visible / stable   (~2 scrolls)
+  //  0.42–0.54   title fades out
+  //  0.30–0.72   cards slide in from ±90vw      (~8+ scrolls of gradual movement)
+  //  0.72–0.75   everything settled, 1 scroll to exit
 
   const titleOpacity =
-    scrollProgress < 0.333 ? 0
-    : scrollProgress < 0.39  ? (scrollProgress - 0.333) / 0.057
-    : scrollProgress < 0.46  ? 1
-    : scrollProgress < 0.56  ? 1 - (scrollProgress - 0.46) / 0.10
+    scrollProgress < 0.25  ? 0
+    : scrollProgress < 0.32 ? (scrollProgress - 0.25) / 0.07
+    : scrollProgress < 0.42 ? 1
+    : scrollProgress < 0.54 ? 1 - (scrollProgress - 0.42) / 0.12
     : 0
 
-  // Cards slide in from ±90vw (closer start so they become visible sooner)
+  // Cards slide in from ±90vw — spread across most of the sticky phase
+  // so convergence feels slow and deliberate (~8 scrolls of movement)
   const convergence =
-    scrollProgress < 0.37 ? 0
-    : scrollProgress < 0.63 ? (scrollProgress - 0.37) / 0.26
+    scrollProgress < 0.30 ? 0
+    : scrollProgress < 0.72 ? (scrollProgress - 0.30) / 0.42
     : 1
 
   // Tilt only activates once the cards have fully settled
@@ -106,8 +108,8 @@ export function AboutPreview() {
   // compositing layer that prevents backdrop-filter from seeing through to the
   // real page content, causing the blur to silently disappear.
   const contentOpacity =
-    scrollProgress < 0.37 ? 0
-    : scrollProgress < 0.53 ? (scrollProgress - 0.37) / 0.16
+    scrollProgress < 0.30 ? 0
+    : scrollProgress < 0.52 ? (scrollProgress - 0.30) / 0.22
     : 1
 
   return (
@@ -136,12 +138,12 @@ export function AboutPreview() {
             }}
           />
 
-          {/* "Behind the Design" title — fades in, then fades out as cards converge */}
+          {/* "A Little About Me" title — fades in, then fades out as cards converge */}
           <h2
             className="absolute text-3xl md:text-5xl lg:text-6xl font-bold text-white text-center z-10 pointer-events-none text-balance"
             style={{ opacity: titleOpacity }}
           >
-            Behind the design
+            A Little About Me
           </h2>
 
           {/* Left: About text card
@@ -150,7 +152,7 @@ export function AboutPreview() {
               backdrop-filter on the GlassCard child. */}
           <div
             style={{
-              transform: `translateX(${(1 - convergence) * -120}vw)`,
+              transform: `translateX(${(1 - convergence) * -90}vw)`,
               flex: "0 0 auto",
             }}
           >
@@ -167,16 +169,23 @@ export function AboutPreview() {
                   className="flex flex-col justify-between h-full"
                   style={{ opacity: contentOpacity }}
                 >
-                  <div>
-                    <h3 className="text-white text-[11px] sm:text-lg md:text-xl font-semibold mb-1 sm:mb-4 leading-tight">About me</h3>
-                    <p className="text-white/70 text-[9px] sm:text-sm leading-snug sm:leading-relaxed">
-                      {"I'm a New Media Design and Web Development student at BCIT with a strong background in art and a focus on UI/UX design. I enjoy creating clean, modern digital experiences that are both visually engaging and easy to use."}
+                  <div className="flex flex-col gap-3 sm:gap-4">
+                    <h3 className="text-white text-[13px] sm:text-xl md:text-2xl font-semibold leading-tight">
+                      Hi, I'm Farnaz
+                    </h3>
+                    <p className="text-white/80 text-[10px] sm:text-base leading-snug sm:leading-relaxed">
+                      A New Media Design student at BCIT who loves art, UI/UX, and digital design.
                     </p>
-                    <p className="hidden sm:block text-white/70 text-sm leading-relaxed mt-3">
-                      {"I'm especially interested in the intersection of design, technology, and storytelling\u2014where thoughtful visuals meet practical, user-centered solutions. I love turning ideas into meaningful digital experiences that not only look good, but work well for real people."}
+                    <p className="hidden sm:block text-white/70 text-[10px] sm:text-base leading-relaxed">
+                      I'm passionate about creating modern, interactive experiences — because let's be honest, no one stays focused on something that isn't engaging anymore.
+                    </p>
+                    <p className="hidden sm:block text-white/70 text-[10px] sm:text-base leading-relaxed">
+                      I enjoy blending design, technology, and storytelling to turn ideas into visuals that not only look good, but actually <span className="text-white/90 font-medium">connect with people.</span>
+                    </p>
+                    <p className="hidden sm:block text-white/50 text-[9px] sm:text-sm leading-relaxed italic mt-1">
+                      Curious to know more? Explore my About page ↓
                     </p>
                   </div>
-                  <div className="mt-1 sm:mt-4 flex-shrink-0" />
                 </div>
               </GlassCard>
             </TiltWrapper>
@@ -188,7 +197,7 @@ export function AboutPreview() {
           {/* Right: Photo card — same pattern, no opacity on wrapper */}
           <div
             style={{
-              transform: `translateX(${(1 - convergence) * 120}vw)`,
+              transform: `translateX(${(1 - convergence) * 90}vw)`,
               flex: "0 0 auto",
             }}
           >
