@@ -240,7 +240,7 @@ function MockupCarousel() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div style={{ width: "100%", maxWidth: "660px", height: "420px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ width: "100%", maxWidth: "900px", height: "clamp(460px, 68vh, 700px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <img
           key={idx}
           src={MOCKUPS[idx].src}
@@ -473,7 +473,7 @@ function LaptopVideoMockup() {
 }
 
 /* ── Right-panel visual: single image or mini carousel ───────────────────── */
-function StepVisual({ step, openLightbox }) {
+function StepVisual({ step, openLightbox, isMobile }) {
   const [visible,  setVisible]  = useState(true)
   const [slideIdx, setSlideIdx] = useState(0)
   const [imgAnim,  setImgAnim]  = useState(true)
@@ -547,8 +547,8 @@ function StepVisual({ step, openLightbox }) {
       flexDirection:        "column",
       alignItems:           "center",
       justifyContent:       "center",
-      height:               `${STEP_BOX_H}px`,
-      minHeight:            `${STEP_BOX_H}px`,
+      height:               isMobile ? "220px" : `${STEP_BOX_H}px`,
+      minHeight:            isMobile ? "220px" : `${STEP_BOX_H}px`,
       position:             "sticky",
     }}>
 
@@ -853,25 +853,52 @@ const ITEM_H = 300 /* px — fixed height for every card */
 const GALLERY_SCROLL_RATIO = 6
 
 function BrandInRealLife({ openLightbox }) {
-  const wrapperRef = useRef(null)
-  const trackRef   = useRef(null)
-  const currentX   = useRef(0)
-  const targetX    = useRef(0)
-  const rafId      = useRef(null)
+  const wrapperRef    = useRef(null)
+  const trackRef      = useRef(null)
+  const currentX      = useRef(0)
+  const targetX       = useRef(0)
+  const rafId         = useRef(null)
+  // Touch drag (mobile)
+  const touchStartX      = useRef(null)
+  const touchStartTarget = useRef(0)
+  // Custom scrollbar
+  const sbTrackRef   = useRef(null)
+  const sbThumbRef   = useRef(null)
+  const sbDragging   = useRef(false)
+  const sbDragStartX = useRef(0)
+  const sbDragStartT = useRef(0)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
 
-  /* Recompute wrapper height whenever the track's size changes (fires as
-     each image/video loads its natural dimensions). ResizeObserver is the
-     reliable way — setTimeout guesses at a delay, this is exact. */
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
+
+  /* Mobile touch drag */
+  const onTouchStart = (e) => {
+    touchStartX.current      = e.touches[0].clientX
+    touchStartTarget.current = targetX.current
+  }
+  const onTouchMove = (e) => {
+    if (touchStartX.current === null) return
+    const delta = e.touches[0].clientX - touchStartX.current
+    const track = trackRef.current
+    if (!track) return
+    const maxShift = -(track.scrollWidth - window.innerWidth + 96)
+    targetX.current = Math.max(maxShift, Math.min(0, touchStartTarget.current + delta))
+  }
+  const onTouchEnd = () => { touchStartX.current = null }
+
+  /* Recompute wrapper height when track resizes */
   useEffect(() => {
     const track   = trackRef.current
     const wrapper = wrapperRef.current
     if (!track || !wrapper) return
-
     const update = () => {
       const scrollRange = Math.max(0, track.scrollWidth - window.innerWidth + 96)
       wrapper.style.height = `calc(100vh + ${scrollRange * GALLERY_SCROLL_RATIO}px)`
     }
-
     update()
     const ro = new ResizeObserver(update)
     ro.observe(track)
@@ -879,12 +906,24 @@ function BrandInRealLife({ openLightbox }) {
     return () => { ro.disconnect(); window.removeEventListener("resize", update) }
   }, [])
 
-  /* Smooth lerp animation loop */
+  /* Smooth lerp loop — also syncs scrollbar thumb position */
   useEffect(() => {
     const loop = () => {
       currentX.current += (targetX.current - currentX.current) * 0.09
-      if (trackRef.current) {
-        trackRef.current.style.transform = `translateX(${currentX.current}px)`
+      if (trackRef.current) trackRef.current.style.transform = `translateX(${currentX.current}px)`
+      const track   = trackRef.current
+      const sbTrack = sbTrackRef.current
+      const sbThumb = sbThumbRef.current
+      if (track && sbTrack && sbThumb) {
+        const maxShift = -(track.scrollWidth - window.innerWidth + 96)
+        if (maxShift < 0) {
+          const sbW    = sbTrack.offsetWidth
+          const thumbW = Math.max(48, sbW * (window.innerWidth / track.scrollWidth))
+          const maxTX  = sbW - thumbW
+          const prog   = currentX.current / maxShift
+          sbThumb.style.width     = `${thumbW}px`
+          sbThumb.style.transform = `translateX(${Math.max(0, Math.min(maxTX, prog * maxTX))}px)`
+        }
       }
       rafId.current = requestAnimationFrame(loop)
     }
@@ -892,13 +931,13 @@ function BrandInRealLife({ openLightbox }) {
     return () => cancelAnimationFrame(rafId.current)
   }, [])
 
-  /* Map page scroll progress (within the tall wrapper) → gallery X position */
+  /* Map page scroll → gallery X */
   useEffect(() => {
     const onScroll = () => {
       const wrapper = wrapperRef.current
       const track   = trackRef.current
       if (!wrapper || !track) return
-      const wRect      = wrapper.getBoundingClientRect()
+      const wRect       = wrapper.getBoundingClientRect()
       const scrollableH = wrapper.offsetHeight - window.innerHeight
       if (scrollableH <= 0) return
       const scrolled = Math.max(0, -wRect.top)
@@ -910,57 +949,91 @@ function BrandInRealLife({ openLightbox }) {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const PAD = "clamp(32px, 5vw, 72px)"
+  /* Scrollbar thumb drag */
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!sbDragging.current) return
+      const delta   = e.clientX - sbDragStartX.current
+      const track   = trackRef.current
+      const sbTrack = sbTrackRef.current
+      const sbThumb = sbThumbRef.current
+      if (!track || !sbTrack || !sbThumb) return
+      const maxShift = -(track.scrollWidth - window.innerWidth + 96)
+      const sbW      = sbTrack.offsetWidth
+      const thumbW   = parseFloat(sbThumb.style.width) || 48
+      const maxTX    = sbW - thumbW
+      const ratio    = maxTX > 0 ? maxShift / maxTX : 0
+      targetX.current = Math.max(maxShift, Math.min(0, sbDragStartT.current + delta * ratio))
+    }
+    const onMouseUp = () => {
+      sbDragging.current = false
+      if (sbThumbRef.current) {
+        sbThumbRef.current.style.background = PINK
+        sbThumbRef.current.style.cursor = "grab"
+      }
+    }
+    document.addEventListener("mousemove", onMouseMove)
+    document.addEventListener("mouseup",   onMouseUp)
+    return () => {
+      document.removeEventListener("mousemove", onMouseMove)
+      document.removeEventListener("mouseup",   onMouseUp)
+    }
+  }, [])
+
+  /* Click on scrollbar track — jump to that position */
+  const onSbTrackClick = (e) => {
+    const sbTrack = sbTrackRef.current
+    const sbThumb = sbThumbRef.current
+    const track   = trackRef.current
+    if (!sbTrack || !sbThumb || !track) return
+    const rect     = sbTrack.getBoundingClientRect()
+    const clickX   = e.clientX - rect.left
+    const sbW      = sbTrack.offsetWidth
+    const thumbW   = parseFloat(sbThumb.style.width) || 48
+    const maxTX    = sbW - thumbW
+    const prog     = Math.max(0, Math.min(1, (clickX - thumbW / 2) / maxTX))
+    const maxShift = -(track.scrollWidth - window.innerWidth + 96)
+    targetX.current = maxShift * prog
+  }
+
+  const PAD    = isMobile ? "16px" : "clamp(32px, 5vw, 72px)"
+  const CARD_H = isMobile ? 150 : ITEM_H
 
   return (
-    /* Tall wrapper — sticky child pins at top while this scrolls through */
     <div ref={wrapperRef}>
       <section
+        onTouchStart={isMobile ? onTouchStart : undefined}
+        onTouchMove={isMobile  ? onTouchMove  : undefined}
+        onTouchEnd={isMobile   ? onTouchEnd   : undefined}
         style={{
-          position:       "sticky",
-          top:            0,
-          height:         "100vh",
-          display:        "flex",
-          flexDirection:  "column",
-          justifyContent: "center",
-          overflow:       "hidden",
+          position: "sticky", top: 0, height: "100vh",
+          display: "flex", flexDirection: "column", justifyContent: "center",
+          overflow: "hidden",
+          touchAction: isMobile ? "pan-y" : undefined,
         }}
       >
         <h2 style={{
-          margin:        "0 0 36px",
-          paddingLeft:   PAD,
-          color:         "#fff",
-          fontSize:      "clamp(1.4rem, 2.5vw, 2rem)",
-          fontWeight:    700,
-          letterSpacing: "-0.01em",
+          margin: "0 0 36px", paddingLeft: PAD,
+          color: "#fff", fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
+          fontWeight: 700, letterSpacing: "-0.01em",
         }}>
           Bringing the Brand to Life
         </h2>
 
-        <div
-          ref={trackRef}
-          style={{
-            display:     "flex",
-            gap:         "16px",
-            paddingLeft: PAD,
-            willChange:  "transform",
-          }}
-        >
+        <div ref={trackRef} style={{ display: "flex", gap: isMobile ? "10px" : "16px", paddingLeft: PAD, willChange: "transform" }}>
           {BRAND_ITEMS.map((item, i) =>
             item.type === "video" ? (
               <div key={i} style={{ position: "relative", flexShrink: 0, cursor: "zoom-in" }}
                 onClick={() => openLightbox({ type: "video", src: item.src })}>
                 <video src={item.src} autoPlay loop muted playsInline
-                  style={{ height: `${ITEM_H}px`, width: "auto", display: "block",
+                  style={{ height: `${CARD_H}px`, width: "auto", display: "block",
                     borderRadius: "16px", objectFit: "cover",
                     boxShadow: "0 8px 32px rgba(0,0,0,0.40)",
                     pointerEvents: "none" }} />
-                {/* Play icon hint */}
                 <div style={{
                   position: "absolute", inset: 0, borderRadius: "16px",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "rgba(0,0,0,0)",
-                  transition: "background 0.2s",
+                  background: "rgba(0,0,0,0)", transition: "background 0.2s",
                 }}
                   onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.30)"}
                   onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0)"}
@@ -983,10 +1056,9 @@ function BrandInRealLife({ openLightbox }) {
             ) : (
               <img key={i} src={item.src} alt=""
                 onClick={() => openLightbox({ type: "image", src: item.src })}
-                style={{ height: `${ITEM_H}px`, width: "auto", flexShrink: 0,
+                style={{ height: `${CARD_H}px`, width: "auto", flexShrink: 0,
                   borderRadius: "16px", objectFit: "cover", display: "block",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.40)",
-                  cursor: "zoom-in",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.40)", cursor: "zoom-in",
                   transition: "transform 0.25s ease, box-shadow 0.25s ease" }}
                 onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 16px 48px rgba(0,0,0,0.55)" }}
                 onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)";    e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.40)" }}
@@ -994,6 +1066,42 @@ function BrandInRealLife({ openLightbox }) {
             )
           )}
         </div>
+
+        {/* ── Custom scrollbar — desktop only ── */}
+        {!isMobile && (
+          <div style={{ padding: `32px ${PAD} 0`, userSelect: "none" }}>
+            <div
+              ref={sbTrackRef}
+              onClick={onSbTrackClick}
+              style={{
+                position: "relative", height: "5px", borderRadius: "3px",
+                background: "rgba(255,255,255,0.10)", cursor: "pointer",
+              }}
+            >
+              <div
+                ref={sbThumbRef}
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  sbDragging.current   = true
+                  sbDragStartX.current = e.clientX
+                  sbDragStartT.current = targetX.current
+                  e.currentTarget.style.cursor = "grabbing"
+                }}
+                style={{
+                  position: "absolute", top: "-3px", left: 0,
+                  height: "11px", width: "80px", borderRadius: "6px",
+                  background: PINK,
+                  cursor: "grab",
+                  boxShadow: `0 0 10px ${PINK_DIM}`,
+                  transition: "background 0.18s, box-shadow 0.18s",
+                }}
+                onMouseEnter={e => { if (!sbDragging.current) { e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = "0 0 12px rgba(255,255,255,0.45)" } }}
+                onMouseLeave={e => { if (!sbDragging.current) { e.currentTarget.style.background = PINK;  e.currentTarget.style.boxShadow = `0 0 10px ${PINK_DIM}` } }}
+              />
+            </div>
+          </div>
+        )}
       </section>
     </div>
   )
@@ -1004,9 +1112,16 @@ function BrandInRealLife({ openLightbox }) {
 function CaseStudyStepper({ openLightbox }) {
   const [openIndex, setOpenIndex] = useState(null)
   const [hdVisible, setHdVisible] = useState(false)
+  const [isMobile,  setIsMobile]  = useState(() => window.innerWidth < 640)
   const headingRef = useRef(null)
   const openStep   = (i) => setOpenIndex(i)
   const closeStep  = ()  => setOpenIndex(null)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
 
   useEffect(() => {
     const el = headingRef.current
@@ -1029,10 +1144,11 @@ function CaseStudyStepper({ openLightbox }) {
     <div style={{
       width: "100%", boxSizing: "border-box",
       paddingTop: "80px", paddingBottom: "32px",
-      paddingLeft: "clamp(32px, 5vw, 72px)", paddingRight: "clamp(32px, 5vw, 72px)",
+      paddingLeft:  isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
+      paddingRight: isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
     }}>
       {/* Section heading */}
-      <div ref={headingRef} style={{ marginBottom: "52px", textAlign: "left" }}>
+      <div ref={headingRef} style={{ marginBottom: isMobile ? "24px" : "52px", textAlign: isMobile ? "center" : "left" }}>
         <div style={{
           display: "inline-block", padding: "5px 18px", borderRadius: "999px",
           background: PINK_DIM, border: `1px solid ${PINK_MID}`,
@@ -1042,33 +1158,62 @@ function CaseStudyStepper({ openLightbox }) {
         }}>
           Case Study
         </div>
-        <h2 style={{ margin: 0, color: "#fff", fontSize: "clamp(1.6rem,3vw,2.4rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.1, ...hdAnim("0.15s") }}>
+        <h2 style={{ margin: 0, color: "#fff", fontSize: isMobile ? "1.3rem" : "clamp(1.6rem,3vw,2.4rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.1, ...hdAnim("0.15s") }}>
           Design Process
         </h2>
-        <p style={{ margin: "12px 0 0", color: "rgba(255,255,255,0.45)", fontSize: "clamp(0.88rem,1.2vw,0.98rem)", ...hdAnim("0.28s") }}>
-          Click any step to explore the full story.
+        <p style={{ margin: "8px 0 0", color: "rgba(255,255,255,0.45)", fontSize: isMobile ? "0.78rem" : "clamp(0.88rem,1.2vw,0.98rem)", ...hdAnim("0.28s") }}>
+          Tap any step to explore the full story.
         </p>
       </div>
 
-      {/* Two-column layout */}
-      <div style={{ display: "flex", gap: "clamp(20px,3vw,48px)", alignItems: "flex-start" }}>
+      {/* Mobile: visual on top, steps below — Desktop: two columns */}
+      <div style={{
+        display:       "flex",
+        flexDirection: isMobile ? "column" : "row",
+        gap:           isMobile ? "16px" : "clamp(20px,3vw,48px)",
+        alignItems:    "flex-start",
+      }}>
 
-        {/* LEFT — steps list */}
+        {/* Glass visual — TOP on mobile (order -1), RIGHT on desktop */}
         <div style={{
-          flex: "0 0 48%", maxWidth: "48%",
+          order:   isMobile ? -1 : 1,
+          flex:    isMobile ? "none" : 1,
+          width:   isMobile ? "100%" : undefined,
+          minWidth: isMobile ? undefined : 0,
+          opacity:    hdVisible ? 1 : 0,
+          transform:  hdVisible ? "translateX(0)" : "translateX(48px)",
+          transition: "opacity 0.65s ease 0.48s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.48s",
+        }}>
+          <StepVisual
+            step={openIndex !== null ? STEPS[openIndex] : STEPS[0]}
+            openLightbox={openLightbox}
+            isMobile={isMobile}
+          />
+        </div>
+
+        {/* Steps list — BOTTOM on mobile (order 0), LEFT on desktop */}
+        <div style={{
+          order:     isMobile ? 0 : 0,
+          flex:      isMobile ? "none" : "0 0 48%",
+          width:     isMobile ? "100%" : undefined,
+          maxWidth:  isMobile ? undefined : "48%",
           opacity:    hdVisible ? 1 : 0,
           transform:  hdVisible ? "translateX(0)" : "translateX(-48px)",
           transition: "opacity 0.65s ease 0.38s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.38s",
         }}>
           {openIndex === null ? (
-            <div style={{ display: "flex", flexDirection: "column", height: `${STEP_BOX_H}px` }}>
+            <div style={{
+              display: "flex", flexDirection: "column",
+              height: isMobile ? "auto" : `${STEP_BOX_H}px`,
+              gap:    isMobile ? "6px" : 0,
+            }}>
               {STEPS.map((step, i) => (
                 <CollapsedStepRow
                   key={step.number}
                   step={step}
                   isLast={i === STEPS.length - 1}
                   onClick={() => openStep(i)}
-                  grow
+                  grow={!isMobile}
                 />
               ))}
             </div>
@@ -1078,16 +1223,6 @@ function CaseStudyStepper({ openLightbox }) {
               <CloseArrow onClick={closeStep} />
             </>
           )}
-        </div>
-
-        {/* RIGHT — glass visual */}
-        <div style={{
-          flex: 1, minWidth: 0,
-          opacity:    hdVisible ? 1 : 0,
-          transform:  hdVisible ? "translateX(0)" : "translateX(48px)",
-          transition: "opacity 0.65s ease 0.48s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.48s",
-        }}>
-          <StepVisual step={openIndex !== null ? STEPS[openIndex] : STEPS[0]} openLightbox={openLightbox} />
         </div>
 
       </div>
@@ -1100,11 +1235,18 @@ export function SugarCloudPage() {
   const { navigate } = useRouter()
   const [heroIn,       setHeroIn]       = useState(false)
   const [lightboxItem, setLightboxItem] = useState(null)
+  const [isMobile,     setIsMobile]     = useState(() => window.innerWidth < 640)
   const openLightbox = (item) => setLightboxItem(item)
 
   useEffect(() => {
     const t = setTimeout(() => setHeroIn(true), 60)
     return () => clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
   }, [])
 
   return (
@@ -1143,21 +1285,58 @@ export function SugarCloudPage() {
         </button>
 
         {/* ════════════════════════════════════════════════════════════
-            HERO — left info  +  right mockup carousel
+            HERO — mobile: laptop top + info below | desktop: left info + right carousel
         ════════════════════════════════════════════════════════════ */}
         <section style={{
-          display:    "flex",
-          alignItems: "flex-start",
-          padding:    "clamp(200px, 24vh, 240px) clamp(20px, 4vw, 72px) 56px",
-          gap:        "clamp(24px, 3vw, 56px)",
+          display:        "flex",
+          flexDirection:  isMobile ? "column" : "row",
+          alignItems:     isMobile ? "center" : "center",
+          height:         isMobile ? "auto" : "100vh",
+          padding:        isMobile
+            ? "120px 16px 32px"
+            : "80px clamp(20px, 4vw, 72px) 0",
+          gap:            isMobile ? "24px" : "clamp(24px, 3vw, 56px)",
         }}>
 
-          {/* ── Left info panel ──────────────────────────────────────── */}
+          {/* ── Laptop mockup — TOP on mobile, RIGHT on desktop ──────── */}
           <div style={{
-            width:         "clamp(220px, 32%, 380px)",
+            order:      isMobile ? -1 : 1,
+            flex:       isMobile ? "none" : 1,
+            width:      isMobile ? "100%" : undefined,
+            minWidth:   isMobile ? undefined : 0,
+            opacity:    heroIn ? 1 : 0,
+            transform:  heroIn ? "translateX(0)" : "translateX(60px)",
+            transition: "opacity 0.8s 0.12s ease, transform 0.8s 0.12s ease",
+          }}>
+            {isMobile ? (
+              /* Mobile: just the laptop, bigger, no phone mockup */
+              <img
+                src="/images/Sugar_Laptop.png"
+                alt="SugarCloud desktop mockup"
+                style={{
+                  width:      "100%",
+                  maxWidth:   "420px",
+                  height:     "auto",
+                  display:    "block",
+                  margin:     "0 auto",
+                  filter:     "drop-shadow(0 16px 48px rgba(0,0,0,0.55))",
+                  objectFit:  "contain",
+                }}
+              />
+            ) : (
+              <MockupCarousel />
+            )}
+          </div>
+
+          {/* ── Info panel — BOTTOM centered on mobile, LEFT on desktop ─ */}
+          <div style={{
+            order:         isMobile ? 0 : 0,
+            width:         isMobile ? "100%" : "clamp(220px, 32%, 380px)",
             flexShrink:    0,
             display:       "flex",
             flexDirection: "column",
+            alignItems:    isMobile ? "center" : "flex-start",
+            textAlign:     isMobile ? "center" : "left",
             opacity:       heroIn ? 1 : 0,
             transform:     heroIn ? "translateX(0)" : "translateX(-50px)",
             transition:    "opacity 0.8s ease, transform 0.8s ease",
@@ -1167,20 +1346,20 @@ export function SugarCloudPage() {
               src="/images/SugarcloudLogo.png"
               alt="SugarCloud Cupcakes"
               style={{
-                width:        "clamp(80px, 12vw, 130px)",
+                width:        isMobile ? "80px" : "clamp(80px, 12vw, 130px)",
                 height:       "auto",
                 objectFit:    "contain",
-                marginBottom: "20px",
+                marginBottom: "16px",
                 filter:       "drop-shadow(0 4px 20px rgba(232,121,160,0.40))",
               }}
             />
 
             {/* Name */}
-            <h1 style={{ margin: "0 0 12px", lineHeight: 1.1 }}>
+            <h1 style={{ margin: "0 0 10px", lineHeight: 1.1 }}>
               <span style={{
                 display:    "block",
                 fontFamily: "'Dancing Script', cursive",
-                fontSize:   "clamp(2rem, 3.5vw, 3.2rem)",
+                fontSize:   isMobile ? "1.8rem" : "clamp(2rem, 3.5vw, 3.2rem)",
                 fontWeight: 700,
                 color:      "#fff",
               }}>
@@ -1188,7 +1367,7 @@ export function SugarCloudPage() {
               </span>
               <span style={{
                 display:    "block",
-                fontSize:   "clamp(1.6rem, 2.8vw, 2.6rem)",
+                fontSize:   isMobile ? "1.4rem" : "clamp(1.6rem, 2.8vw, 2.6rem)",
                 fontWeight: 600,
                 color:      "#fff",
               }}>
@@ -1199,37 +1378,26 @@ export function SugarCloudPage() {
             {/* Category badge */}
             <div style={{
               display:       "inline-flex",
-              alignSelf:     "flex-start",
+              alignSelf:     isMobile ? "center" : "flex-start",
               padding:       "5px 16px",
               borderRadius:  "999px",
               background:    PINK_DIM,
               border:        `1px solid ${PINK_MID}`,
               color:         PINK,
-              fontSize:      "0.75rem",
+              fontSize:      isMobile ? "0.65rem" : "0.75rem",
               fontWeight:    600,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              marginBottom:  "28px",
+              marginBottom:  "20px",
               whiteSpace:    "nowrap",
             }}>
               UI/UX · Branding · Product Design
             </div>
 
             {/* Tool icons */}
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
               {TOOLS.map(t => <ToolIcon key={t.name} {...t} />)}
             </div>
-          </div>
-
-          {/* ── Right mockup carousel ────────────────────────────────── */}
-          <div style={{
-            flex:       1,
-            minWidth:   0,
-            opacity:    heroIn ? 1 : 0,
-            transform:  heroIn ? "translateX(0)" : "translateX(60px)",
-            transition: "opacity 0.8s 0.12s ease, transform 0.8s 0.12s ease",
-          }}>
-            <MockupCarousel />
           </div>
 
         </section>

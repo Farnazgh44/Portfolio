@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Footer }    from "../components/footer"
 import { SideBlobs } from "../components/side-blobs"
 import { useRouter }  from "../lib/router-context"
@@ -54,24 +54,24 @@ const PROJECTS = [
     tools:       ["Figma", "Photoshop"],
   },
   {
-    id:          "cat-holder",
-    pageId:      "project-cat-holder",
-    image:       "/images/Cat_feature.png",
+    id:          "dogwood",
+    pageId:      "project-dogwood",
+    image:       "/images/Dogwood.png",
     logo:        null,
-    name:        "Cat Phone Holder",
-    category:    "3D Design",
-    desc:        "A practical 3D-printed phone holder shaped like a sitting cat. Designed in Tinkercad and tested for real-world usability — a fun blend of product design and everyday utility.",
-    tools:       ["Tinkercad"],
+    name:        "Dogwood Land & Gardening",
+    category:    "Web Design & UX Case Study",
+    desc:        "A website design for Dogwood Land & Gardening — a local landscaping and gardening business. Focused on clean layout, approachable branding, and a seamless user experience for potential clients.",
+    tools:       ["Figma", "Canva", "VS Code"],
   },
   {
-    id:          "perfume",
-    pageId:      "project-perfume",
-    image:       "/images/Perfume_featured.png",
+    id:          "game",
+    pageId:      "project-game",
+    image:       "/images/Game.png",
     logo:        null,
-    name:        "3D Perfume Bottle",
-    category:    "Product Visualisation",
-    desc:        "A high-fidelity product visualisation of a perfume bottle created in Adobe Dimension with Photoshop compositing — demonstrating 3D rendering, lighting, and brand presentation.",
-    tools:       ["Dimension", "Photoshop"],
+    name:        "Space Shipper",
+    category:    "Game UI",
+    desc:        "A game user interface design project focused on intuitive controls, immersive visual hierarchy, and a cohesive in-game experience across menus, HUD elements, and interactive screens.",
+    tools:       ["Figma", "Canva", "Photoshop"],
   },
 ]
 
@@ -243,25 +243,25 @@ function CardOverlay({ project, onViewProject }) {
 }
 
 /* ─── Arrow button ──────────────────────────────────────────────────────────── */
-function ArrowBtn({ onClick, dir }) {
+function ArrowBtn({ onClick, dir, isMobile }) {
   return (
     <button
       onClick={onClick}
       style={{
         position:             "absolute",
-        [dir === "left" ? "left" : "right"]: "2.5vw",
+        [dir === "left" ? "left" : "right"]: isMobile ? "3vw" : "2.5vw",
         top:                  "50%",
         transform:            "translateY(-50%)",
         zIndex:               20,
-        width:                "54px",
-        height:               "54px",
+        width:                isMobile ? "36px" : "54px",
+        height:               isMobile ? "36px" : "54px",
         borderRadius:         "50%",
         background:           "rgba(255,255,255,0.12)",
         backdropFilter:       "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
         border:               "1px solid rgba(255,255,255,0.24)",
         color:                "rgba(255,255,255,0.88)",
-        fontSize:             "1.8rem",
+        fontSize:             isMobile ? "1.3rem" : "1.8rem",
         cursor:               "pointer",
         display:              "flex",
         alignItems:           "center",
@@ -291,6 +291,14 @@ export function ProjectsPage() {
   const dragRef  = useRef(null)
   const touchRef = useRef(null)
   const { navigate } = useRouter()
+
+  /* Mobile detection — phones only (< 640px). Desktop stays untouched. */
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
 
   const prev = () => setCurrent(i => (i - 1 + N) % N)
   const next = () => setCurrent(i => (i + 1) % N)
@@ -349,6 +357,10 @@ export function ProjectsPage() {
         .proj-card:hover .proj-img-float {
           animation-play-state: paused;
         }
+        /* Mobile — disable hover overlay (no hover on touch screens) */
+        @media (max-width: 639px) {
+          .proj-card:hover .proj-overlay { opacity: 0; pointer-events: none; }
+        }
 
         .proj-card { position: relative; }
         .proj-overlay {
@@ -396,8 +408,8 @@ export function ProjectsPage() {
                   position:             "absolute",
                   left:                 "50%",
                   top:                  "50%",
-                  width:                "clamp(480px, 62vw, 880px)",
-                  height:               "clamp(380px, 76vh, 760px)",
+                  width:                isMobile ? "82vw" : "clamp(480px, 62vw, 880px)",
+                  height:               isMobile ? "clamp(280px, 55vh, 400px)" : "clamp(380px, 76vh, 760px)",
                   borderRadius:         "28px",
                   background:           "rgba(255,255,255,0.07)",
                   backdropFilter:       "blur(24px)",
@@ -407,6 +419,8 @@ export function ProjectsPage() {
                     ? "0 28px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.14)"
                     : "0 10px 30px rgba(0,0,0,0.22)",
                   overflow:             "hidden",
+                  display:              "flex",
+                  flexDirection:        "column",
                   ...style,
                   transition:   "transform 0.6s cubic-bezier(0.4,0,0.2,1), filter 0.55s ease, opacity 0.5s ease, box-shadow 0.5s ease",
                   willChange:   "transform, filter, opacity",
@@ -418,37 +432,93 @@ export function ProjectsPage() {
                 onPointerMove={isFront ? onPointerMove : undefined}
                 onPointerUp={isFront   ? onPointerUp   : undefined}
                 onTouchStart={isFront  ? onTouchStart  : undefined}
-                onTouchEnd={isFront    ? onTouchEnd    : undefined}
+                onTouchEnd={isFront ? (e) => {
+                  if (touchRef.current === null) return
+                  const dx = e.changedTouches[0].clientX - touchRef.current
+                  touchRef.current = null
+                  if (dx < -60) next()
+                  else if (dx > 60) prev()
+                  else if (isMobile && Math.abs(dx) < 10) navigate(project.pageId) // tap = open project
+                } : undefined}
               >
-                {/* Project image — floats gently on the front card */}
-                <img
-                  src={project.image}
-                  alt={project.name || project.nameScript}
-                  draggable="false"
-                  className={isFront ? "proj-img-float" : ""}
-                  style={{
-                    width:         "100%",
-                    height:        "100%",
-                    objectFit:     "contain",
-                    objectPosition:"center center",
-                    display:       "block",
-                    userSelect:    "none",
-                    pointerEvents: "none",
-                  }}
-                />
+                {/* ── Image zone — fills card minus the info bar ── */}
+                <div style={{
+                  position:   "relative",
+                  flex:       1,
+                  minHeight:  0,
+                  overflow:   "hidden",
+                }}>
+                  <img
+                    src={project.image}
+                    alt={project.name || project.nameScript}
+                    draggable="false"
+                    className={isFront ? "proj-img-float" : ""}
+                    style={{
+                      width:          "100%",
+                      height:         "100%",
+                      objectFit:      "contain",
+                      objectPosition: "center center",
+                      display:        "block",
+                      userSelect:     "none",
+                      pointerEvents:  "none",
+                      padding:        isMobile ? "12px 12px 0" : "20px 20px 0",
+                    }}
+                  />
 
-                {/* Hover overlay — project info */}
-                <CardOverlay
-                  project={project}
-                  onViewProject={() => navigate(project.pageId)}
-                />
+                  {/* Hover overlay — project info (covers image zone only) */}
+                  <CardOverlay
+                    project={project}
+                    onViewProject={() => navigate(project.pageId)}
+                  />
+                </div>
+
+                {/* ── Persistent info bar ── */}
+                <div style={{
+                  flexShrink:    0,
+                  padding:       isMobile ? "10px 16px 12px" : "13px 24px 15px",
+                  background:    "rgba(255,255,255,0.06)",
+                  backdropFilter:"blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  borderTop:     "1px solid rgba(255,255,255,0.18)",
+                  display:       "flex",
+                  flexDirection: "column",
+                  gap:           "2px",
+                }}>
+                  <p style={{
+                    margin:        0,
+                    color:         "#fff",
+                    fontWeight:    700,
+                    fontSize:      isMobile ? "0.95rem" : "clamp(0.95rem, 1.3vw, 1.15rem)",
+                    letterSpacing: "0.01em",
+                    lineHeight:    1.2,
+                    whiteSpace:    "nowrap",
+                    overflow:      "hidden",
+                    textOverflow:  "ellipsis",
+                  }}>
+                    {project.nameScript
+                      ? `${project.nameScript} ${project.namePlain}`
+                      : project.name}
+                  </p>
+                  <p style={{
+                    margin:        0,
+                    color:         "rgba(255,255,255,0.55)",
+                    fontWeight:    500,
+                    fontSize:      isMobile ? "0.72rem" : "clamp(0.72rem, 0.9vw, 0.82rem)",
+                    letterSpacing: "0.04em",
+                    whiteSpace:    "nowrap",
+                    overflow:      "hidden",
+                    textOverflow:  "ellipsis",
+                  }}>
+                    {project.category}
+                  </p>
+                </div>
               </div>
             )
           })}
 
           {/* ── Navigation arrows ── */}
-          <ArrowBtn onClick={prev} dir="left"  />
-          <ArrowBtn onClick={next} dir="right" />
+          <ArrowBtn onClick={prev} dir="left"  isMobile={isMobile} />
+          <ArrowBtn onClick={next} dir="right" isMobile={isMobile} />
 
           {/* ── Dot indicators ── */}
           <div style={{

@@ -18,7 +18,8 @@
      drifting but very slow.  Each arc takes 8–15 seconds to complete.
 ─────────────────────────────────────────────────────────────────────────── */
 import { useRef, useEffect } from "react"
-import { useTheme } from "../lib/theme-context"
+import { useTheme }   from "../lib/theme-context"
+import { useRouter }  from "../lib/router-context"
 
 /* homeEdge: which wall this blob lives near
    morph:    which CSS border-radius animation (1–5)                        */
@@ -118,13 +119,53 @@ const NOISE      = 0.005  // Brownian noise — prevents exact periodic paths
 const JITTER     = 0.06   // random nudge on wall bounce (breaks corner ping-pong)
 
 export function SideBlobs() {
-  const { themeName }  = useTheme()
-  const colors         = THEME_COLORS[themeName] ?? THEME_COLORS.pink
+  const { themeName } = useTheme()
+  const { page }      = useRouter()
+  const colors        = THEME_COLORS[themeName] ?? THEME_COLORS.pink
+  const isHome        = page === "home"
 
-  const elRefs = useRef([])
-  const state  = useRef([])
-  const mouse  = useRef({ x: -9999, y: -9999 })
-  const raf    = useRef(null)
+  const elRefs       = useRef([])
+  const state        = useRef([])
+  const mouse        = useRef({ x: -9999, y: -9999 })
+  const raf          = useRef(null)
+  const containerRef = useRef(null)
+  const isHomeRef    = useRef(isHome)   // stable ref so scroll handler stays current
+  isHomeRef.current  = isHome
+
+  /* ── Scroll-based fade + blur ─────────────────────────────────────────────
+     Home page  : blobs start crystal-clear at the hero, then blur as the
+                  user scrolls past it (progress 0 → 1 over one viewport).
+     Other pages: no hero to showcase — blobs start already softened
+                  (base progress = 0.55) and blur a little more on scroll.
+     Direct DOM write — zero re-renders, runs alongside the physics RAF.    */
+  const applyBlur = useRef(null)
+  applyBlur.current = () => {
+    const el = containerRef.current
+    if (!el) return
+    const scrollProgress = Math.min(1, window.scrollY / window.innerHeight)
+    // Non-home pages start at a 0.55 floor so blobs are always subtle
+    const progress = isHomeRef.current
+      ? scrollProgress
+      : Math.max(0.55, scrollProgress)
+    el.style.opacity = String(1 - progress * 0.65)
+    el.style.filter  = progress > 0.02
+      ? `blur(${(progress * 14).toFixed(1)}px)`
+      : "none"
+  }
+
+  useEffect(() => {
+    const handler = () => applyBlur.current()
+    // Apply immediately on mount (handles non-home pages & page navigations)
+    handler()
+    window.addEventListener("scroll", handler, { passive: true })
+    return () => window.removeEventListener("scroll", handler)
+  }, [])   // runs once; isHomeRef stays up-to-date via the ref
+
+  // Re-apply whenever the page changes (router navigation resets scrollY to 0)
+  useEffect(() => {
+    applyBlur.current()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   useEffect(() => {
     state.current = BLOBS.map(b => ({
@@ -253,57 +294,62 @@ export function SideBlobs() {
   }, [])
 
   return (
-    /* z-index: -5 keeps SideBlobs:
-         • ABOVE the gradient LavaBackground (which is at z-index: -10)
-         • BELOW every piece of page content — sections with `relative` but
-           no explicit z-index sit at z-index: auto (above negative values),
-           so all text, cards, hero blobs, navbar (z-50) are in front.     */
+    /* Outer div — receives scroll-driven opacity + blur via containerRef.
+       Starts fully visible; fades and softens as user scrolls past the hero.
+       z-index: -5 keeps blobs above the gradient background but below all content. */
     <div
+      ref={containerRef}
       className="fixed inset-0 pointer-events-none overflow-hidden"
-      style={{ zIndex: -5, filter: "url(#metaball-goo)" }}
+      style={{ zIndex: -5 }}
     >
-      <svg className="absolute w-0 h-0" aria-hidden="true">
-        <defs>
-          <filter
-            id="metaball-goo"
-            x="-30%" y="-30%"
-            width="160%" height="160%"
-            colorInterpolationFilters="sRGB"
-          >
-            <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
-            <feColorMatrix
-              in="blur"
-              type="matrix"
-              values="1 0 0 0 0
-                      0 1 0 0 0
-                      0 0 1 0 0
-                      0 0 0 28 -12"
-              result="goo"
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
+      {/* Inner div — metaball goo filter runs here, isolated from the scroll blur */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{ filter: "url(#metaball-goo)" }}
+      >
+        <svg className="absolute w-0 h-0" aria-hidden="true">
+          <defs>
+            <filter
+              id="metaball-goo"
+              x="-30%" y="-30%"
+              width="160%" height="160%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
+              <feColorMatrix
+                in="blur"
+                type="matrix"
+                values="1 0 0 0 0
+                        0 1 0 0 0
+                        0 0 1 0 0
+                        0 0 0 28 -12"
+                result="goo"
+              />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </defs>
+        </svg>
 
-      {BLOBS.map((b, i) => {
-        const morphN = b.morph
-        const dur    = MORPH_DURATIONS[(i + morphN) % MORPH_DURATIONS.length]
-        const delay  = -(i * 1.8)
-        return (
-          <div
-            key={i}
-            ref={el => { elRefs.current[i] = el }}
-            className="absolute top-0 left-0"
-            style={{
-              width:      b.r * 2,
-              height:     b.r * 2,
-              background: colors[i % colors.length],
-              willChange: "transform",
-              animation:  `morph-blob-${morphN} ${dur}s ease-in-out ${delay}s infinite`,
-            }}
-          />
-        )
-      })}
+        {BLOBS.map((b, i) => {
+          const morphN = b.morph
+          const dur    = MORPH_DURATIONS[(i + morphN) % MORPH_DURATIONS.length]
+          const delay  = -(i * 1.8)
+          return (
+            <div
+              key={i}
+              ref={el => { elRefs.current[i] = el }}
+              className="absolute top-0 left-0"
+              style={{
+                width:      b.r * 2,
+                height:     b.r * 2,
+                background: colors[i % colors.length],
+                willChange: "transform",
+                animation:  `morph-blob-${morphN} ${dur}s ease-in-out ${delay}s infinite`,
+              }}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }

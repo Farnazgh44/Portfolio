@@ -13,6 +13,9 @@ const INITIAL_BLOBS = [
   { id: 4, x: 70, y: 75, w: 80,  h: 75,  anim: "blob-float-5", dur: 11 },
 ]
 
+/* Mobile only shows 1 blob — reduces visual clutter on small screens */
+const MOBILE_BLOB_IDS = new Set([0])
+
 /* Hero blob colour gradients — one set per theme.
    Deliberately DEEPER / RICHER than the background SideBlobs so the two
    layers read as distinct: vivid bg dots → richer draggable hero blobs.  */
@@ -94,6 +97,7 @@ function DraggableBlob({ blob, containerRef }) {
   }, [pos, containerRef])
 
   const handleTouchStart = useCallback((e) => {
+    e.preventDefault()   // prevent page scroll taking over the drag
     e.stopPropagation()
     const touch = e.touches[0]
     setDragging(true)
@@ -133,6 +137,7 @@ function DraggableBlob({ blob, containerRef }) {
 
     const onMouseMove = (e) => handleMove(e.clientX, e.clientY)
     const onTouchMove = (e) => {
+      e.preventDefault()  // prevent scroll while dragging a blob on mobile
       const touch = e.touches[0]
       handleMove(touch.clientX, touch.clientY)
     }
@@ -144,7 +149,7 @@ function DraggableBlob({ blob, containerRef }) {
 
     window.addEventListener("mousemove", onMouseMove)
     window.addEventListener("mouseup", onEnd)
-    window.addEventListener("touchmove", onTouchMove, { passive: true })
+    window.addEventListener("touchmove", onTouchMove, { passive: false }) // non-passive so preventDefault works
     window.addEventListener("touchend", onEnd)
 
     return () => {
@@ -215,6 +220,14 @@ export function HeroSection() {
     return () => window.removeEventListener("resize", check)
   }, [])
 
+  /* Mobile detection — phone-only font/layout overrides */
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
   /* Animation phase:
      0 = waiting  1 = "Hello, I'm"  2 = "Farnaz"
      3 = subtitle  4 = description  5 = buttons visible */
@@ -237,7 +250,21 @@ export function HeroSection() {
   }, [phase])
 
   return (
-    <section className="relative h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative h-[75vh] sm:h-screen flex items-center pt-20 overflow-hidden">
+      <style>{`
+        @keyframes heroArrowBounce {
+          0%, 100% { transform: translateY(0);    opacity: 0.55; }
+          50%       { transform: translateY(10px); opacity: 1;    }
+        }
+        @keyframes heroArrowGlow {
+          0%, 100% { filter: drop-shadow(0 0 4px rgba(255,255,255,0.35)) drop-shadow(0 0 10px rgba(200,160,255,0.25)); }
+          50%       { filter: drop-shadow(0 0 10px rgba(255,255,255,0.75)) drop-shadow(0 0 22px rgba(200,160,255,0.55)); }
+        }
+        @keyframes heroArrowFadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to   { opacity: 1; transform: translateY(0);     }
+        }
+      `}</style>
 
       {/* ── Mobile only: blobs float freely behind text ── */}
       <div
@@ -245,26 +272,28 @@ export function HeroSection() {
         className="sm:hidden absolute inset-0 w-full h-full"
         style={{ filter: "url(#gooey)", zIndex: 0 }}
       >
-        {INITIAL_BLOBS.map((blob, i) => (
+        {INITIAL_BLOBS.filter(b => MOBILE_BLOB_IDS.has(b.id)).map((blob, i) => (
           <DraggableBlob
             key={blob.id}
-            blob={{ ...blob, color: heroColors[i] }}
+            blob={{ ...blob, color: heroColors[blob.id] }}
             containerRef={blobContainerRef}
           />
         ))}
       </div>
 
       {/* content-wrap — shifted up slightly so text sits above the vertical centre */}
-      <div className="content-wrap w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-10 lg:gap-16 -mt-12">
+      <div className="content-wrap w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 md:gap-10 lg:gap-16"
+        style={{ marginTop: isMobile ? "3rem" : "-3rem" }}
+      >
 
         {/* ── Left: text column ── */}
-        <div className="hero-text-content relative z-10 min-w-0 w-full sm:flex-1">
+        <div className="hero-text-content relative z-10 min-w-0 w-full sm:flex-1 pl-6 sm:pl-0">
 
           {/* "Hello, I'm" */}
           <SplitText
             text="Hello, I'm"
-            className="text-white/90 text-sm sm:text-base md:text-lg mb-0"
-            style={isWide ? { fontSize: "2.5rem", marginBottom: "0" } : { marginBottom: "0" }}
+            className="text-white/90 text-base sm:text-base md:text-lg mb-0"
+            style={isWide ? { fontSize: "2.5rem", marginBottom: "0" } : { marginBottom: "0", ...(isMobile ? { fontSize: "1.1rem" } : {}) }}
             delay={22}
             duration={0.4}
             ease="power3.out"
@@ -281,7 +310,9 @@ export function HeroSection() {
             className="font-bold text-white mb-2"
             style={isWide
               ? { fontSize: "10rem", marginBottom: "1.5rem", marginTop: "-0.35em" }
-              : { fontSize: "clamp(2.2rem, 7vw, 6rem)", marginTop: "-0.28em" }
+              : isMobile
+                ? { fontSize: "3.8rem", marginTop: "-0.28em" }
+                : { fontSize: "clamp(2.2rem, 7vw, 6rem)", marginTop: "-0.28em" }
             }
             delay={45}
             duration={0.5}
@@ -296,10 +327,10 @@ export function HeroSection() {
           {/* "UI/UX & Digital Designer" */}
           <SplitText
             text="UI/UX & Digital Designer"
-            className="text-base sm:text-lg md:text-xl font-semibold text-white/90 mb-3"
+            className="text-lg sm:text-lg md:text-xl font-semibold text-white/90 mb-3"
             style={isWide
               ? { fontSize: "3rem", marginBottom: "1.5rem", whiteSpace: "nowrap" }
-              : {}
+              : isMobile ? { fontSize: "1.15rem" } : {}
             }
             delay={18}
             duration={0.4}
@@ -313,12 +344,13 @@ export function HeroSection() {
 
           {/* Description — block fade-in (body text looks best as a unit, not per-char) */}
           <p
-            className="text-white/70 text-xs sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 max-w-[75%] sm:max-w-md"
+            className="text-white/70 text-sm sm:text-sm md:text-base leading-relaxed mb-6 sm:mb-8 max-w-[80%] sm:max-w-md"
             style={{
               opacity:   phase >= 4 ? 1 : 0,
               transform: phase >= 4 ? "translateY(0)" : "translateY(14px)",
               transition: "opacity 0.45s cubic-bezier(0.215,0.61,0.355,1), transform 0.45s cubic-bezier(0.215,0.61,0.355,1)",
               ...(isWide ? { fontSize: "1.6rem", lineHeight: "2.2", maxWidth: "680px", marginBottom: "3rem" } : {}),
+              ...(isMobile ? { fontSize: "0.88rem", maxWidth: "100%" } : {}),
             }}
           >
             Based in Vancouver, creating visually engaging and user-centered digital experiences.
@@ -355,6 +387,34 @@ export function HeroSection() {
               About Me
             </BlobButton>
           </div>
+
+          {/* ── Scroll-down arrow ── */}
+          {showButtons && (
+            <div style={{
+              marginTop:  isMobile ? "32px" : "48px",
+              animation:  "heroArrowFadeIn 0.7s cubic-bezier(0.23,1,0.32,1) 0.5s both",
+              display:    "flex",
+              alignItems: "center",
+              gap:        "10px",
+            }}>
+              <div style={{
+                animation: "heroArrowBounce 1.8s ease-in-out infinite, heroArrowGlow 1.8s ease-in-out infinite",
+              }}>
+                <svg width={isMobile ? "30" : "38"} height={isMobile ? "30" : "38"} viewBox="0 0 38 38" fill="none">
+                  <path d="M8 12L19 26L30 12" stroke="rgba(255,255,255,0.85)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <span style={{
+                color:         "rgba(255,255,255,0.45)",
+                fontSize:      isMobile ? "0.72rem" : "0.82rem",
+                letterSpacing: "0.10em",
+                textTransform: "uppercase",
+                fontWeight:    500,
+              }}>
+                Scroll
+              </span>
+            </div>
+          )}
         </div>
 
         {/* ── Right: draggable lava blobs (desktop/tablet only) ── */}

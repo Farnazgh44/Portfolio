@@ -21,18 +21,26 @@ const STORY_SECTIONS = [
     imageScale: "100%",
   },
   {
+    title: "My Story",
+    paragraphs: [
+      "Since I was a child, I've always been passionate about art and drawing. I used to capture my experiences by turning them into visuals, telling stories through what I created.",
+      "As I grew older, I realized that this is what art truly means to me: communicating ideas and emotions through visuals.",
+      "Now, through UI/UX and digital design, I've found a way to bring that passion into a modern context — using my artistic background to create designs that are clear, meaningful, and interactive.",
+    ],
+    image: "/images/about-mystory.jpeg",
+    imagePosition: "center center",
+    imageScale: "110%",
+  },
+  {
     title: "What Drives Me",
-    text: "I believe great design has the power to make people's lives easier and more enjoyable. Every pixel I place, every interaction I craft, is driven by empathy for the end user. I'm motivated by the challenge of solving real problems through thoughtful, human-centered design.",
+    paragraphs: [
+      "I'm driven by creating designs that are both unique and purposeful.",
+      "I enjoy diving into existing designs, analyzing how they work, and exploring ways to improve them. This constant curiosity strengthens my critical thinking and pushes me to grow as a designer.",
+      "I like to challenge myself by rethinking how designs can be improved — both visually and functionally — to enhance the overall user experience and create more engaging, effective interfaces.",
+    ],
     image: "/images/about-whatdrivesme.jpeg",
     imagePosition: "center 80%",
     imageScale: "140%",
-  },
-  {
-    title: "Beyond Design",
-    text: "When I'm not designing, you'll find me exploring new cities, trying out local cuisines, or getting lost in a good video game. I believe that diverse experiences fuel creativity, and everything I do outside of work inspires the stories I tell through design.",
-    image: "/images/about-beyonddesign.jpeg",
-    imagePosition: "center 15%",
-    imageScale: "110%",
   },
 ]
 
@@ -189,11 +197,19 @@ function AboutHero() {
   const [settled, setSettled] = useState(false)
   /* showButtons → buttons pop up after text has landed */
   const [showButtons, setShowButtons] = useState(false)
+  /* isMobile — phones only (<640px) */
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
 
   useEffect(() => {
     const t1 = setTimeout(() => setSettled(true), 80)
     const t2 = setTimeout(() => setShowButtons(true), 650)
     return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [])
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
   }, [])
 
   /* Container ref for VariableProximity mouse tracking */
@@ -203,105 +219,13 @@ function AboutHero() {
   const slideEase = "transform 0.85s cubic-bezier(0.23, 1, 0.32, 1)"
 
   return (
-    <section className="relative h-screen flex items-center px-4 md:px-8 pt-20 overflow-hidden">
-      {/* Always side-by-side: text 3/4, photo 1/4 on mobile; text flex-1, photo fixed on desktop */}
-      <div className="max-w-6xl mx-auto w-full flex flex-row items-stretch gap-3 md:gap-8">
-        {/* Text — no box, raw layout, capped to <50% screen */}
+    <section className="relative h-screen flex items-start sm:items-center px-4 md:px-8 pt-20 sm:pt-20 overflow-hidden">
+      {/* Mobile: photo on top, text+buttons below. Desktop: side-by-side */}
+      <div className="max-w-6xl mx-auto w-full flex flex-col sm:flex-row items-stretch gap-3 md:gap-8">
+
+        {/* Photo — TOP on mobile (order-1), RIGHT on desktop (order-2) */}
         <div
-          className="p-3 sm:p-4 md:p-5 flex-none flex flex-col justify-between
-                     w-[48%] sm:w-[50%] md:w-[50%] h-[260px] sm:h-[400px] md:h-[560px]"
-        >
-          <div className="flex flex-col h-full justify-between">
-
-            {/* Heading — slides in from left first */}
-            <div
-              style={{
-                fontSize: "clamp(2rem, 4.5vw, 5rem)",
-                lineHeight: 1.1,
-                whiteSpace: "nowrap",
-                transform: settled ? "translateX(0)" : "translateX(-110vw)",
-                opacity: settled ? 1 : 0,
-                transition: `${slideEase}, opacity 0.6s ease`,
-              }}
-            >
-              <AutoBlobText
-                text="About Me"
-                as="h2"
-                className="text-white font-bold mb-2 sm:mb-5"
-                filterId="goo-about-heading"
-                startDelay={950}
-              />
-            </div>
-
-            {/* Body text — slides in from left slightly after heading */}
-            <div
-              ref={proximityRef}
-              className="flex-1 min-h-0 overflow-visible"
-              style={{
-                transform: settled ? "translateX(0)" : "translateX(-110vw)",
-                opacity: settled ? 1 : 0,
-                transition: `transform 0.85s 0.12s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s 0.12s ease`,
-              }}
-            >
-              <VariableProximity
-                label="Welcome to my portfolio — I'm Farnaz Gholami, a UI/UX & Digital Designer based in Vancouver, BC."
-                className="text-white/80 text-xs sm:text-base leading-snug sm:leading-relaxed mb-1 sm:mb-3 font-medium"
-                fromFontVariationSettings="'wght' 300"
-                toFontVariationSettings="'wght' 800"
-                containerRef={proximityRef}
-                radius={120}
-                falloff="linear"
-              />
-              <VariableProximity
-                label="With a strong background in art — something that has been part of my life since childhood — and my education in New Media Design and Web Development at BCIT, I've been able to combine creativity with technology."
-                className="hidden sm:block text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
-                fromFontVariationSettings="'wght' 300"
-                toFontVariationSettings="'wght' 800"
-                containerRef={proximityRef}
-                radius={120}
-                falloff="linear"
-              />
-              <VariableProximity
-                label="I'm passionate about designing user-friendly, visually engaging experiences that are not only beautiful, but meaningful. I enjoy creating designs that balance aesthetics with functionality to truly connect with users."
-                className="hidden sm:block text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
-                fromFontVariationSettings="'wght' 300"
-                toFontVariationSettings="'wght' 800"
-                containerRef={proximityRef}
-                radius={120}
-                falloff="linear"
-              />
-            </div>
-
-            {/* Buttons — each pops up with a staggered delay */}
-            <div className="flex items-center gap-1 sm:gap-3 mt-2 sm:mt-4 flex-wrap" style={{ zIndex: 10 }}>
-              {[
-                { label: "Why Liquid Morphism?", id: "my-story" },
-                { label: "Values",               id: "values"   },
-                { label: "Hobbies",              id: "hobbies"  },
-              ].map(({ label, id }, i) => (
-                <BlobButton
-                  key={id}
-                  className="pill-btn-hover px-2 sm:px-8 py-1 sm:py-2.5 rounded-full text-[8px] sm:text-sm font-medium text-white/80 cursor-pointer whitespace-nowrap"
-                  onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
-                  style={{
-                    background: "rgba(255,255,255,0.12)",
-                    backdropFilter: "blur(10px)",
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    opacity: showButtons ? 1 : 0,
-                    transform: showButtons ? "translateY(0)" : "translateY(16px)",
-                    transition: `opacity 0.4s ${i * 0.1}s ease, transform 0.4s ${i * 0.1}s cubic-bezier(0.34, 1.56, 0.64, 1)`,
-                  }}
-                >
-                  {label}
-                </BlobButton>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Photo — slides in from right, then tilt-on-hover activates */}
-        <div
-          className="flex-none ml-auto"
+          className="order-1 sm:order-2 sm:flex-none sm:ml-auto w-full sm:w-auto"
           style={{
             transform: settled ? "translateX(0)" : "translateX(120vw)",
             transition: "transform 0.9s cubic-bezier(0.23, 1, 0.32, 1)",
@@ -309,15 +233,141 @@ function AboutHero() {
         >
           <TiltWrapper active={settled} amplitude={10}>
             <div
-              className="rounded-2xl overflow-hidden
-                         w-[42%] sm:w-auto md:w-[560px]
-                         h-[260px] sm:h-[400px] md:h-[600px]"
+              className="rounded-2xl overflow-hidden w-full sm:w-auto md:w-[560px] h-[260px] sm:h-[400px] md:h-[600px]"
               style={glassStyle}
             >
               <img src="/images/about-portrait.png" alt="Portrait of Farnaz" className="w-full h-full object-cover" />
             </div>
           </TiltWrapper>
         </div>
+
+        {/* Text — BOTTOM on mobile (order-2), LEFT on desktop (order-1) */}
+        <div
+          className="order-2 sm:order-1 flex-none flex flex-col gap-2 sm:gap-0 sm:justify-between
+                     w-full sm:w-[50%] md:w-[50%] h-auto sm:h-[400px] md:h-[560px] p-0 sm:p-4 md:p-5"
+        >
+          {/* Heading */}
+          <div
+            style={{
+              fontSize: isMobile ? "1.2rem" : "clamp(2rem, 4.5vw, 5rem)",
+              lineHeight: 1.1,
+              whiteSpace: "nowrap",
+              transform: settled ? "translateX(0)" : "translateX(-110vw)",
+              opacity: settled ? 1 : 0,
+              transition: `${slideEase}, opacity 0.6s ease`,
+            }}
+          >
+            <AutoBlobText
+              text="About Me"
+              as="h2"
+              className="text-white font-bold mb-1 sm:mb-5"
+              filterId="goo-about-heading"
+              startDelay={950}
+            />
+          </div>
+
+          {/* Body text */}
+          <div
+            ref={proximityRef}
+            className="sm:flex-1 sm:min-h-0 overflow-visible"
+            style={{
+              transform: settled ? "translateX(0)" : "translateX(-110vw)",
+              opacity: settled ? 1 : 0,
+              transition: `transform 0.85s 0.12s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s 0.12s ease`,
+              fontSize: isMobile ? "11px" : undefined,
+            }}
+          >
+            <VariableProximity
+              label="Welcome to my portfolio — I'm Farnaz Gholami, a UI/UX & Digital Designer based in Vancouver, BC."
+              className="text-white/80 text-[10px] sm:text-base leading-tight sm:leading-relaxed mb-1 sm:mb-3 font-medium"
+              fromFontVariationSettings="'wght' 300"
+              toFontVariationSettings="'wght' 800"
+              containerRef={proximityRef}
+              radius={120}
+              falloff="linear"
+            />
+            {isMobile && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "6px" }}>
+                <p style={{
+                  margin: 0,
+                  fontSize: "11px",
+                  lineHeight: 1.65,
+                  color: "rgba(255,255,255,0.72)",
+                  fontWeight: 400,
+                  letterSpacing: "0.01em",
+                }}>
+                  With a strong background in{" "}
+                  <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>art</span>
+                  {" "}— something that has been part of my life since childhood — and my education in{" "}
+                  <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>New Media Design & Web Development</span>
+                  {" "}at BCIT, I've been able to combine creativity with technology.
+                </p>
+                <p style={{
+                  margin: 0,
+                  fontSize: "11px",
+                  lineHeight: 1.65,
+                  color: "rgba(255,255,255,0.72)",
+                  fontWeight: 400,
+                  letterSpacing: "0.01em",
+                }}>
+                  I'm passionate about designing{" "}
+                  <span style={{ color: "rgba(255,255,255,0.95)", fontWeight: 600 }}>user-friendly, visually engaging</span>
+                  {" "}experiences that are not only beautiful, but{" "}
+                  <span style={{ fontStyle: "italic" }}>meaningful</span>
+                  {" "}— designs that balance aesthetics with functionality to truly connect with users.
+                </p>
+              </div>
+            )}
+            {!isMobile && (
+              <VariableProximity
+                label="With a strong background in art — something that has been part of my life since childhood — and my education in New Media Design and Web Development at BCIT, I've been able to combine creativity with technology."
+                className="text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
+                fromFontVariationSettings="'wght' 300"
+                toFontVariationSettings="'wght' 800"
+                containerRef={proximityRef}
+                radius={120}
+                falloff="linear"
+              />
+            )}
+            {!isMobile && (
+              <VariableProximity
+                label="I'm passionate about designing user-friendly, visually engaging experiences that are not only beautiful, but meaningful. I enjoy creating designs that balance aesthetics with functionality to truly connect with users."
+                className="text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
+                fromFontVariationSettings="'wght' 300"
+                toFontVariationSettings="'wght' 800"
+                containerRef={proximityRef}
+                radius={120}
+                falloff="linear"
+              />
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-4 flex-wrap" style={{ zIndex: 10 }}>
+            {[
+              { label: "Why Liquid Morphism?", id: "my-story" },
+              { label: "Values",               id: "values"   },
+              { label: "Hobbies",              id: "hobbies"  },
+            ].map(({ label, id }, i) => (
+              <BlobButton
+                key={id}
+                className="pill-btn-hover px-4 sm:px-8 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-white/80 cursor-pointer whitespace-nowrap"
+                onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
+                style={{
+                  background: "rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  opacity: showButtons ? 1 : 0,
+                  transform: showButtons ? "translateY(0)" : "translateY(16px)",
+                  transition: `opacity 0.4s ${i * 0.1}s ease, transform 0.4s ${i * 0.1}s cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                }}
+              >
+                {label}
+              </BlobButton>
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   )

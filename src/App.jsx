@@ -15,8 +15,8 @@ import { ProjectDetailPage } from "./pages/ProjectDetailPage"
 import { SugarCloudPage }    from "./pages/SugarCloudPage"
 import { AlpineLinkPage }    from "./pages/AlpineLinkPage"
 import { RedditPage }        from "./pages/RedditPage"
-import { CatHolderPage }     from "./pages/CatHolderPage"
-import { PerfumePage }       from "./pages/PerfumePage"
+import { DogwoodPage }       from "./pages/DogwoodPage"
+import { GamePage }          from "./pages/GamePage"
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -78,18 +78,18 @@ function PageRouter() {
     )
   }
 
-  if (page === "project-cat-holder") {
+  if (page === "project-dogwood") {
     return (
       <ErrorBoundary>
-        <CatHolderPage />
+        <DogwoodPage />
       </ErrorBoundary>
     )
   }
 
-  if (page === "project-perfume") {
+  if (page === "project-game") {
     return (
       <ErrorBoundary>
-        <PerfumePage />
+        <GamePage />
       </ErrorBoundary>
     )
   }
@@ -128,6 +128,7 @@ function PageRouter() {
 export default function App() {
   const [introComplete, setIntroComplete] = useState(false)
   const handleIntroDone = useCallback(() => setIntroComplete(true), [])
+  const isPointerDevice = window.matchMedia("(pointer: fine)").matches
 
   // Stamp data-wide on <html> so CSS can target 1920px+ without media query specificity issues
   useEffect(() => {
@@ -145,8 +146,8 @@ export default function App() {
         {/* Intro animation overlay */}
         {!introComplete && <IntroAnimation onComplete={handleIntroDone} />}
 
-        {/* Custom blob cursor (desktop only) */}
-        <BlobCursor />
+        {/* Custom blob cursor (desktop/mouse only — hidden on touch devices) */}
+        {isPointerDevice && <BlobCursor />}
 
         {/* Global SVG gradient for icon hover effects */}
         <svg className="absolute w-0 h-0" aria-hidden="true">

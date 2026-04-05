@@ -11,66 +11,43 @@ const glassStyle = {
 
 const INFO_CARDS = [
   {
-    title: "Why I Use AI",
+    title: "Why I Create These",
     body: [
-      "AI is becoming part of many industries, including design. I believe it's important to understand and use these tools rather than ignore them.",
-      "AI doesn't replace creativity, the vision still comes from the designer. As many professionals say, \"AI is not creativity by itself, it becomes creative when guided by human intention.\"",
-      "When used thoughtfully, AI becomes a creative partner for inspiration and new ideas.",
+      "Not every design needs to be a full case study. Some ideas stand on their own.",
+      "This space is a collection of finished pieces that explore different styles, visuals, and creative directions. While they're not part of larger projects, each one reflects my attention to detail and design thinking.",
+      "These works allow me to experiment, stay inspired, and keep creating without limits.",
     ],
   },
   {
-    title: "How I Use AI",
+    title: "How I Approach Them",
     body: [
-      "AI has become part of the modern creative process. Rather than replacing creativity, it expands it.",
-      "As a designer and developer, I use AI to explore ideas faster, visualize concepts, and experiment with new directions. Even when the results aren't exact, they often spark new inspiration.",
-      "For me, AI is a powerful tool for early-stage ideation and creative exploration.",
+      "These pieces are created through quick ideas, visual exploration, and a focus on aesthetics.",
+      "Some are standalone concepts, while others are small explorations of style or interaction. Even without a full process behind them, they help me refine my skills and push my creativity further.",
+      "For me, this is where design feels more open, flexible, and fun.",
     ],
   },
 ]
 
-/* ── Gallery data ──
-   Manually ordered to give each column a pleasant tall/short rhythm and
-   ensure neighbouring columns always have visually distinct aspect ratios.
-
-   col 0 (i%3=0): square → tall → square → wide → square → portrait → square
-   col 1 (i%3=1): very-tall → landscape → tall → square → portrait → square → portrait
-   col 2 (i%3=2): landscape → square → tall → square → square → landscape → portrait
+/* ── Gallery data — 7 images + 3 videos
+   Column assignment is index % 3, so:
+   col 0 → indices 0, 3, 6, 9
+   col 1 → indices 1, 4, 7, 10  ← Draft(6) at 4, Draft(7) at 7: stacked in same column
+   col 2 → indices 2, 5, 8
 */
 const GALLERY_ITEMS = [
-  // ── row 0 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI12.png", alt: "Woman putting on a diamond earring",       category: "Realistic" }, // col 0 – square
-  { src: "/images/AI4.png",  alt: "Pixel art kitchen scene",                  category: "Art"       }, // col 1 – very tall
-  { src: "/images/AI15.png", alt: "Pixel art vibrant sunset over the lake",   category: "Art"       }, // col 2 – landscape
-  // ── row 1 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI1.png",  alt: "Woman dancing in the rain",                category: "Realistic" }, // col 0 – tall portrait
-  { src: "/images/AI6.png",  alt: "Toronto skyline bursting through a map",   category: "Realistic" }, // col 1 – landscape/square
-  { src: "/images/AI10.png", alt: "3D onigiri character",                     category: "Art"       }, // col 2 – square
-  // ── row 2 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI16.png", alt: "Glittery millefeuille cake slice",         category: "Realistic" }, // col 0 – square
-  { src: "/images/AI8.png",  alt: "Pixel art rainy street at night",          category: "Art"       }, // col 1 – tall portrait
-  { src: "/images/AI3.png",  alt: "Cupcake Instagram 3D mockup",              category: "Art"       }, // col 2 – tall portrait
-  // ── row 3 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI17.png", alt: "Dreamy pink cherry blossom sky",           category: "Realistic" }, // col 0 – landscape (wide)
-  { src: "/images/AI13.png", alt: "Woman applying perfume by the window",     category: "Realistic" }, // col 1 – square
-  { src: "/images/AI20.png", alt: "Pink hazy road through pine trees",        category: "Realistic" }, // col 2 – square
-  // ── row 4 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI7.png",  alt: "Blue conditioner bottles on a beach",      category: "Texture"   }, // col 0 – square
-  { src: "/images/AI2.png",  alt: "Strawberry cake slice, painterly style",   category: "Realistic" }, // col 1 – portrait
-  { src: "/images/AI21.png", alt: "Neon crystal game controller",             category: "Texture"   }, // col 2 – square
-  // ── row 5 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI19.png", alt: "Cabin by a golden river at sunset",        category: "Realistic" }, // col 0 – portrait
-  { src: "/images/AI23.png", alt: "Cartoon sharks by an elevator",            category: "Art"       }, // col 1 – square
-  { src: "/images/AI14.png", alt: "Colourful Italian coastal village",        category: "Realistic" }, // col 2 – landscape/square
-  // ── row 6 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI5.png",  alt: "Glass letter F filled with strawberries",  category: "Texture"   }, // col 0 – square
-  { src: "/images/AI11.png", alt: "Pixel art cozy bedroom at night",          category: "Art"       }, // col 1 – portrait
-  { src: "/images/AI9.png",  alt: "Pixel art burger and fries combo",         category: "Art"       }, // col 2 – portrait
-  // ── row 7 ──────────────────────────────────────────────────────────────────
-  { src: "/images/AI18.png", alt: "Anime girl with a blue drink",             category: "Art"       }, // col 0 – portrait
-  { src: "/images/AI22.png", alt: "Cherry blossom walkway by the river",      category: "Realistic" }, // col 1 – tall portrait
+  { type: "image", src: "/images/Draft (1).png", alt: "Draft 1",  category: "Illustration"   }, // col 0
+  { type: "image", src: "/images/Draft (2).png", alt: "Draft 2",  category: "Illustration"   }, // col 1
+  { type: "video", src: "/videos/Draft (1).mp4", alt: "Draft V1", category: "Motion graphic" }, // col 2
+  { type: "image", src: "/images/Draft (3).png", alt: "Draft 3",  category: "3D"             }, // col 0
+  { type: "image", src: "/images/Draft (6).png", alt: "Draft 6",  category: "3D"             }, // col 1 ← Draft 6 first
+  { type: "video", src: "/videos/Draft (2).mp4", alt: "Draft V2", category: "Motion graphic" }, // col 2
+  { type: "image", src: "/images/Draft (4).png", alt: "Draft 4",  category: "3D"             }, // col 0
+  { type: "image", src: "/images/Draft (7).png", alt: "Draft 7",  category: "Illustration"   }, // col 1 ← Draft 7 directly below Draft 6
+  { type: "video", src: "/videos/Draft (3).mp4", alt: "Draft V3", category: "Motion graphic" }, // col 2
+  { type: "image", src: "/images/Draft (5).png", alt: "Draft 5",  category: "Illustration"   }, // col 0
 ]
 
-const CATEGORIES = ["All", "Realistic", "Art", "Texture"]
+const CATEGORIES = ["All", "Illustration", "Motion graphic", "3D"]
 
 export function AIPage() {
   const [settled, setSettled]     = useState(false)
@@ -114,6 +91,10 @@ export function AIPage() {
 
   return (
     <main className="relative min-h-screen flex flex-col">
+      <style>{`
+        @keyframes fadeIn      { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes lightboxPop { from { opacity: 0; transform: scale(0.88) } to { opacity: 1; transform: scale(1) } }
+      `}</style>
       <SideBlobs />
 
       {/* ── Hero section ── */}
@@ -138,7 +119,7 @@ export function AIPage() {
                 whiteSpace:  "nowrap",
               }}
             >
-              Designing with AI
+              Drafting Ideas
             </h1>
 
             {/* Subheading */}
@@ -150,7 +131,7 @@ export function AIPage() {
                 letterSpacing: "0.01em",
               }}
             >
-              AI Generated Images and Videos
+              A Collection of Visual Explorations
             </p>
 
             {/* Quote */}
@@ -170,7 +151,7 @@ export function AIPage() {
                   fontStyle:  "italic",
                 }}
               >
-                "AI will not replace designers, but designers who use AI will replace those who don't."
+                "Not every idea needs a full story to have meaning."
               </p>
             </blockquote>
           </div>
@@ -201,15 +182,21 @@ export function AIPage() {
                 >
                   {card.title}
                 </h3>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                   {card.body.map((para, pi) => (
                     <p
                       key={pi}
                       style={{
-                        fontSize:   "clamp(0.78rem, 1vw, 0.88rem)",
-                        color:      "rgba(255,255,255,0.65)",
-                        lineHeight: 1.65,
+                        fontSize:   pi === 0
+                          ? "clamp(0.83rem, 1.05vw, 0.93rem)"
+                          : "clamp(0.78rem, 1vw, 0.88rem)",
+                        color:      pi === 0
+                          ? "rgba(255,255,255,0.88)"
+                          : "rgba(255,255,255,0.60)",
+                        fontWeight: pi === 0 ? 500 : 400,
+                        lineHeight: 1.70,
                         margin:     0,
+                        paddingBottom: pi === 0 ? "2px" : 0,
                       }}
                     >
                       {para}
@@ -241,10 +228,10 @@ export function AIPage() {
               className="text-white font-bold mb-1"
               style={{ fontSize: "clamp(1.6rem, 3vw, 2.8rem)", lineHeight: 1.15 }}
             >
-              AI Gallery
+              Gallery
             </h2>
             <p style={{ fontSize: "clamp(0.82rem, 1.1vw, 0.95rem)", color: "rgba(255,255,255,0.45)" }}>
-              A collection of images and visuals created with the help of AI tools
+              Pieces that explore style, visuals, and creative direction
             </p>
           </div>
 
@@ -279,7 +266,7 @@ export function AIPage() {
             ))}
           </div>
 
-          {/* Masonry grid – explicit 3-column flex so we control which image goes in which column */}
+          {/* Masonry grid – 3-column flex, images and videos supported */}
           {(() => {
             const NUM_COLS = 3
             const cols = Array.from({ length: NUM_COLS }, () => [])
@@ -306,6 +293,7 @@ export function AIPage() {
                           opacity:      galleryVisible ? 1 : 0,
                           transform:    galleryVisible ? "scale(1)" : "scale(0.96)",
                           transitionDelay: `${(ci * 0.08 + globalIdx * 0.03).toFixed(2)}s`,
+                          background:   "rgba(0,0,0,0.25)",
                         }}
                         onMouseEnter={e => {
                           e.currentTarget.style.transform = "scale(1.025)"
@@ -316,12 +304,52 @@ export function AIPage() {
                           e.currentTarget.style.boxShadow = "none"
                         }}
                       >
-                        <img
-                          src={item.src}
-                          alt={item.alt}
-                          loading="lazy"
-                          style={{ display: "block", width: "100%", height: "auto" }}
-                        />
+                        {item.type === "video" ? (
+                          <>
+                            <video
+                              src={item.src}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              style={{ display: "block", width: "100%", height: "auto", pointerEvents: "none" }}
+                            />
+                            {/* Play icon overlay */}
+                            <div style={{
+                              position: "absolute", inset: 0,
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              background: "rgba(0,0,0,0)", transition: "background 0.2s",
+                            }}
+                              onMouseEnter={e => e.currentTarget.style.background = "rgba(0,0,0,0.30)"}
+                              onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0)"}
+                            >
+                              <div style={{
+                                width: "48px", height: "48px", borderRadius: "50%",
+                                background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)",
+                                border: "1px solid rgba(255,255,255,0.30)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                opacity: 0, transition: "opacity 0.2s",
+                              }}
+                                ref={el => {
+                                  if (!el) return
+                                  el.parentElement.addEventListener("mouseenter", () => el.style.opacity = "1")
+                                  el.parentElement.addEventListener("mouseleave", () => el.style.opacity = "0")
+                                }}
+                              >
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="white">
+                                  <path d="M5 3l11 6-11 6V3z"/>
+                                </svg>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <img
+                            src={item.src}
+                            alt={item.alt}
+                            loading="lazy"
+                            style={{ display: "block", width: "100%", height: "auto" }}
+                          />
+                        )}
                       </div>
                     ))}
                   </div>
@@ -333,16 +361,16 @@ export function AIPage() {
         </div>
       </section>
 
-      {/* ── Lightbox ── */}
+      {/* ── Lightbox — supports both images and videos ── */}
       {lightbox && (
         <div
           onClick={() => setLightbox(null)}
           style={{
             position:   "fixed",
             inset:      0,
-            background: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
+            background: "rgba(0,0,0,0.88)",
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
             zIndex:     9999,
             display:    "flex",
             alignItems: "center",
@@ -352,63 +380,66 @@ export function AIPage() {
             animation:  "fadeIn 0.2s ease",
           }}
         >
-          <div
-            onClick={e => e.stopPropagation()}
+          {/* Close button */}
+          <button
+            onClick={() => setLightbox(null)}
             style={{
-              position:    "relative",
-              maxWidth:    "min(90vw, 900px)",
-              maxHeight:   "85vh",
-              cursor:      "default",
-              animation:   "lightboxPop 0.3s cubic-bezier(0.23,1,0.32,1)",
+              position:    "absolute",
+              top:         "clamp(16px,3vh,28px)",
+              right:       "clamp(16px,3vw,28px)",
+              width:       "44px",
+              height:      "44px",
+              borderRadius: "50%",
+              border:      "1px solid rgba(255,255,255,0.22)",
+              background:  "rgba(255,255,255,0.12)",
+              backdropFilter: "blur(12px)",
+              color:       "#fff",
+              fontSize:    "20px",
+              cursor:      "pointer",
+              display:     "flex",
+              alignItems:  "center",
+              justifyContent: "center",
+              lineHeight:  1,
+              zIndex:      10000,
+              transition:  "background 0.2s",
             }}
-          >
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.24)"}
+            onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+          >✕</button>
+
+          {lightbox.type === "video" ? (
+            <video
+              src={lightbox.src}
+              autoPlay
+              loop
+              controls
+              onClick={e => e.stopPropagation()}
+              style={{
+                maxWidth:     "90vw",
+                maxHeight:    "85vh",
+                borderRadius: "16px",
+                boxShadow:    "0 30px 80px rgba(0,0,0,0.65)",
+                cursor:       "default",
+                animation:    "lightboxPop 0.3s cubic-bezier(0.23,1,0.32,1)",
+              }}
+            />
+          ) : (
             <img
               src={lightbox.src}
               alt={lightbox.alt}
+              onClick={e => e.stopPropagation()}
               style={{
-                display:     "block",
-                maxWidth:    "100%",
-                maxHeight:   "80vh",
+                display:      "block",
+                maxWidth:     "90vw",
+                maxHeight:    "85vh",
                 borderRadius: "16px",
-                boxShadow:   "0 24px 80px rgba(0,0,0,0.7)",
-                border:      "1px solid rgba(255,255,255,0.12)",
+                objectFit:    "contain",
+                boxShadow:    "0 30px 80px rgba(0,0,0,0.65)",
+                cursor:       "default",
+                animation:    "lightboxPop 0.3s cubic-bezier(0.23,1,0.32,1)",
               }}
             />
-            {/* Caption */}
-            <p
-              style={{
-                textAlign:  "center",
-                marginTop:  "12px",
-                fontSize:   "0.85rem",
-                color:      "rgba(255,255,255,0.6)",
-              }}
-            >
-              {lightbox.alt}
-            </p>
-            {/* Close button */}
-            <button
-              onClick={() => setLightbox(null)}
-              style={{
-                position:    "absolute",
-                top:         "-14px",
-                right:       "-14px",
-                width:       "36px",
-                height:      "36px",
-                borderRadius: "50%",
-                border:      "1px solid rgba(255,255,255,0.25)",
-                background:  "rgba(30,20,60,0.9)",
-                color:       "#fff",
-                fontSize:    "1.1rem",
-                cursor:      "pointer",
-                display:     "flex",
-                alignItems:  "center",
-                justifyContent: "center",
-                lineHeight:  1,
-              }}
-            >
-              ×
-            </button>
-          </div>
+          )}
         </div>
       )}
 

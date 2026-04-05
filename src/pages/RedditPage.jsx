@@ -863,7 +863,7 @@ function BrandIdentityViewer() {
 }
 
 /* ─── Right panel — dispatches to correct visual per step ───────────────────── */
-function StepVisual({ step }) {
+function StepVisual({ step, isMobile }) {
   const [visible, setVisible]   = useState(true)
   const prevStep                = useRef(step)
 
@@ -915,8 +915,8 @@ function StepVisual({ step }) {
       display:              "flex",
       alignItems:           "center",
       justifyContent:       "center",
-      height:               `${STEP_BOX_H}px`,
-      minHeight:            `${STEP_BOX_H}px`,
+      height:               isMobile ? "220px" : `${STEP_BOX_H}px`,
+      minHeight:            isMobile ? "220px" : `${STEP_BOX_H}px`,
     }}>
       <img
         src={s?.visual}
@@ -1099,13 +1099,19 @@ function CloseArrow({ onClick }) {
 /* ─── Full stepper wrapper ───────────────────────────────────────────────────── */
 function CaseStudyStepper() {
   const [openIndex, setOpenIndex] = useState(null)
-  const [hdVisible, setHdVisible] = useState(false)   /* heading animation trigger */
+  const [hdVisible, setHdVisible] = useState(false)
+  const [isMobile,  setIsMobile]  = useState(() => window.innerWidth < 640)
   const headingRef = useRef(null)
   const openStep  = (i) => setOpenIndex(i)
   const closeStep = ()  => setOpenIndex(null)
   const orange = "rgba(249,115,22,1)"
 
-  /* Fire slide-in the first time the heading enters the viewport */
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
+
   useEffect(() => {
     const el = headingRef.current
     if (!el) return
@@ -1117,7 +1123,6 @@ function CaseStudyStepper() {
     return () => obs.disconnect()
   }, [])
 
-  /* Heading slide-in style helper */
   const hdAnim = (delay) => ({
     opacity:   hdVisible ? 1 : 0,
     transform: hdVisible ? "translateX(0)" : "translateX(-48px)",
@@ -1130,11 +1135,11 @@ function CaseStudyStepper() {
       boxSizing:     "border-box",
       paddingTop:    "80px",
       paddingBottom: "120px",
-      paddingLeft:   "clamp(32px, 5vw, 72px)",
-      paddingRight:  "clamp(32px, 5vw, 72px)",
+      paddingLeft:   isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
+      paddingRight:  isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
     }}>
       {/* Section heading */}
-      <div ref={headingRef} style={{ marginBottom: "52px", textAlign: "left" }}>
+      <div ref={headingRef} style={{ marginBottom: isMobile ? "24px" : "52px", textAlign: isMobile ? "center" : "left" }}>
         <div style={{
           display: "inline-block", padding: "5px 18px", borderRadius: "999px",
           background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.30)",
@@ -1144,56 +1149,122 @@ function CaseStudyStepper() {
         }}>
           Case Study
         </div>
-        <h2 style={{ margin: 0, color: "#fff", fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.1, ...hdAnim("0.15s") }}>
+        <h2 style={{ margin: 0, color: "#fff", fontSize: isMobile ? "1.3rem" : "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.1, ...hdAnim("0.15s") }}>
           Design Process
         </h2>
-        <p style={{ margin: "12px 0 0", color: "rgba(255,255,255,0.45)", fontSize: "clamp(0.88rem, 1.2vw, 0.98rem)", ...hdAnim("0.28s") }}>
-          Click any step to explore the full story.
+        <p style={{ margin: "8px 0 0", color: "rgba(255,255,255,0.45)", fontSize: isMobile ? "0.78rem" : "clamp(0.88rem, 1.2vw, 0.98rem)", ...hdAnim("0.28s") }}>
+          {isMobile ? "Tap any step to explore." : "Click any step to explore the full story."}
         </p>
       </div>
 
-      {/* Two-column layout */}
-      <div style={{ display: "flex", gap: "clamp(20px, 3vw, 48px)", alignItems: "flex-start" }}>
+      {/* Mobile: visual top, steps below — Desktop: two columns */}
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? "16px" : "clamp(20px, 3vw, 48px)", alignItems: "flex-start" }}>
 
-        {/* ── LEFT — switches between all-steps list and single open step ── */}
+        {/* Glass visual — TOP on mobile, RIGHT on desktop */}
         <div style={{
-          flex: "0 0 48%", maxWidth: "48%",
-          opacity: hdVisible ? 1 : 0,
-          transform: hdVisible ? "translateX(0)" : "translateX(-48px)",
+          order: isMobile ? -1 : 1, flex: isMobile ? "none" : 1,
+          width: isMobile ? "100%" : undefined, minWidth: isMobile ? undefined : 0,
+          opacity: hdVisible ? 1 : 0, transform: hdVisible ? "translateX(0)" : "translateX(48px)",
+          transition: "opacity 0.65s ease 0.48s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.48s",
+        }}>
+          <StepVisual step={openIndex !== null ? STEPS[openIndex] : STEPS[0]} isMobile={isMobile} />
+        </div>
+
+        {/* Steps — BOTTOM on mobile, LEFT on desktop */}
+        <div style={{
+          order: isMobile ? 0 : 0,
+          flex: isMobile ? "none" : "0 0 48%", width: isMobile ? "100%" : undefined, maxWidth: isMobile ? undefined : "48%",
+          opacity: hdVisible ? 1 : 0, transform: hdVisible ? "translateX(0)" : "translateX(-48px)",
           transition: "opacity 0.65s ease 0.38s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.38s",
         }}>
           {openIndex === null ? (
-            /* ALL 6 STEPS — collapsed clickable list, same height as glass box */
-            <div style={{ display: "flex", flexDirection: "column", height: `${STEP_BOX_H}px` }}>
+            <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "auto" : `${STEP_BOX_H}px`, gap: isMobile ? "6px" : 0 }}>
               {STEPS.map((step, i) => (
-                <CollapsedStepRow
-                  key={step.number}
-                  step={step}
-                  isLast={i === STEPS.length - 1}
-                  onClick={() => openStep(i)}
-                  grow
-                />
+                <CollapsedStepRow key={step.number} step={step} isLast={i === STEPS.length - 1} onClick={() => openStep(i)} grow={!isMobile} />
               ))}
             </div>
           ) : (
-            /* ONE STEP OPEN + close-arrow below */
-            <>
-              <OpenStepBox step={STEPS[openIndex]} />
-              <CloseArrow onClick={closeStep} />
-            </>
+            <><OpenStepBox step={STEPS[openIndex]} /><CloseArrow onClick={closeStep} /></>
           )}
         </div>
 
-        {/* ── RIGHT — sticky visual (image only) ── */}
-        <div style={{
-          flex: 1, minWidth: 0,
-          opacity: hdVisible ? 1 : 0,
-          transform: hdVisible ? "translateX(0)" : "translateX(48px)",
-          transition: "opacity 0.65s ease 0.48s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.48s",
-        }}>
-          <StepVisual step={openIndex !== null ? STEPS[openIndex] : STEPS[0]} />
-        </div>
+      </div>
+    </div>
+  )
+}
 
+/* ─── Mobile swipeable phone carousel (phones only) ─────────────────────────── */
+const HERO_PHONES = [
+  { src: "/images/HomeNew.png",    label: "Home"    },
+  { src: "/images/AnswerNew.png",  label: "Answers" },
+  { src: "/images/ProfileNew.png", label: "Profile" },
+  { src: "/images/CreateNew.png",  label: "Create"  },
+  { src: "/images/ChatNew.png",    label: "Chat"    },
+]
+
+function MobilePhoneCarousel() {
+  const [idx, setIdx]         = useState(0)
+  const [offset, setOffset]   = useState(0)
+  const [dragging, setDragging] = useState(false)
+  const touchStartX = useRef(null)
+  const idxRef      = useRef(0)
+  const total       = HERO_PHONES.length
+  const SWIPE_THRESHOLD = 40
+  const orange = "rgba(249,115,22,1)"
+
+  const goTo = (n) => {
+    const next = (n + total) % total
+    setIdx(next)
+    idxRef.current = next
+    setOffset(0)
+  }
+
+  useEffect(() => {
+    const t = setInterval(() => goTo(idxRef.current + 1), 5000)
+    return () => clearInterval(t)
+  }, [])
+
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; setDragging(true) }
+  const onTouchMove  = (e) => { if (touchStartX.current === null) return; setOffset(e.touches[0].clientX - touchStartX.current) }
+  const onTouchEnd   = () => {
+    if (Math.abs(offset) >= SWIPE_THRESHOLD) goTo(idxRef.current + (offset < 0 ? 1 : -1))
+    else setOffset(0)
+    touchStartX.current = null
+    setDragging(false)
+  }
+
+  return (
+    <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+      <div
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{ width: "100%", display: "flex", justifyContent: "center", background: "transparent", touchAction: "pan-y" }}
+      >
+        <img
+          src={HERO_PHONES[idx].src}
+          alt={HERO_PHONES[idx].label}
+          draggable={false}
+          style={{
+            width:      "55%",
+            maxWidth:   "210px",
+            height:     "auto",
+            display:    "block",
+            transform:  `translateX(${offset}px)`,
+            transition: dragging ? "none" : "transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)",
+            filter:     "drop-shadow(0 8px 28px rgba(249,115,22,0.35))",
+            userSelect: "none",
+          }}
+        />
+      </div>
+      <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+        {HERO_PHONES.map((_, i) => (
+          <button key={i} onClick={() => goTo(i)} style={{
+            width: i === idx ? "20px" : "6px", height: "6px", borderRadius: "3px",
+            background: i === idx ? orange : "rgba(255,255,255,0.35)",
+            border: "none", padding: 0, cursor: "pointer", transition: "all 0.3s ease",
+          }} />
+        ))}
       </div>
     </div>
   )
@@ -1378,6 +1449,12 @@ function HeroPhoneStack() {
 /* ─── Main page ─────────────────────────────────────────────────────────────── */
 export function RedditPage() {
   const { navigate } = useRouter()
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
 
   return (
     <>
@@ -1399,24 +1476,34 @@ export function RedditPage() {
             HERO — left info (30%) | right bare image (70%)
         ══════════════════════════════════════════════════════════════ */}
         <section style={{
-          display:  "flex",
-          width:    "100vw",
-          height:   "100vh",
-          overflow: "hidden",
-          position: "relative",
-          zIndex:   1,
+          display:       "flex",
+          flexDirection: isMobile ? "column" : "row",
+          width:         "100vw",
+          height:        isMobile ? "auto" : "100vh",
+          minHeight:     isMobile ? "100vh" : undefined,
+          overflow:      "hidden",
+          position:      "relative",
+          zIndex:        1,
+          padding:       isMobile ? "85px 16px 16px" : 0,
+          boxSizing:     "border-box",
+          gap:           isMobile ? "10px" : 0,
+          alignItems:    isMobile ? "center" : undefined,
         }}>
+
+          {/* ── MOBILE MOCKUP — swipeable carousel on mobile, 3-D stack on desktop ── */}
+          {isMobile && <MobilePhoneCarousel />}
 
           {/* ── LEFT PANEL ── */}
           <div style={{
-            width:          "32vw",
-            minWidth:       "300px",
+            width:          isMobile ? "100%" : "32vw",
+            minWidth:       isMobile ? "unset" : "300px",
             flexShrink:     0,
             display:        "flex",
             flexDirection:  "column",
-            justifyContent: "center",
+            justifyContent: isMobile ? "flex-start" : "center",
+            alignItems:     isMobile ? "center" : undefined,
             /* generous padding so content breathes */
-            padding:        "0 clamp(36px, 5vw, 72px) 0 clamp(36px, 5vw, 72px)",
+            padding:        isMobile ? "0" : "0 clamp(36px, 5vw, 72px) 0 clamp(36px, 5vw, 72px)",
             position:       "relative",
             zIndex:         2,
           }}>
@@ -1452,17 +1539,17 @@ export function RedditPage() {
             </button>
 
             {/* ── Info block ── */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? "10px" : "22px" }}>
 
               {/* Reddit logo */}
               <img
                 src="/images/RedditLogo.png"
                 alt="Reddit logo"
                 style={{
-                  height:    "clamp(64px, 8vw, 96px)",
+                  height:    isMobile ? "60px" : "clamp(64px, 8vw, 96px)",
                   width:     "auto",
                   objectFit: "contain",
-                  alignSelf: "flex-start",
+                  alignSelf: isMobile ? "center" : "flex-start",
                   filter:    "drop-shadow(0 4px 18px rgba(255,100,0,0.45))",
                   animation: "rdSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.10s both",
                 }}
@@ -1470,13 +1557,14 @@ export function RedditPage() {
 
               {/* Project title */}
               <h1 style={{
-                margin:      0,
-                color:       "#fff",
-                fontSize:    "clamp(2rem, 3.6vw, 3.2rem)",
-                fontWeight:  700,
-                lineHeight:  1.05,
-                whiteSpace:  "nowrap",
-                animation:   "rdSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.25s both",
+                margin:     0,
+                color:      "#fff",
+                fontSize:   isMobile ? "1.5rem" : "clamp(2rem, 3.6vw, 3.2rem)",
+                fontWeight: 700,
+                lineHeight: 1.05,
+                whiteSpace: isMobile ? "normal" : "nowrap",
+                textAlign:  isMobile ? "center" : "left",
+                animation:  "rdSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.25s both",
               }}>
                 Reddit Redesign
               </h1>
@@ -1484,7 +1572,7 @@ export function RedditPage() {
               {/* Category badge */}
               <div style={{
                 display:       "inline-flex",
-                alignSelf:     "flex-start",
+                alignSelf:     isMobile ? "center" : "flex-start",
                 padding:       "5px 16px",
                 borderRadius:  "999px",
                 background:    "rgba(249,115,22,0.18)",
@@ -1506,10 +1594,11 @@ export function RedditPage() {
                 background:   "rgba(255,255,255,0.22)",
                 borderRadius: "2px",
                 animation:    "rdSlideLeft 0.55s ease 0.52s both",
+                alignSelf:    isMobile ? "center" : undefined,
               }} />
 
               {/* Tool icons — squares with no label, staggered pop-in */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: isMobile ? "center" : "flex-start" }}>
                 {TOOLS.map((t, i) => (
                   <ToolIcon key={t.name} {...t} animDelay={`${0.58 + i * 0.10}s`} />
                 ))}
@@ -1518,14 +1607,16 @@ export function RedditPage() {
             </div>
           </div>
 
-          {/* ── RIGHT PANEL — interactive 3-D phone stack ── */}
-          <div style={{
-            flex:     1,
-            position: "relative",
-            height:   "100%",
-          }}>
-            <HeroPhoneStack />
-          </div>
+          {/* ── RIGHT PANEL — interactive 3-D phone stack (desktop only) ── */}
+          {!isMobile && (
+            <div style={{
+              flex:     1,
+              position: "relative",
+              height:   "100%",
+            }}>
+              <HeroPhoneStack />
+            </div>
+          )}
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
