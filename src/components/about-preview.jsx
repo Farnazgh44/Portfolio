@@ -60,7 +60,24 @@ function TiltWrapper({ children, active, amplitude = 12 }) {
 export function AboutPreview() {
   const sectionRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [titleVisible, setTitleVisible]     = useState(false)
+  const titleVisibleRef = useRef(false)
   const { navigate } = useRouter()
+
+  // Trigger "A Little About Me" slide-in as soon as section enters viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !titleVisibleRef.current) {
+          titleVisibleRef.current = true
+          setTitleVisible(true)
+        }
+      },
+      { threshold: 0.01 }
+    )
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     function handleScroll() {
@@ -76,49 +93,71 @@ export function AboutPreview() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // With min-h-[300vh], total range = 400vh. Sticky phase runs from s≈0.25 to s≈0.75
-  // giving ~200vh of sticky scroll (≈10 scrolls at 20vh each).
-  //
-  // Timeline:
-  //  0.25–0.32   "Behind the design" fades in   (~1.5 scrolls)
-  //  0.32–0.42   title fully visible / stable   (~2 scrolls)
-  //  0.42–0.54   title fades out
-  //  0.30–0.72   cards slide in from ±90vw      (~8+ scrolls of gradual movement)
-  //  0.72–0.75   everything settled, 1 scroll to exit
-
-  const titleOpacity =
-    scrollProgress < 0.25  ? 0
-    : scrollProgress < 0.32 ? (scrollProgress - 0.25) / 0.07
-    : scrollProgress < 0.42 ? 1
-    : scrollProgress < 0.54 ? 1 - (scrollProgress - 0.42) / 0.12
-    : 0
-
-  // Cards slide in from ±90vw — spread across most of the sticky phase
-  // so convergence feels slow and deliberate (~8 scrolls of movement)
+  // Cards converge in the first half of the sticky phase (0.15 → 0.52),
+  // then stay FULLY LOCKED for the rest (~60vh of dwell) before the section exits.
+  // This ensures cards are settled and still before the page scrolls on.
   const convergence =
-    scrollProgress < 0.30 ? 0
-    : scrollProgress < 0.72 ? (scrollProgress - 0.30) / 0.42
+    scrollProgress < 0.15 ? 0
+    : scrollProgress < 0.52 ? (scrollProgress - 0.15) / 0.37
     : 1
 
-  // Tilt only activates once the cards have fully settled
   const tiltActive = convergence >= 1
 
-  // Content opacity is applied ONLY to the inner content, never to the
-  // GlassCard wrapper — because opacity < 1 on a parent creates an offscreen
-  // compositing layer that prevents backdrop-filter from seeing through to the
-  // real page content, causing the blur to silently disappear.
   const contentOpacity =
-    scrollProgress < 0.30 ? 0
-    : scrollProgress < 0.52 ? (scrollProgress - 0.30) / 0.22
+    scrollProgress < 0.15 ? 0
+    : scrollProgress < 0.42 ? (scrollProgress - 0.15) / 0.27
     : 1
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[300vh] w-full"
+      className="relative min-h-[220vh] w-full"
       id="about"
     >
+      <style>{`
+        @keyframes aboutTitleSlideIn {
+          from { opacity: 0; transform: translateX(calc(-50% - 72px)); }
+          to   { opacity: 1; transform: translateX(-50%);               }
+        }
+        @keyframes aboutTitleShine {
+          0%   { background-position: 200% center; }
+          100% { background-position: -200% center; }
+        }
+        .about-title-animated {
+          background: linear-gradient(
+            120deg,
+            rgba(255,255,255,0.45) 30%,
+            rgba(255,255,255,1.00) 50%,
+            rgba(255,255,255,0.45) 70%
+          );
+          background-size:         250% auto;
+          -webkit-background-clip: text;
+          background-clip:         text;
+          -webkit-text-fill-color: transparent;
+          animation:
+            aboutTitleSlideIn 0.7s cubic-bezier(0.215,0.61,0.355,1) both,
+            aboutTitleShine   3.5s linear infinite 0.7s;
+        }
+      `}</style>
+
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+
+        {/* "A Little About Me" — slides in from left, stays fixed at upper-left */}
+        <h2
+          className={`absolute font-bold pointer-events-none select-none${titleVisible ? " about-title-animated" : ""}`}
+          style={{
+            left: "50%",
+            top:  "clamp(90px, 11vh, 120px)",
+            whiteSpace: "nowrap",
+            fontSize:   "clamp(2rem, 3.2vw, 3rem)",
+            lineHeight: 1.1,
+            zIndex:     25,
+            opacity:    titleVisible ? undefined : 0,
+          }}
+        >
+          A Little About Me
+        </h2>
+
         <div className="relative w-[90%] max-w-6xl flex items-center justify-center">
           {/* Decorative blobs */}
           <div
@@ -137,14 +176,6 @@ export function AboutPreview() {
               animation: "blob-float-2 18s ease-in-out infinite",
             }}
           />
-
-          {/* "A Little About Me" title — fades in, then fades out as cards converge */}
-          <h2
-            className="absolute text-3xl md:text-5xl lg:text-6xl font-bold text-white text-center z-10 pointer-events-none text-balance"
-            style={{ opacity: titleOpacity }}
-          >
-            A Little About Me
-          </h2>
 
           {/* Left: About text card
               IMPORTANT: opacity is NOT on this wrapper — it's inside the card.

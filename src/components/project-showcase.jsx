@@ -7,8 +7,8 @@ const allProjects = [
   { id: "1", name: "SugarCloud Cupcakes", tools: "UI/UX & Product Design",     image: "/images/Laptop_Feature.png",    imageStyle: { objectFit: "contain" }                   },
   { id: "2", name: "AlpineLink",          tools: "Mobile App Design",           image: "/images/Phone1_feature.png",    imageStyle: { objectFit: "contain" }                   },
   { id: "3", name: "Reddit App Redesign", tools: "Mobile App Design",           image: "/images/Phone2_feature.png",    imageStyle: { objectFit: "contain" }                   },
-  { id: "4", name: "Cat Phone Holder",    tools: "3D Design",                   image: "/images/Cat_feature.png",       imageStyle: { objectFit: "contain" }                   },
-  { id: "5", name: "3D Perfume Bottle",   tools: "Product Visualisation",       image: "/images/Perfume_featured.png",  imageStyle: { objectFit: "contain", objectPosition: "center center" } },
+  { id: "4", name: "Dogwood Land & Gardening", tools: "Web Design & UX Case Study", image: "/images/Dogwood.png",        imageStyle: { objectFit: "cover" }                     },
+  { id: "5", name: "Space Shipper",       tools: "Game UI",                     image: "/images/Game.png",              imageStyle: { objectFit: "cover" }                     },
 ]
 
 function ProjectCard({ project }) {

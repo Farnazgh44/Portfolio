@@ -17,7 +17,7 @@ import { BlobButton }  from "./blob-button"
 */
 
 const N                 = 3
-const SECTION_HEIGHT_VH = 400
+const SECTION_HEIGHT_VH = 340
 const SWIPE_THRESHOLD   = 0.75   // activates after all 3 cards are fully up
 const EXIT_THRESHOLD    = 0.70   // deactivates when user scrolls back — must be past card 2's window end (0.73) so all cards are at translate(-50%,-50%) when Phase 1 resumes, preventing a jump
 const SENSITIVITY       = 80     // px drag to trigger a swipe
@@ -55,7 +55,7 @@ const CARD_DATA = [
   },
 ]
 
-/* POS[0]=back/bottom-left … POS[4]=front/top-right
+/* POS[0]=back/bottom-left … POS[2]=front/top-right
    Cards enter left→right, each one layering IN FRONT of the previous      */
 const CARD_POS = [
   { left: "23vw", top: "65vh" },
@@ -63,12 +63,19 @@ const CARD_POS = [
   { left: "77vw", top: "51vh" },
 ]
 
+/* Mobile positions — tighter horizontal spread so larger cards stay on screen */
+const MOBILE_CARD_POS = [
+  { left: "28vw", top: "68vh" },
+  { left: "50vw", top: "57vh" },
+  { left: "72vw", top: "46vh" },
+]
+
 /* Each card rises from below during its own scroll window.
-   ~90vh per card ≈ one scroll gesture each.                */
+   Starting at 0 so the first card appears immediately on entry.  */
 const CARD_WINDOWS = [
-  [0.05, 0.28],   // SugarCloud
-  [0.28, 0.51],   // AlpineLink
-  [0.51, 0.73],   // Reddit
+  [0.00, 0.23],   // SugarCloud  — rises as soon as section enters view
+  [0.23, 0.46],   // AlpineLink
+  [0.46, 0.68],   // Reddit
 ]
 
 const easeOut = t => 1 - Math.pow(1 - t, 3)
@@ -87,10 +94,24 @@ const GLASS = {
 
 export function FeaturedWorks() {
   const { navigate }      = useRouter()
+
+  /* Mobile detection — phones only (< 640px). Desktop stays untouched. */
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  /* Ref so the RAF loop always reads the correct positions for current breakpoint */
+  const activePosRef = useRef(window.innerWidth < 640 ? MOBILE_CARD_POS : CARD_POS)
+  useEffect(() => {
+    activePosRef.current = isMobile ? MOBILE_CARD_POS : CARD_POS
+  }, [isMobile])
+
   const clickSuppressRef  = useRef(false)   // true when a drag occurred — suppresses next click
   const hintDoneRef       = useRef(false)   // true after the one-time jiggle hint has played
   const sectionRef        = useRef(null)
-  const titleRef     = useRef(null)
   const cardRefs     = useRef([])          // cardRefs.current[i] = DOM node for card i
   const rafRef       = useRef(null)
   const scrollRef    = useRef(0)
@@ -118,6 +139,8 @@ export function FeaturedWorks() {
   const [swipeMode, setSwipeMode] = useState(false)
   const [showSwipeUI, setShowSwipeUI] = useState(false)  // text + button visibility
   const [showHint, setShowHint]   = useState(false)   // controls arrow hint visibility
+  const [titleVisible, setTitleVisible] = useState(false)  // triggers "Featured Works" animation
+  const titleVisibleRef = useRef(false)   // prevents re-firing on re-scroll
 
   // After a swipe, the card that went to back needs a silent transform reset
   const pendingResetRef = useRef(null)
@@ -132,6 +155,21 @@ export function FeaturedWorks() {
       el.style.opacity   = "0"
       el.style.transform = `translate(-50%, calc(-50% + ${offY}px))`
     })
+  }, [])
+
+  /* ── Trigger "Featured Works" animation the instant section enters viewport ── */
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !titleVisibleRef.current) {
+          titleVisibleRef.current = true
+          setTitleVisible(true)
+        }
+      },
+      { threshold: 0.01 }   // fires when even 1% of the section is visible
+    )
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => observer.disconnect()
   }, [])
 
   /* ── Scroll tracker ─────────────────────────────────────────────────── */
@@ -155,14 +193,6 @@ export function FeaturedWorks() {
       rafRef.current = requestAnimationFrame(tick)
       const s = scrollRef.current
 
-      /* Title: stays in background throughout all card animations, shrinking
-         gradually as each card rises, then disappears exactly when the last
-         card is fully up and swipe mode activates.                         */
-      if (titleRef.current) {
-        const t = clamp01(s / SWIPE_THRESHOLD)   // 0 → 1 across entire card range
-        titleRef.current.style.transform = `translate(-50%, -50%) scale(${1 - t * 0.6})`
-        titleRef.current.style.opacity   = String(0.22 * (1 - t))
-      }
 
       /* ── Phase transition: enter swipe mode ── */
       if (s >= SWIPE_THRESHOLD && !swipeModeRef.current) {
@@ -178,8 +208,8 @@ export function FeaturedWorks() {
           el.style.transition = cardComplete
             ? "none"
             : "transform 0.50s cubic-bezier(0.34,1.1,0.64,1), opacity 0.35s ease"
-          el.style.left       = CARD_POS[i].left
-          el.style.top        = CARD_POS[i].top
+          el.style.left       = activePosRef.current[i].left
+          el.style.top        = activePosRef.current[i].top
           el.style.transform  = "translate(-50%, -50%)"
           el.style.opacity    = "1"
           el.style.zIndex     = String(i + 1)
@@ -206,8 +236,8 @@ export function FeaturedWorks() {
           el.style.animation  = ""       // kill nudge — CSS animations override style.transform
           el.style.transition = "none"
           el.style.cursor     = "default"
-          el.style.left       = CARD_POS[i].left
-          el.style.top        = CARD_POS[i].top
+          el.style.left       = activePosRef.current[i].left
+          el.style.top        = activePosRef.current[i].top
           // Mirror the Phase 1 formula so there is zero positional discontinuity
           const [winStart, winEnd] = CARD_WINDOWS[i]
           const p = clamp01((s - winStart) / (winEnd - winStart))
@@ -455,6 +485,29 @@ export function FeaturedWorks() {
           .fw-hint-pill {
             animation: fwHintFloat 1.5s ease-in-out infinite;
           }
+          @keyframes fwTitleFadeUp {
+            from { opacity: 0; transform: translateY(26px); }
+            to   { opacity: 1; transform: translateY(0);    }
+          }
+          @keyframes fwTitleShine {
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
+          }
+          .fw-title-animated {
+            background: linear-gradient(
+              120deg,
+              rgba(255,255,255,0.45) 30%,
+              rgba(255,255,255,1.00) 50%,
+              rgba(255,255,255,0.45) 70%
+            );
+            background-size:           250% auto;
+            -webkit-background-clip:   text;
+            background-clip:           text;
+            -webkit-text-fill-color:   transparent;
+            animation:
+              fwTitleFadeUp 0.65s cubic-bezier(0.215,0.61,0.355,1) both,
+              fwTitleShine  3.5s linear infinite 0.65s;
+          }
           @keyframes fwCardNudge {
             0%, 100% { transform: translate(-50%, -50%) translateX(0px)   rotate(0deg);    }
             30%      { transform: translate(-50%, -50%) translateX(-9px)  rotate(-0.7deg); }
@@ -468,38 +521,32 @@ export function FeaturedWorks() {
           .fw-label-btn:hover {
             color: rgba(255,255,255,1);
           }
+          @media (max-width: 639px) {
+            .fw-card .fw-overlay { display: none !important; }
+          }
         `}</style>
 
-        {/* "Featured Works" background title */}
+        {/* "Featured Works" — fades up then shines on loop, text-only gradient */}
         <h2
-          ref={titleRef}
-          className="absolute font-bold pointer-events-none select-none"
+          className={`absolute font-bold pointer-events-none select-none${titleVisible ? " fw-title-animated" : ""}`}
           style={{
-            left:       "50%",
-            top:        "56%",
-            transform:  "translate(-50%, -50%)",
-            opacity:    0.22,
-            zIndex:     0,
+            left:       isMobile ? "calc(clamp(1rem, 4vw, 2rem) + 1.5rem)" : "calc(max((100vw - 1080px) * 0.5, 0px) + clamp(1rem, 4vw, 2rem))",
+            top:        isMobile ? "clamp(100px, 13vh, 130px)" : "clamp(90px, 11vh, 120px)",
+            zIndex:     25,
             whiteSpace: "nowrap",
-            fontSize:   "clamp(2.8rem, 9vw, 7.5rem)",
-            willChange: "transform, opacity",
-            /* ── Shiny text ── */
-            background:           "linear-gradient(90deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.55) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.55) 70%, rgba(255,255,255,0.55) 100%)",
-            backgroundSize:       "250% auto",
-            WebkitBackgroundClip: "text",
-            backgroundClip:       "text",
-            WebkitTextFillColor:  "transparent",
-            animation:            "fwShine 3.5s linear infinite",
+            fontSize:   isMobile ? "clamp(1.4rem, 6vw, 2rem)" : "clamp(2rem, 3.2vw, 3rem)",
+            lineHeight: 1.1,
+            opacity:    titleVisible ? undefined : 0,
           }}
         >
           Featured Works
         </h2>
 
-        {/* ── Top-left swipe hint with ScrollFloat ── */}
+        {/* ── "Swipe to explore projects" — sits below "Featured Works" ── */}
         <div style={{
           position:      "absolute",
-          top:           "clamp(60px, 10vh, 100px)",
-          left:          "clamp(24px, 3vw, 52px)",
+          top:           isMobile ? "clamp(155px, 20vh, 185px)" : "clamp(148px, 19vh, 185px)",
+          left:          isMobile ? "calc(clamp(1rem, 4vw, 2rem) + 1.5rem)" : "calc(max((100vw - 1080px) * 0.5, 0px) + clamp(1rem, 4vw, 2rem))",
           zIndex:        20,
           opacity:       showSwipeUI ? 1 : 0,
           transform:     showSwipeUI ? "translateX(0)" : "translateX(-70vw)",
@@ -511,9 +558,9 @@ export function FeaturedWorks() {
             animationDuration={1}
             stagger={0.03}
             style={{
-              color:         "rgba(255,255,255,0.90)",
-              fontSize:      "3rem",
-              fontWeight:    600,
+              color:         "rgba(255,255,255,0.80)",
+              fontSize:      isMobile ? "1rem" : "1.8rem",
+              fontWeight:    500,
               letterSpacing: "0.02em",
               whiteSpace:    "nowrap",
             }}
@@ -563,13 +610,15 @@ export function FeaturedWorks() {
             - opacity/transform come from RAF & event handlers only        */}
         {Array.from({ length: N }, (_, i) => {
           const slot = swipeMode ? queue.indexOf(i) : i
-          const pos  = CARD_POS[slot]
+          const activePos = isMobile ? MOBILE_CARD_POS : CARD_POS
+          const pos  = activePos[slot]
           const data = CARD_DATA[i]
           return (
             <div
               key={i}
               ref={el => { cardRefs.current[i] = el }}
               className="fw-card"
+              onClick={isMobile ? () => { if (!clickSuppressRef.current) navigate(data.route) } : undefined}
               style={{
                 position:       "absolute",
                 left:           pos.left,
@@ -583,6 +632,8 @@ export function FeaturedWorks() {
                 /* opacity & transform intentionally omitted —
                    managed exclusively via direct DOM (RAF + handlers)     */
                 ...GLASS,
+                /* Mobile override — bigger cards, tighter positions keep all 3 on screen */
+                ...(isMobile ? { width: "200px", height: "200px", cursor: "pointer" } : {}),
               }}
             >
               {/* Project image — fills the top ~80% of the card */}
@@ -639,7 +690,7 @@ export function FeaturedWorks() {
               {swipeMode && queue.indexOf(i) === N - 1 && (
                 <div style={{
                   position:      "absolute",
-                  bottom:        "62px",
+                  bottom:        isMobile ? "36px" : "62px",
                   left:          0,
                   right:         0,
                   display:       "flex",
@@ -724,8 +775,8 @@ export function FeaturedWorks() {
                   {data.desc}
                 </p>
 
-                {/* View Project button */}
-                <BlobButton
+                {/* View Project button — desktop only, mobile uses tap on the whole card */}
+                {!isMobile && <BlobButton
                   stopProp
                   onClick={() => navigate(data.route)}
                   style={{
@@ -747,7 +798,7 @@ export function FeaturedWorks() {
                   }}
                 >
                   View Project
-                </BlobButton>
+                </BlobButton>}
               </div>
             </div>
           )

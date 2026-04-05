@@ -9,9 +9,9 @@ import { BlobButton }    from "../components/blob-button"
 const CONTACT_LINKS = [
   {
     label: "Email",
-    value: "farnazgh4444@gmail.com",
-    href: "mailto:farnazgh4444@gmail.com",
-    copyValue: "farnazgh4444@gmail.com",
+    value: "farnaz.gholami7900@gmail.com",
+    href: "mailto:farnaz.gholami7900@gmail.com",
+    copyValue: "farnaz.gholami7900@gmail.com",
     action: "copy",
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -327,7 +327,7 @@ function ContactSection() {
     } catch {
       const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`)
       const body    = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`)
-      window.open(`mailto:farnazgh4444@gmail.com?subject=${subject}&body=${body}`, "_blank")
+      window.open(`mailto:farnaz.gholami7900@gmail.com?subject=${subject}&body=${body}`, "_blank")
       setSent(true)
       setFormData({ name: "", email: "", message: "" })
       setTimeout(() => setSent(false), 4000)

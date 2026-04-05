@@ -4,7 +4,7 @@ import { GlassCard } from "./glass-card"
 const socialLinks = [
   {
     label: "Email",
-    href: "mailto:farnazgh4444@gmail.com",
+    href: "mailto:farnaz.gholami7900@gmail.com",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="4" width="20" height="16" rx="2" />
