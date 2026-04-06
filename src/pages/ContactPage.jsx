@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { useRouter }     from "../lib/router-context"
 import { Footer }        from "../components/footer"
 import { SideBlobs }     from "../components/side-blobs"
@@ -73,115 +73,6 @@ const glassStyle = {
   border: "1px solid rgba(255,255,255,0.15)",
 }
 
-/* ─── Draggable Blob ─── */
-const CONTACT_BLOBS = [
-  { id: 0, x: 15, y: 15, w: 320, h: 320, color: "radial-gradient(circle, rgba(255,60,150,0.95) 0%, rgba(200,40,180,0.8) 50%, rgba(120,30,200,0.6) 100%)", anim: "blob-float-1", dur: 18 },
-  { id: 1, x: 45, y: 20, w: 240, h: 240, color: "radial-gradient(circle, rgba(60,220,180,0.95) 0%, rgba(40,180,255,0.8) 50%, rgba(80,60,220,0.6) 100%)", anim: "blob-float-3", dur: 22 },
-  { id: 2, x: 30, y: 50, w: 160, h: 160, color: "radial-gradient(circle, rgba(255,100,180,0.95) 0%, rgba(220,60,200,0.8) 50%, rgba(100,40,240,0.6) 100%)", anim: "blob-float-5", dur: 16 },
-  { id: 3, x: 75, y: 25, w: 280, h: 280, color: "radial-gradient(circle, rgba(40,180,255,0.95) 0%, rgba(60,220,160,0.8) 50%, rgba(180,60,220,0.6) 100%)", anim: "blob-float-2", dur: 24 },
-  { id: 4, x: 20, y: 70, w: 200, h: 200, color: "radial-gradient(circle, rgba(255,80,120,0.95) 0%, rgba(255,40,180,0.8) 50%, rgba(180,30,200,0.6) 100%)", anim: "blob-float-4", dur: 20 },
-  { id: 5, x: 70, y: 65, w: 180, h: 180, color: "radial-gradient(circle, rgba(60,240,160,0.95) 0%, rgba(40,200,220,0.8) 50%, rgba(80,80,240,0.6) 100%)", anim: "blob-float-1", dur: 26 },
-]
-
-function ContactDraggableBlob({ blob, containerRef }) {
-  const blobRef = useRef(null)
-  const [dragging, setDragging] = useState(false)
-  const [pos, setPos] = useState({ x: 0, y: 0 })
-  const [offset, setOffset] = useState({ x: 0, y: 0 })
-  const [stretch, setStretch] = useState({ scaleX: 1, scaleY: 1, rotate: 0 })
-  const prevPos = useRef({ x: 0, y: 0 })
-  const animFrame = useRef(null)
-
-  useEffect(() => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    setPos({
-      x: (blob.x / 100) * rect.width - blob.w / 2,
-      y: (blob.y / 100) * rect.height - blob.h / 2,
-    })
-  }, [blob, containerRef])
-
-  const handleMouseDown = useCallback((e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragging(true)
-    const blobRect = blobRef.current.getBoundingClientRect()
-    const containerRect = containerRef.current.getBoundingClientRect()
-    setOffset({
-      x: e.clientX - (blobRect.left - containerRect.left),
-      y: e.clientY - (blobRect.top - containerRect.top),
-    })
-    prevPos.current = { x: pos.x, y: pos.y }
-  }, [pos, containerRef])
-
-  const handleTouchStart = useCallback((e) => {
-    e.stopPropagation()
-    const touch = e.touches[0]
-    setDragging(true)
-    const blobRect = blobRef.current.getBoundingClientRect()
-    const containerRect = containerRef.current.getBoundingClientRect()
-    setOffset({
-      x: touch.clientX - (blobRect.left - containerRect.left),
-      y: touch.clientY - (blobRect.top - containerRect.top),
-    })
-    prevPos.current = { x: pos.x, y: pos.y }
-  }, [pos, containerRef])
-
-  useEffect(() => {
-    if (!dragging) return
-    const handleMove = (clientX, clientY) => {
-      if (animFrame.current) cancelAnimationFrame(animFrame.current)
-      animFrame.current = requestAnimationFrame(() => {
-        const newX = clientX - offset.x
-        const newY = clientY - offset.y
-        const dx = newX - prevPos.current.x
-        const dy = newY - prevPos.current.y
-        const speed = Math.sqrt(dx * dx + dy * dy)
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI)
-        const stretchAmount = Math.min(speed * 0.015, 0.4)
-        setStretch({ scaleX: 1 + stretchAmount, scaleY: 1 - stretchAmount * 0.5, rotate: angle })
-        prevPos.current = { x: newX, y: newY }
-        setPos({ x: newX, y: newY })
-      })
-    }
-    const onMouseMove = (e) => handleMove(e.clientX, e.clientY)
-    const onTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY)
-    const onEnd = () => { setDragging(false); setStretch({ scaleX: 1, scaleY: 1, rotate: 0 }) }
-    window.addEventListener("mousemove", onMouseMove)
-    window.addEventListener("mouseup", onEnd)
-    window.addEventListener("touchmove", onTouchMove, { passive: true })
-    window.addEventListener("touchend", onEnd)
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove)
-      window.removeEventListener("mouseup", onEnd)
-      window.removeEventListener("touchmove", onTouchMove)
-      window.removeEventListener("touchend", onEnd)
-      if (animFrame.current) cancelAnimationFrame(animFrame.current)
-    }
-  }, [dragging, offset])
-
-  return (
-    <div
-      ref={blobRef}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
-      className="absolute cursor-grab active:cursor-grabbing select-none"
-      style={{
-        width: blob.w, height: blob.h,
-        left: pos.x, top: pos.y,
-        background: blob.color,
-        borderRadius: "40% 60% 55% 45% / 55% 45% 60% 40%",
-        boxShadow: `0 0 ${blob.w * 0.2}px rgba(150,80,255,0.3)`,
-        animation: dragging ? "none" : `${blob.anim} ${blob.dur}s ease-in-out infinite`,
-        transform: dragging ? `rotate(${stretch.rotate}deg) scaleX(${stretch.scaleX}) scaleY(${stretch.scaleY})` : undefined,
-        transition: dragging ? "none" : "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)",
-        zIndex: dragging ? 50 : 1,
-        filter: dragging ? "brightness(1.2)" : "none",
-        touchAction: "none",
-      }}
-    />
-  )
-}
 
 /* ─── Contact Info Item ─── */
 function ContactInfoItem({ item }) {
@@ -290,7 +181,6 @@ function ContactInfoItem({ item }) {
 
 /* ─── Main Contact Section — blobs behind, form + info in front ─── */
 function ContactSection() {
-  const blobContainerRef = useRef(null)
   const [popped, setPopped]       = useState(false)
   const [formData, setFormData]   = useState({ name: "", email: "", message: "" })
   const [sending, setSending]     = useState(false)
@@ -341,32 +231,7 @@ function ContactSection() {
       className="relative min-h-screen flex items-center py-24 overflow-hidden"
       id="contact-form"
     >
-      {/* SVG gooey filter */}
-      <svg className="absolute w-0 h-0" aria-hidden="true">
-        <defs>
-          <filter id="lava-goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
-            <feColorMatrix in="blur" mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"
-              result="goo"
-            />
-            <feBlend in="SourceGraphic" in2="goo" />
-          </filter>
-        </defs>
-      </svg>
-
-      {/* Draggable lava blobs — full section background */}
-      <div
-        ref={blobContainerRef}
-        className="absolute inset-0"
-        style={{ filter: "url(#lava-goo)" }}
-      >
-        {CONTACT_BLOBS.map((blob) => (
-          <ContactDraggableBlob key={blob.id} blob={blob} containerRef={blobContainerRef} />
-        ))}
-      </div>
-
-      {/* Form + info card — sits above blobs */}
+      {/* Form + info card */}
       <div className="content-wrap relative z-10 w-full">
         <SpotlightCard
           className="rounded-2xl p-6 md:p-10"

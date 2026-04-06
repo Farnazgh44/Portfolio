@@ -35,16 +35,16 @@ const INFO_CARDS = [
    col 2 → indices 2, 5, 8
 */
 const GALLERY_ITEMS = [
-  { type: "image", src: "/images/Draft (1).png", alt: "Draft 1",  category: "Illustration"   }, // col 0
-  { type: "image", src: "/images/Draft (2).png", alt: "Draft 2",  category: "Illustration"   }, // col 1
-  { type: "video", src: "/videos/Draft (1).mp4", alt: "Draft V1", category: "Motion graphic" }, // col 2
-  { type: "image", src: "/images/Draft (3).png", alt: "Draft 3",  category: "3D"             }, // col 0
-  { type: "image", src: "/images/Draft (6).png", alt: "Draft 6",  category: "3D"             }, // col 1 ← Draft 6 first
-  { type: "video", src: "/videos/Draft (2).mp4", alt: "Draft V2", category: "Motion graphic" }, // col 2
-  { type: "image", src: "/images/Draft (4).png", alt: "Draft 4",  category: "3D"             }, // col 0
-  { type: "image", src: "/images/Draft (7).png", alt: "Draft 7",  category: "Illustration"   }, // col 1 ← Draft 7 directly below Draft 6
-  { type: "video", src: "/videos/Draft (3).mp4", alt: "Draft V3", category: "Motion graphic" }, // col 2
-  { type: "image", src: "/images/Draft (5).png", alt: "Draft 5",  category: "Illustration"   }, // col 0
+  { type: "image", src: "/images/Draft (1).png", alt: "Draft 1",  category: ["3D"],                 col: 0 },
+  { type: "image", src: "/images/Draft (2).png", alt: "Draft 2",  category: ["Illustration", "3D"], col: 1 },
+  { type: "video", src: "/videos/Draft (1).mp4", alt: "Draft V1", category: ["Motion graphic"],      col: 2 },
+  { type: "image", src: "/images/Draft (3).png", alt: "Draft 3",  category: ["3D"],                 col: 0 },
+  { type: "image", src: "/images/Draft (6).png", alt: "Draft 6",  category: ["Illustration"],        col: 1 },
+  { type: "video", src: "/videos/Draft (2).mp4", alt: "Draft V2", category: ["Motion graphic"],      col: 2 },
+  { type: "image", src: "/images/Draft (5).png", alt: "Draft 5",  category: ["Illustration"],        col: 0 }, // directly under Draft(3).png
+  { type: "image", src: "/images/Draft (7).png", alt: "Draft 7",  category: ["Illustration"],        col: 1 },
+  { type: "video", src: "/videos/Draft (3).mp4", alt: "Draft V3", category: ["Motion graphic"],      col: 2 },
+  { type: "image", src: "/images/Draft (4).png", alt: "Draft 4",  category: ["3D"],                 col: 2 }, // directly under Draft(3).mp4
 ]
 
 const CATEGORIES = ["All", "Illustration", "Motion graphic", "3D"]
@@ -85,7 +85,7 @@ export function AIPage() {
 
   const filtered = activeTab === "All"
     ? GALLERY_ITEMS
-    : GALLERY_ITEMS.filter(item => item.category === activeTab)
+    : GALLERY_ITEMS.filter(item => item.category.includes(activeTab))
 
   const slideEase = "transform 0.85s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease"
 
@@ -270,7 +270,10 @@ export function AIPage() {
           {(() => {
             const NUM_COLS = 3
             const cols = Array.from({ length: NUM_COLS }, () => [])
-            filtered.forEach((item, i) => cols[i % NUM_COLS].push({ item, globalIdx: i }))
+            filtered.forEach((item, i) => {
+              const colIdx = activeTab === "All" ? item.col : i % NUM_COLS
+              cols[colIdx].push({ item, globalIdx: i })
+            })
 
             return (
               <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>

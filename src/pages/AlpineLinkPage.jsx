@@ -838,7 +838,7 @@ export function AlpineLinkPage() {
               onClick={() => navigate("projects")}
               style={{
                 position:             "fixed",
-                top:                  "clamp(72px,9vh,96px)",
+                top:                  "clamp(110px,13vh,140px)",
                 left:                 "clamp(24px,3vw,48px)",
                 zIndex:               50,
                 display:              "flex",
