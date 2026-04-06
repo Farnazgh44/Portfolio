@@ -1410,7 +1410,7 @@ export function SugarCloudPage() {
         {/* ── Figma link — sits right below the Design Process section ─── */}
         <div style={{ display: "flex", justifyContent: "center", paddingBottom: "56px" }}>
           <a
-            href="https://www.figma.com/design/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=340-4540&t=4aOix6OQCOgCvoiS-1"
+            href="https://www.figma.com/proto/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=487-2571&t=IrG9SyveZBIJpkcp-1&scaling=scale-down&content-scaling=fixed&page-id=340%3A4540"
             target="_blank"
             rel="noopener noreferrer"
             style={{
