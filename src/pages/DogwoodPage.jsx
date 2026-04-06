@@ -719,7 +719,7 @@ export function DogwoodPage() {
 
           {/* ← Back */}
           <button onClick={() => navigate("projects")} style={{
-            position: "fixed", top: "clamp(72px,9vh,96px)", left: "clamp(24px,3vw,48px)",
+            position: "fixed", top: "clamp(110px,13vh,140px)", left: "clamp(24px,3vw,48px)",
             zIndex: 50, display: "flex", alignItems: "center", gap: "7px",
             padding: "9px 20px", borderRadius: "999px",
             background: "rgba(255,255,255,0.10)",

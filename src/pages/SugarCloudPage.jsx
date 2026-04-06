@@ -1260,7 +1260,7 @@ export function SugarCloudPage() {
           onClick={() => navigate("projects")}
           style={{
             position:             "fixed",
-            top:                  "clamp(72px,9vh,96px)",
+            top:                  "clamp(110px,13vh,140px)",
             left:                 "clamp(20px,2.5vw,44px)",
             zIndex:               50,
             display:              "flex",

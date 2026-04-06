@@ -591,8 +591,8 @@ function NavySection() {
       setContainerScale(scale)
 
       setMissionVisible(p > 0.3)
-      setGoalsVisible(p > 0.5)
-      setValuesVisible(p > 0.7)
+      setValuesVisible(p > 0.5)
+      setGoalsVisible(p > 0.7)
     }
     window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll()
@@ -700,52 +700,19 @@ function NavySection() {
             }}
           />
 
-          {/* Cards - absolutely positioned at corners */}
-          <div className="absolute inset-0 z-10 p-6 md:p-10">
+          {/* Cards — centered column, equal spacing */}
+          <div className="absolute inset-0 z-10">
 
-            {/* Goals - TOP LEFT
-                Mobile: 58% wide for more text room, pushed slightly lower.
-                Desktop stays at 42%.                                          */}
+            {/* Mission — TOP LEFT, slides in from LEFT */}
             <div
-              className="absolute top-20 left-2 md:top-24 md:left-10 rounded-2xl p-3 md:p-6 w-[58%] md:w-[42%] transition-all duration-1000 ease-out"
+              className="absolute rounded-2xl p-3 md:p-6 transition-all duration-1000 ease-out"
               style={{
                 ...glassStyle,
-                opacity: goalsVisible ? 1 : 0,
-                transform: goalsVisible ? "translateY(0)" : "translateY(-80px)",
-                zIndex: 20,
-              }}
-            >
-              <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-3 flex-wrap">
-                <h3 className="text-white text-sm md:text-xl font-bold">Goals</h3>
-                <div className="flex gap-1 md:gap-2 relative z-30 flex-wrap">
-                  {Object.keys(GOALS_DATA).map((key) => (
-                    <BlobButton
-                      key={key}
-                      stopProp
-                      onClick={() => setGoalsTab(key)}
-                      className="pill-btn-hover px-2 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-medium transition-all duration-300 cursor-pointer relative z-30"
-                      style={{
-                        background: goalsTab === key ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.06)",
-                        color: goalsTab === key ? "white" : "rgba(255,255,255,0.5)",
-                        border: `1px solid ${goalsTab === key ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.1)"}`,
-                      }}
-                    >
-                      {key}
-                    </BlobButton>
-                  ))}
-                </div>
-              </div>
-              {/* No min-h or line-clamp — let the text show in full */}
-              <p className="text-white/70 text-[10px] md:text-sm leading-relaxed transition-opacity duration-300">{GOALS_DATA[goalsTab]}</p>
-            </div>
-
-            {/* Mission - BOTTOM RIGHT — taller: no line-clamp, auto height */}
-            <div
-              className="absolute bottom-2 right-2 md:bottom-10 md:right-10 rounded-2xl p-3 md:p-6 w-[45%] md:w-[42%] transition-all duration-1000 ease-out"
-              style={{
-                ...glassStyle,
-                opacity: missionVisible ? 1 : 0,
-                transform: missionVisible ? "translateY(0) translateX(0)" : "translateY(80px) translateX(40px)",
+                top:     "12%",   /* ← move up/down */
+                left:    "15%",    /* ← move left/right */
+                width:   "clamp(240px, 42%, 480px)",
+                opacity:   missionVisible ? 1 : 0,
+                transform: missionVisible ? "translateX(0)" : "translateX(-150vw)",
                 zIndex: 20,
               }}
             >
@@ -755,13 +722,16 @@ function NavySection() {
               </p>
             </div>
 
-            {/* Core Values - BOTTOM LEFT — taller: no line-clamp, auto height */}
+            {/* Values — CENTER, slides in from RIGHT */}
             <div
-              className="absolute bottom-2 left-2 md:bottom-10 md:left-10 rounded-2xl p-3 md:p-6 w-[45%] md:w-[42%] transition-all duration-1000 ease-out"
+              className="absolute rounded-2xl p-3 md:p-6 transition-all duration-1000 ease-out"
               style={{
                 ...glassStyle,
-                opacity: valuesVisible ? 1 : 0,
-                transform: valuesVisible ? "translateX(0)" : "translateX(-80px)",
+                top:   "37%",    /* ← move up/down */
+                left:  "50%",    /* ← move left/right */
+                transform: valuesVisible ? "translateX(-50%)" : "translateX(150vw)",
+                width: "clamp(240px, 42%, 480px)",
+                opacity:   valuesVisible ? 1 : 0,
                 zIndex: 20,
               }}
             >
@@ -785,6 +755,43 @@ function NavySection() {
               </div>
               <p className="text-white/70 text-[10px] md:text-sm leading-relaxed transition-opacity duration-300">{VALUES_DATA[valuesTab]}</p>
             </div>
+
+            {/* Goals — BOTTOM RIGHT, slides in from BOTTOM */}
+            <div
+              className="absolute rounded-2xl p-3 md:p-6 transition-all duration-1000 ease-out"
+              style={{
+                ...glassStyle,
+                top:   "70%",    /* ← move up/down */
+                right: "15%",     /* ← move left/right (uses right, not left) */
+                width: "clamp(240px, 42%, 480px)",
+                opacity:   goalsVisible ? 1 : 0,
+                transform: goalsVisible ? "translateY(0)" : "translateY(120vh)",
+                zIndex: 20,
+              }}
+            >
+              <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-3 flex-wrap">
+                <h3 className="text-white text-sm md:text-xl font-bold">Goals</h3>
+                <div className="flex gap-1 md:gap-2 relative z-30 flex-wrap">
+                  {Object.keys(GOALS_DATA).map((key) => (
+                    <BlobButton
+                      key={key}
+                      stopProp
+                      onClick={() => setGoalsTab(key)}
+                      className="pill-btn-hover px-2 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-medium transition-all duration-300 cursor-pointer relative z-30"
+                      style={{
+                        background: goalsTab === key ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.06)",
+                        color: goalsTab === key ? "white" : "rgba(255,255,255,0.5)",
+                        border: `1px solid ${goalsTab === key ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.1)"}`,
+                      }}
+                    >
+                      {key}
+                    </BlobButton>
+                  ))}
+                </div>
+              </div>
+              <p className="text-white/70 text-[10px] md:text-sm leading-relaxed transition-opacity duration-300">{GOALS_DATA[goalsTab]}</p>
+            </div>
+
           </div>
         </div>
       </div>

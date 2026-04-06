@@ -23,6 +23,7 @@ const PROJECTS = [
     id:          "sugarcloud",
     pageId:      "project-sugarcloud",
     image:       "/images/Laptop_Feature.png",
+    imageScale:  1.3,
     logo:        "/images/SugarcloudLogo.png",
     logoHeight:  "clamp(60px, 7vw, 90px)",
     nameScript:  "SugarCloud",
@@ -57,16 +58,18 @@ const PROJECTS = [
     id:          "dogwood",
     pageId:      "project-dogwood",
     image:       "/images/Dogwood.png",
+    imageScale:  1.5,
     logo:        null,
-    name:        "Dogwood Land & Gardening",
+    name:        "Dogwood Landscaping & Gardening",
     category:    "Web Design & UX Case Study",
-    desc:        "A website design for Dogwood Land & Gardening — a local landscaping and gardening business. Focused on clean layout, approachable branding, and a seamless user experience for potential clients.",
+    desc:        "A website design for Dogwood Landscaping & Gardening — a local landscaping and gardening business. Focused on clean layout, approachable branding, and a seamless user experience for potential clients.",
     tools:       ["Figma", "Canva", "VS Code"],
   },
   {
     id:          "game",
     pageId:      "project-game",
     image:       "/images/Game.png",
+    imageScale:  1.5,
     logo:        null,
     name:        "Space Shipper",
     category:    "Game UI",
@@ -94,7 +97,7 @@ function getCardStyle(offset) {
     const dir = offset > 0 ? 1 : -1
     return {
       transform: `translate(calc(-50% + ${dir * 20}vw), -50%) scale(0.70)`,
-      filter:    "blur(4px)",           /* visible but softly blurred */
+      filter:    "none",
       opacity:   1,
       zIndex:    6,
     }
@@ -448,22 +451,30 @@ export function ProjectsPage() {
                   minHeight:  0,
                   overflow:   "hidden",
                 }}>
-                  <img
-                    src={project.image}
-                    alt={project.name || project.nameScript}
-                    draggable="false"
-                    className={isFront ? "proj-img-float" : ""}
-                    style={{
-                      width:          "100%",
-                      height:         "100%",
-                      objectFit:      "contain",
-                      objectPosition: "center center",
-                      display:        "block",
-                      userSelect:     "none",
-                      pointerEvents:  "none",
-                      padding:        isMobile ? "12px 12px 0" : "20px 20px 0",
-                    }}
-                  />
+                  {/* Scale wrapper — separate from float so transforms don't clash */}
+                  <div style={{
+                    width:           "100%",
+                    height:          "100%",
+                    transform:       project.imageScale ? `scale(${project.imageScale})` : undefined,
+                    transformOrigin: "center center",
+                  }}>
+                    <img
+                      src={project.image}
+                      alt={project.name || project.nameScript}
+                      draggable="false"
+                      className={isFront ? "proj-img-float" : ""}
+                      style={{
+                        width:          "100%",
+                        height:         "100%",
+                        objectFit:      "contain",
+                        objectPosition: "center center",
+                        display:        "block",
+                        userSelect:     "none",
+                        pointerEvents:  "none",
+                        padding:        isMobile ? "12px 12px 0" : "20px 20px 0",
+                      }}
+                    />
+                  </div>
 
                   {/* Hover overlay — project info (covers image zone only) */}
                   <CardOverlay
@@ -482,6 +493,7 @@ export function ProjectsPage() {
                   borderTop:     "1px solid rgba(255,255,255,0.18)",
                   display:       "flex",
                   flexDirection: "column",
+                  alignItems:    "center",
                   gap:           "2px",
                 }}>
                   <p style={{
@@ -491,9 +503,11 @@ export function ProjectsPage() {
                     fontSize:      isMobile ? "0.95rem" : "clamp(0.95rem, 1.3vw, 1.15rem)",
                     letterSpacing: "0.01em",
                     lineHeight:    1.2,
+                    textAlign:     "center",
                     whiteSpace:    "nowrap",
                     overflow:      "hidden",
                     textOverflow:  "ellipsis",
+                    maxWidth:      "100%",
                   }}>
                     {project.nameScript
                       ? `${project.nameScript} ${project.namePlain}`
@@ -505,9 +519,11 @@ export function ProjectsPage() {
                     fontWeight:    500,
                     fontSize:      isMobile ? "0.72rem" : "clamp(0.72rem, 0.9vw, 0.82rem)",
                     letterSpacing: "0.04em",
+                    textAlign:     "center",
                     whiteSpace:    "nowrap",
                     overflow:      "hidden",
                     textOverflow:  "ellipsis",
+                    maxWidth:      "100%",
                   }}>
                     {project.category}
                   </p>
