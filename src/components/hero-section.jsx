@@ -356,11 +356,17 @@ export function HeroSection() {
             Based in Vancouver, creating visually engaging and user-centered digital experiences.
           </p>
 
-          {/* CTA buttons */}
+          {/* CTA buttons — always in DOM, opacity/transform only so no layout shift */}
           <div
-            className={`flex gap-3 sm:gap-4 flex-wrap transition-all duration-700 ${
-              showButtons ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
+            style={{
+              display: "flex",
+              gap: isMobile ? "12px" : "16px",
+              flexWrap: "wrap",
+              opacity: showButtons ? 1 : 0,
+              transform: showButtons ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.7s cubic-bezier(0.215,0.61,0.355,1), transform 0.7s cubic-bezier(0.215,0.61,0.355,1)",
+              willChange: "opacity, transform",
+            }}
           >
             <BlobButton
               onClick={() => navigate("projects")}
@@ -388,33 +394,35 @@ export function HeroSection() {
             </BlobButton>
           </div>
 
-          {/* ── Scroll-down arrow ── */}
-          {showButtons && (
+          {/* ── Scroll-down arrow — always in DOM to avoid layout shift ── */}
+          <div style={{
+            marginTop:  isMobile ? "32px" : "48px",
+            display:    "flex",
+            alignItems: "center",
+            gap:        "10px",
+            opacity:    showButtons ? 1 : 0,
+            transition: "opacity 0.7s cubic-bezier(0.23,1,0.32,1) 0.5s",
+            willChange: "opacity",
+          }}>
             <div style={{
-              marginTop:  isMobile ? "32px" : "48px",
-              animation:  "heroArrowFadeIn 0.7s cubic-bezier(0.23,1,0.32,1) 0.5s both",
-              display:    "flex",
-              alignItems: "center",
-              gap:        "10px",
+              animation: showButtons
+                ? "heroArrowBounce 1.8s ease-in-out infinite, heroArrowGlow 1.8s ease-in-out infinite"
+                : "none",
             }}>
-              <div style={{
-                animation: "heroArrowBounce 1.8s ease-in-out infinite, heroArrowGlow 1.8s ease-in-out infinite",
-              }}>
-                <svg width={isMobile ? "30" : "38"} height={isMobile ? "30" : "38"} viewBox="0 0 38 38" fill="none">
-                  <path d="M8 12L19 26L30 12" stroke="rgba(255,255,255,0.85)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span style={{
-                color:         "rgba(255,255,255,0.45)",
-                fontSize:      isMobile ? "0.72rem" : "0.82rem",
-                letterSpacing: "0.10em",
-                textTransform: "uppercase",
-                fontWeight:    500,
-              }}>
-                Scroll
-              </span>
+              <svg width={isMobile ? "30" : "38"} height={isMobile ? "30" : "38"} viewBox="0 0 38 38" fill="none">
+                <path d="M8 12L19 26L30 12" stroke="rgba(255,255,255,0.85)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
-          )}
+            <span style={{
+              color:         "rgba(255,255,255,0.45)",
+              fontSize:      isMobile ? "0.72rem" : "0.82rem",
+              letterSpacing: "0.10em",
+              textTransform: "uppercase",
+              fontWeight:    500,
+            }}>
+              Scroll
+            </span>
+          </div>
         </div>
 
         {/* ── Right: draggable lava blobs (desktop/tablet only) ── */}

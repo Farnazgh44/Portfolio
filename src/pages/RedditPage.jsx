@@ -1604,6 +1604,62 @@ export function RedditPage() {
                 ))}
               </div>
 
+              {/* Figma buttons */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: isMobile ? "center" : "flex-start" }}>
+                <a
+                  href="https://www.figma.com/design/vKNmWMvdeVnMEGZolC6pQC/Untitled?t=O3BGVudJqnWothys-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "999px",
+                    background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.30)",
+                    color: "rgba(255,255,255,0.90)",
+                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                    textDecoration: "none", transition: "all 0.22s ease",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(249,115,22,0.22)"
+                    e.currentTarget.style.borderColor = "rgba(249,115,22,0.60)"
+                    e.currentTarget.style.transform = "translateY(-2px)"
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "rgba(249,115,22,0.12)"
+                    e.currentTarget.style.borderColor = "rgba(249,115,22,0.30)"
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  Figma File
+                </a>
+                <a
+                  href="https://www.figma.com/proto/vKNmWMvdeVnMEGZolC6pQC/Untitled?node-id=1-44&t=Xoh1V0ERq1omo8KN-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "999px",
+                    background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.30)",
+                    color: "rgba(255,255,255,0.90)",
+                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                    textDecoration: "none", transition: "all 0.22s ease",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(249,115,22,0.22)"
+                    e.currentTarget.style.borderColor = "rgba(249,115,22,0.60)"
+                    e.currentTarget.style.transform = "translateY(-2px)"
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "rgba(249,115,22,0.12)"
+                    e.currentTarget.style.borderColor = "rgba(249,115,22,0.30)"
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  Figma Prototype
+                </a>
+              </div>
+
             </div>
           </div>
 
@@ -1623,50 +1679,6 @@ export function RedditPage() {
             STEPPER / ACCORDION SECTION
         ══════════════════════════════════════════════════════════════ */}
         <CaseStudyStepper />
-
-        {/* ── Figma Link button ── */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "0 0 48px" }}>
-          <a
-            href="https://www.figma.com/design/vKNmWMvdeVnMEGZolC6pQC/Untitled?node-id=0-1&t=JOTQP8xADYPxQDX1-1"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display:              "inline-flex",
-              alignItems:           "center",
-              gap:                  "10px",
-              padding:              "14px 36px",
-              borderRadius:         "999px",
-              background:           "linear-gradient(135deg, rgba(249,115,22,0.18), rgba(249,115,22,0.08))",
-              backdropFilter:       "blur(14px)",
-              WebkitBackdropFilter: "blur(14px)",
-              border:               "1px solid rgba(249,115,22,0.45)",
-              color:                "rgba(255,255,255,0.92)",
-              fontSize:             "0.95rem",
-              fontWeight:           600,
-              letterSpacing:        "0.05em",
-              textDecoration:       "none",
-              cursor:               "pointer",
-              transition:           "background 0.25s ease, border-color 0.25s ease, transform 0.2s ease",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background  = "linear-gradient(135deg, rgba(249,115,22,0.32), rgba(249,115,22,0.16))"
-              e.currentTarget.style.borderColor = "rgba(249,115,22,0.70)"
-              e.currentTarget.style.transform   = "translateY(-2px)"
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background  = "linear-gradient(135deg, rgba(249,115,22,0.18), rgba(249,115,22,0.08))"
-              e.currentTarget.style.borderColor = "rgba(249,115,22,0.45)"
-              e.currentTarget.style.transform   = "translateY(0)"
-            }}
-          >
-            <img
-              src="/images/toolkit-figma.png"
-              alt="Figma"
-              style={{ width: "22px", height: "22px", objectFit: "contain" }}
-            />
-            View Figma File
-          </a>
-        </div>
 
       </main>
 

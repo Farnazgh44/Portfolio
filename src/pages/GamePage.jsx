@@ -500,6 +500,62 @@ export function GamePage() {
                 ))}
               </div>
 
+              {/* Figma buttons */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                <a
+                  href="https://www.figma.com/design/PGc2M6keAzxa6FAuvaps3u/Untitled?node-id=35-42&t=mF4x0WF4U1UzMCC7-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "999px",
+                    background: CYAN_DIM, border: `1px solid ${CYAN_MID}`,
+                    color: "rgba(255,255,255,0.90)",
+                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                    textDecoration: "none", transition: "all 0.22s ease",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(99,210,255,0.28)"
+                    e.currentTarget.style.borderColor = CYAN
+                    e.currentTarget.style.transform = "translateY(-2px)"
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = CYAN_DIM
+                    e.currentTarget.style.borderColor = CYAN_MID
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  Figma File
+                </a>
+                <a
+                  href="https://www.figma.com/proto/PGc2M6keAzxa6FAuvaps3u/Untitled?node-id=35-61&t=UsQpZFFvZXLIRtUI-1&scaling=min-zoom&content-scaling=fixed&page-id=35%3A42"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "999px",
+                    background: CYAN_DIM, border: `1px solid ${CYAN_MID}`,
+                    color: "rgba(255,255,255,0.90)",
+                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                    textDecoration: "none", transition: "all 0.22s ease",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(99,210,255,0.28)"
+                    e.currentTarget.style.borderColor = CYAN
+                    e.currentTarget.style.transform = "translateY(-2px)"
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = CYAN_DIM
+                    e.currentTarget.style.borderColor = CYAN_MID
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  Figma Prototype
+                </a>
+              </div>
+
             </div>
           </div>
 
