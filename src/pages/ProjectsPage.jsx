@@ -23,7 +23,7 @@ const PROJECTS = [
     id:          "sugarcloud",
     pageId:      "project-sugarcloud",
     image:       "/images/Laptop_Feature.png",
-    imageScale:  1.3,
+    imageScale:  1.03,
     logo:        "/images/SugarcloudLogo.png",
     logoHeight:  "clamp(60px, 7vw, 90px)",
     nameScript:  "SugarCloud",

@@ -670,7 +670,8 @@ function CollapsedStepRow({ step, isLast, onClick, grow }) {
 }
 
 /* ── Open step box ───────────────────────────────────────────────────────── */
-function OpenStepBox({ step }) {
+function OpenStepBox({ step, onClose }) {
+  const [closeHov, setCloseHov] = useState(false)
   return (
     <div style={{ display: "flex" }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "48px", flexShrink: 0 }}>
@@ -696,10 +697,29 @@ function OpenStepBox({ step }) {
         backdropFilter:       "blur(12px)", WebkitBackdropFilter: "blur(12px)",
         overflow:             "hidden",
       }}>
-        <div style={{ padding: "14px 18px", borderBottom: `1px solid rgba(232,121,160,0.22)` }}>
+        {/* Header row with title + close button */}
+        <div style={{ padding: "14px 14px 14px 18px", borderBottom: `1px solid rgba(232,121,160,0.22)`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
           <span style={{ color: "#fff", fontSize: "clamp(0.93rem,1.3vw,1.05rem)", fontWeight: 700, letterSpacing: "0.01em" }}>
             {step.title}
           </span>
+          <button
+            onClick={onClose}
+            onMouseEnter={() => setCloseHov(true)}
+            onMouseLeave={() => setCloseHov(false)}
+            title="Close"
+            style={{
+              flexShrink: 0,
+              width: "28px", height: "28px", borderRadius: "50%",
+              border:     `1px solid ${closeHov ? PINK : PINK_MID}`,
+              background: closeHov ? "rgba(232,121,160,0.25)" : "rgba(232,121,160,0.10)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", transition: "all 0.22s ease",
+            }}
+          >
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <path d="M2 9l7-7M9 9L2 2" stroke={closeHov ? "#fff" : PINK} strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
         <div style={{
           height: `${STEP_CONTENT_H}px`, overflowY: "auto",
@@ -1218,10 +1238,7 @@ function CaseStudyStepper({ openLightbox }) {
               ))}
             </div>
           ) : (
-            <>
-              <OpenStepBox step={STEPS[openIndex]} />
-              <CloseArrow onClick={closeStep} />
-            </>
+            <OpenStepBox step={STEPS[openIndex]} onClose={closeStep} />
           )}
         </div>
 
@@ -1398,6 +1415,62 @@ export function SugarCloudPage() {
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
               {TOOLS.map(t => <ToolIcon key={t.name} {...t} />)}
             </div>
+
+            {/* Figma buttons */}
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start", marginTop: "20px" }}>
+              <a
+                href="https://www.figma.com/design/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=340-4540&t=O3BGVudJqnWothys-1"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "7px",
+                  padding: "9px 18px", borderRadius: "999px",
+                  background: PINK_DIM, border: `1px solid ${PINK_MID}`,
+                  color: "rgba(255,255,255,0.90)",
+                  fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                  textDecoration: "none", transition: "all 0.22s ease",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(232,121,160,0.28)"
+                  e.currentTarget.style.borderColor = PINK
+                  e.currentTarget.style.transform = "translateY(-2px)"
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = PINK_DIM
+                  e.currentTarget.style.borderColor = PINK_MID
+                  e.currentTarget.style.transform = "translateY(0)"
+                }}
+              >
+                <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                Figma File
+              </a>
+              <a
+                href="https://www.figma.com/proto/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=487-2571&t=j1rZPXVPC3aiuZmU-1&scaling=scale-down&content-scaling=fixed&page-id=340%3A4540"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "7px",
+                  padding: "9px 18px", borderRadius: "999px",
+                  background: PINK_DIM, border: `1px solid ${PINK_MID}`,
+                  color: "rgba(255,255,255,0.90)",
+                  fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                  textDecoration: "none", transition: "all 0.22s ease",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(232,121,160,0.28)"
+                  e.currentTarget.style.borderColor = PINK
+                  e.currentTarget.style.transform = "translateY(-2px)"
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = PINK_DIM
+                  e.currentTarget.style.borderColor = PINK_MID
+                  e.currentTarget.style.transform = "translateY(0)"
+                }}
+              >
+                <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                Figma Prototype
+              </a>
+            </div>
           </div>
 
         </section>
@@ -1406,45 +1479,6 @@ export function SugarCloudPage() {
             DESIGN PROCESS — AlpineLink-style stepper
         ════════════════════════════════════════════════════════════ */}
         <CaseStudyStepper openLightbox={openLightbox} />
-
-        {/* ── Figma link — sits right below the Design Process section ─── */}
-        <div style={{ display: "flex", justifyContent: "center", paddingBottom: "56px" }}>
-          <a
-            href="https://www.figma.com/proto/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=487-2571&t=IrG9SyveZBIJpkcp-1&scaling=scale-down&content-scaling=fixed&page-id=340%3A4540"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display:              "inline-flex",
-              alignItems:           "center",
-              gap:                  "10px",
-              padding:              "13px 34px",
-              borderRadius:         "999px",
-              background:           PINK_DIM,
-              backdropFilter:       "blur(14px)",
-              WebkitBackdropFilter: "blur(14px)",
-              border:               `1px solid ${PINK_MID}`,
-              color:                "rgba(255,255,255,0.92)",
-              fontSize:             "0.92rem",
-              fontWeight:           600,
-              letterSpacing:        "0.05em",
-              textDecoration:       "none",
-              transition:           "all 0.25s ease",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background  = "rgba(232,121,160,0.30)"
-              e.currentTarget.style.borderColor = PINK
-              e.currentTarget.style.transform   = "translateY(-2px)"
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background  = PINK_DIM
-              e.currentTarget.style.borderColor = PINK_MID
-              e.currentTarget.style.transform   = "translateY(0)"
-            }}
-          >
-            <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "20px", height: "20px", objectFit: "contain" }} />
-            View Figma File
-          </a>
-        </div>
 
         {/* ════════════════════════════════════════════════════════════
             BRAND IN REAL LIFE — scroll-driven horizontal gallery

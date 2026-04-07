@@ -791,6 +791,62 @@ export function DogwoodPage() {
                 ))}
               </div>
 
+              {/* Figma buttons */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                <a
+                  href="https://www.figma.com/design/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=0-1&t=O3BGVudJqnWothys-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "999px",
+                    background: GREEN_DIM, border: `1px solid ${GREEN_MID}`,
+                    color: "rgba(255,255,255,0.90)",
+                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                    textDecoration: "none", transition: "all 0.22s ease",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(134,197,120,0.28)"
+                    e.currentTarget.style.borderColor = GREEN
+                    e.currentTarget.style.transform = "translateY(-2px)"
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = GREEN_DIM
+                    e.currentTarget.style.borderColor = GREEN_MID
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  Figma File
+                </a>
+                <a
+                  href="https://www.figma.com/proto/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=4-4&t=7pTLCSUb9lWlAy5s-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=28%3A12"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "7px",
+                    padding: "9px 18px", borderRadius: "999px",
+                    background: GREEN_DIM, border: `1px solid ${GREEN_MID}`,
+                    color: "rgba(255,255,255,0.90)",
+                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                    textDecoration: "none", transition: "all 0.22s ease",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(134,197,120,0.28)"
+                    e.currentTarget.style.borderColor = GREEN
+                    e.currentTarget.style.transform = "translateY(-2px)"
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = GREEN_DIM
+                    e.currentTarget.style.borderColor = GREEN_MID
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                  Figma Prototype
+                </a>
+              </div>
+
             </div>
           </div>
 
