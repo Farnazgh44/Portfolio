@@ -45,16 +45,26 @@ const STORY_SECTIONS = [
 ]
 
 const TOOLKIT = [
-  { name: "Figma", image: "/images/toolkit-figma.png", desc: "Used for UI/UX design, wireframes, and prototypes" },
-  { name: "Maze", image: "/images/toolkit-maze.png", desc: "A UI/UX testing tool that lets you test Figma prototypes with real users. It helps you see usability issues early and improve your design before development" },
-  { name: "Illustrator", image: "/images/toolkit-illustrator.png", desc: "Used for creating vector graphics, icons, and illustrations" },
-  { name: "InDesign", image: "/images/toolkit-indesign.png", desc: "Used for layout design like magazines, booklets, and PDFs" },
-  { name: "After Effects", image: "/images/toolkit-aftereffects.png", desc: "Used for motion graphics and animations" },
+  { name: "Adobe Illustrator", image: "/images/toolkit-illustrator.png", desc: "Used for creating vector graphics, icons, and illustrations" },
+  { name: "Adobe InDesign", image: "/images/toolkit-indesign.png", desc: "Used for layout design like magazines, booklets, and PDFs" },
+  { name: "Adobe Photoshop", image: "/images/toolkit-photoshop.png", desc: "Used for photo editing and visual design" },
+  { name: "Adobe After Effects", image: "/images/toolkit-aftereffects.png", desc: "Used for motion graphics and animations" },
+  { name: "Adobe Premiere", image: "/images/Premium.png", desc: "Used for video editing and storytelling" },
   { name: "Canva", image: "/images/toolkit-canva.png", desc: "Used for quick and simple graphic design" },
-  { name: "VS Code", image: "/images/toolkit-vscode.png", desc: "Used for writing and editing code" },
-  { name: "Dimension", image: "/images/toolkit-dimension.png", desc: "Used for creating simple 3D scenes and mockups" },
+  { name: "VSC (Visual Studio Code)", image: "/images/toolkit-vscode.png", desc: "Used for writing and editing code" },
+  { name: "Adobe Dimension", image: "/images/toolkit-dimension.png", desc: "Used for creating simple 3D scenes and mockups" },
+  { name: "Figma", image: "/images/toolkit-figma.png", desc: "Used for UI/UX design, wireframes, and prototypes" },
   { name: "Tinkercad", image: "/images/toolkit-tinkercad.png", desc: "Used for simple 3D modeling and basic design learning" },
-  { name: "WordPress", image: "/images/wordpress.png", desc: "Used for building and managing websites with customizable themes and plugins" },
+  { name: "HTML", image: "/images/HTML.png", desc: "Used to structure web pages" },
+  { name: "CSS", image: "/images/CSS.png", desc: "Used to style and layout websites" },
+  { name: "JavaScript", image: "/images/JS.png", desc: "Used to add interactivity to websites" },
+  { name: "Maya", image: "/images/Maya.png", desc: "Used for 3D modeling and animation" },
+  { name: "React", image: "/images/React.png", desc: "Used to build interactive web interfaces" },
+  { name: "Adobe Substance Painter", image: "/images/Substance_Painter.png", desc: "Used for texturing 3D models" },
+  { name: "Maze", image: "/images/toolkit-maze.png", desc: "Used to test UI/UX designs with real users" },
+  { name: "WordPress", image: "/images/wordpress.png", desc: "Used to build and manage websites easily" },
+  { name: "Adobe Character Animator", image: "/images/character-animator.png", desc: "Used to animate characters using motion capture" },
+  { name: "Project Neo", image: "/images/Project_Neo.png", desc: "Used to create 3D designs in a simple interface" },
 ]
 
 const GOALS_DATA = {

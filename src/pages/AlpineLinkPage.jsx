@@ -13,8 +13,9 @@ const BLUE12 = "rgba(56,189,248,0.12)"
 const BLUE30 = "rgba(56,189,248,0.30)"
 
 const TOOLS = [
-  { name: "Figma",        icon: "/images/toolkit-figma.png"        },
-  { name: "After Effects",icon: "/images/toolkit-aftereffects.png" },
+  { name: "Figma",       icon: "/images/toolkit-figma.png"        },
+  { name: "Illustrator", icon: "/images/toolkit-illustrator.png"  },
+  { name: "Photoshop",   icon: "/images/toolkit-photoshop.png"    },
 ]
 
 /* ─── Tool icon (square, icon-only, pop-in animation) ────────────────────────── */
@@ -338,7 +339,8 @@ function CollapsedStepRow({ step, isLast, onClick, grow }) {
 }
 
 /* ─── Open step box ───────────────────────────────────────────────────────────── */
-function OpenStepBox({ step }) {
+function OpenStepBox({ step, onClose }) {
+  const [closeHov, setCloseHov] = useState(false)
   return (
     <div style={{ display: "flex" }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "48px", flexShrink: 0 }}>
@@ -364,10 +366,29 @@ function OpenStepBox({ step }) {
         backdropFilter:       "blur(12px)", WebkitBackdropFilter: "blur(12px)",
         overflow:             "hidden",
       }}>
-        <div style={{ padding: "14px 18px", borderBottom: "1px solid rgba(56,189,248,0.18)" }}>
+        {/* Header row with title + close button */}
+        <div style={{ padding: "14px 14px 14px 18px", borderBottom: "1px solid rgba(56,189,248,0.18)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
           <span style={{ color: "#fff", fontSize: "clamp(0.93rem,1.3vw,1.05rem)", fontWeight: 700, letterSpacing: "0.01em" }}>
             {step.title}
           </span>
+          <button
+            onClick={onClose}
+            onMouseEnter={() => setCloseHov(true)}
+            onMouseLeave={() => setCloseHov(false)}
+            title="Close"
+            style={{
+              flexShrink: 0,
+              width: "28px", height: "28px", borderRadius: "50%",
+              border:     `1px solid ${closeHov ? BLUE : BLUE30}`,
+              background: closeHov ? "rgba(56,189,248,0.25)" : BLUE12,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", transition: "all 0.22s ease",
+            }}
+          >
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <path d="M2 9l7-7M9 9L2 2" stroke={closeHov ? "#fff" : BLUE} strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
         <div style={{
           height: `${STEP_CONTENT_H}px`, overflowY: "auto",
@@ -497,7 +518,7 @@ function CaseStudyStepper() {
               ))}
             </div>
           ) : (
-            <><OpenStepBox step={STEPS[openIndex]} /><CloseArrow onClick={closeStep} /></>
+            <OpenStepBox step={STEPS[openIndex]} onClose={closeStep} />
           )}
         </div>
 
@@ -864,125 +885,122 @@ export function AlpineLinkPage() {
             </button>
 
             {/* Info block */}
-            <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? "10px" : "22px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
 
-              {/* AlpineLink logo */}
-              <img
-                src="/images/AlpineLogo.png"
-                alt="AlpineLink logo"
-                style={{
-                  height:      isMobile ? "45px" : "clamp(85px,10vw,130px)",
-                  width:       "auto",
-                  objectFit:   "contain",
-                  alignSelf:   isMobile ? "center" : "flex-start",
-                  marginLeft:  0,
-                  filter:      "drop-shadow(0 4px 18px rgba(56,189,248,0.40))",
-                  animation:   "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.10s both",
-                }}
-              />
-
-              {/* Title */}
-              <h1 style={{
-                margin:     0,
-                color:      "#fff",
-                fontSize:   "clamp(2rem,3.6vw,3.2rem)",
-                fontWeight: 700,
-                lineHeight: 1.05,
-                whiteSpace: "nowrap",
-                animation:  "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.25s both",
-              }}>
-                AlpineLink
-              </h1>
-
-              {/* Category badge */}
-              <div style={{
-                display:       "inline-flex",
-                alignSelf:     isMobile ? "center" : "flex-start",
-                padding:       "5px 16px",
-                borderRadius:  "999px",
-                background:    BLUE12,
-                border:        `1px solid rgba(56,189,248,0.40)`,
-                color:         BLUE,
-                fontSize:      "0.75rem",
-                fontWeight:    600,
-                letterSpacing: "0.09em",
-                textTransform: "uppercase",
-                animation:     "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.40s both",
-              }}>
-                Mobile App Design
+              {/* Logo + Name row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "10px", justifyContent: isMobile ? "center" : "flex-start", animation: "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.10s both" }}>
+                <img
+                  src="/images/AlpineLogo.png"
+                  alt="AlpineLink logo"
+                  style={{
+                    height:    isMobile ? "44px" : "clamp(52px, 7vw, 72px)",
+                    width:     "auto",
+                    objectFit: "contain",
+                    flexShrink: 0,
+                    filter:    "drop-shadow(0 4px 16px rgba(56,189,248,0.45))",
+                  }}
+                />
+                <h1 style={{
+                  margin:     0,
+                  color:      "#fff",
+                  fontSize:   isMobile ? "1.7rem" : "clamp(1.8rem, 2.8vw, 2.6rem)",
+                  fontWeight: 700,
+                  lineHeight: 1.05,
+                  whiteSpace: "nowrap",
+                }}>
+                  AlpineLink
+                </h1>
               </div>
+
+              {/* Subtitle */}
+              <p style={{
+                margin:        "0 0 12px",
+                color:         BLUE,
+                fontSize:      isMobile ? "0.75rem" : "clamp(0.78rem, 1vw, 0.90rem)",
+                fontWeight:    600,
+                letterSpacing: "0.07em",
+                textTransform: "uppercase",
+                animation:     "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.22s both",
+                textAlign:     isMobile ? "center" : "left",
+              }}>
+                Outdoor Activity Tracking App
+              </p>
+
+              {/* Description */}
+              <p style={{
+                margin:     "0 0 22px",
+                color:      "rgba(255,255,255,0.55)",
+                fontSize:   isMobile ? "0.78rem" : "clamp(0.78rem, 1vw, 0.86rem)",
+                lineHeight: 1.70,
+                maxWidth:   "400px",
+                animation:  "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.32s both",
+                textAlign:  isMobile ? "center" : "left",
+              }}>
+                An outdoor tracking app that allows users to monitor runs, explore routes in 3D, and access real-time weather and safety insights through a modern and interactive interface.
+              </p>
 
               {/* Divider */}
-              <div style={{
-                width:        "44px",
-                height:       "2px",
-                background:   "rgba(255,255,255,0.22)",
-                borderRadius: "2px",
-                animation:    "alSlideLeft 0.55s ease 0.52s both",
-              }} />
+              <div style={{ width: "100%", maxWidth: "400px", height: "1px", background: "rgba(255,255,255,0.09)", marginBottom: "18px", alignSelf: isMobile ? "center" : "flex-start", animation: "alSlideLeft 0.55s ease 0.40s both" }} />
 
-              {/* Toolkit icons */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: isMobile ? "center" : "flex-start" }}>
-                {TOOLS.map((t, i) => (
-                  <ToolIcon key={t.name} {...t} animDelay={`${0.58 + i * 0.10}s`} />
-                ))}
+              {/* Tools row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start", animation: "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.46s both" }}>
+                <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Tools</span>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
+                  {TOOLS.map((t, i) => (
+                    <ToolIcon key={t.name} {...t} animDelay={`${0.46 + i * 0.08}s`} />
+                  ))}
+                </div>
               </div>
 
-              {/* Figma buttons */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: isMobile ? "center" : "flex-start" }}>
-                <a
-                  href="https://www.figma.com/design/shmElE2YMrEHtmo37AlTfj/Untitled?node-id=0-1&t=ooZW6Z7z85hwXeuS-1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "7px",
-                    padding: "9px 18px", borderRadius: "999px",
-                    background: BLUE12, border: `1px solid ${BLUE30}`,
-                    color: "rgba(255,255,255,0.90)",
-                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
-                    textDecoration: "none", transition: "all 0.22s ease",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(56,189,248,0.22)"
-                    e.currentTarget.style.borderColor = "rgba(56,189,248,0.60)"
-                    e.currentTarget.style.transform = "translateY(-2px)"
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = BLUE12
-                    e.currentTarget.style.borderColor = BLUE30
-                    e.currentTarget.style.transform = "translateY(0)"
-                  }}
-                >
-                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                  Figma File
-                </a>
-                <a
-                  href="https://www.figma.com/proto/shmElE2YMrEHtmo37AlTfj/Untitled?node-id=1-2&t=uUlhF426etMrW1OM-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "7px",
-                    padding: "9px 18px", borderRadius: "999px",
-                    background: BLUE12, border: `1px solid ${BLUE30}`,
-                    color: "rgba(255,255,255,0.90)",
-                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
-                    textDecoration: "none", transition: "all 0.22s ease",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(56,189,248,0.22)"
-                    e.currentTarget.style.borderColor = "rgba(56,189,248,0.60)"
-                    e.currentTarget.style.transform = "translateY(-2px)"
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = BLUE12
-                    e.currentTarget.style.borderColor = BLUE30
-                    e.currentTarget.style.transform = "translateY(0)"
-                  }}
-                >
-                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                  Figma Prototype
-                </a>
+              {/* Role row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start", animation: "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.54s both" }}>
+                <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Role</span>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
+                  {["UI/UX Designer"].map(r => (
+                    <span key={r} style={{
+                      padding: "3px 11px", borderRadius: "999px",
+                      background: BLUE12, border: `1px solid ${BLUE30}`,
+                      color: "rgba(255,255,255,0.85)", fontSize: "0.71rem", fontWeight: 600,
+                    }}>{r}</span>
+                  ))}
+                </div>
               </div>
+
+              {/* Timeline row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "26px", justifyContent: isMobile ? "center" : "flex-start", animation: "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.60s both" }}>
+                <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Timeline</span>
+                <span style={{ color: "rgba(255,255,255,0.88)", fontSize: "0.82rem", fontWeight: 600 }}>3 Weeks</span>
+              </div>
+
+              {/* Figma Prototype button */}
+              <a
+                href="https://www.figma.com/proto/shmElE2YMrEHtmo37AlTfj/Untitled?node-id=1-2&t=uUlhF426etMrW1OM-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "8px",
+                  padding: "10px 22px", borderRadius: "999px",
+                  background: BLUE12, border: `1px solid ${BLUE30}`,
+                  color: "rgba(255,255,255,0.92)",
+                  fontSize: "0.84rem", fontWeight: 600, letterSpacing: "0.04em",
+                  textDecoration: "none", transition: "all 0.22s ease",
+                  alignSelf: isMobile ? "center" : "flex-start",
+                  animation: "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.66s both",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(56,189,248,0.22)"
+                  e.currentTarget.style.borderColor = "rgba(56,189,248,0.60)"
+                  e.currentTarget.style.transform = "translateY(-2px)"
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = BLUE12
+                  e.currentTarget.style.borderColor = BLUE30
+                  e.currentTarget.style.transform = "translateY(0)"
+                }}
+              >
+                <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                Figma Prototype
+              </a>
 
             </div>
           </div>

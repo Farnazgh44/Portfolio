@@ -64,7 +64,7 @@ export function Footer() {
   const { navigate } = useRouter()
 
   return (
-    <footer className="relative py-12 px-4 overflow-hidden" id="contact">
+    <footer className="relative pt-40 pb-12 px-4 overflow-hidden" id="contact">
       {/* Subtle lava blobs */}
       <div
         className="absolute w-32 h-32 opacity-15 blur-[40px] pointer-events-none"

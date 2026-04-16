@@ -309,10 +309,10 @@ export function HeroSection() {
             text="Farnaz"
             className="font-bold text-white mb-2"
             style={isWide
-              ? { fontSize: "10rem", marginBottom: "1.5rem", marginTop: "-0.35em" }
+              ? { fontSize: "10rem", marginBottom: "1.5rem", marginTop: "-0.12em", marginLeft: "-0.04em" }
               : isMobile
-                ? { fontSize: "3.8rem", marginTop: "-0.28em" }
-                : { fontSize: "clamp(2.2rem, 7vw, 6rem)", marginTop: "-0.28em" }
+                ? { fontSize: "3.8rem", marginTop: "-0.08em", marginLeft: "-0.03em" }
+                : { fontSize: "clamp(2.2rem, 7vw, 6rem)", marginTop: "-0.08em", marginLeft: "-0.04em" }
             }
             delay={45}
             duration={0.5}
@@ -372,9 +372,11 @@ export function HeroSection() {
               onClick={() => navigate("projects")}
               className="pill-btn-hover px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-sm font-medium text-white/80"
               style={{
-                background: "rgba(255,255,255,0.12)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(255,255,255,0.13)",
+                backdropFilter: "blur(22px)",
+                WebkitBackdropFilter: "blur(22px)",
+                border: "1px solid rgba(255,255,255,0.20)",
+                willChange: "backdrop-filter",
                 ...(isWide ? { fontSize: "1.3rem", padding: "18px 52px" } : {}),
               }}
             >
@@ -384,9 +386,11 @@ export function HeroSection() {
               onClick={() => navigate("about")}
               className="pill-btn-hover px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-sm font-medium text-white/80"
               style={{
-                background: "rgba(255,255,255,0.12)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(255,255,255,0.13)",
+                backdropFilter: "blur(22px)",
+                WebkitBackdropFilter: "blur(22px)",
+                border: "1px solid rgba(255,255,255,0.20)",
+                willChange: "backdrop-filter",
                 ...(isWide ? { fontSize: "1.3rem", padding: "18px 52px" } : {}),
               }}
             >

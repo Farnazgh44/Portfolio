@@ -256,7 +256,7 @@ export function AboutPreview() {
           <div
             style={{
               position:   "absolute",
-              bottom:     "-64px",
+              bottom:     "-140px",
               left:       "50%",
               transform:  "translateX(-50%)",
               opacity:    contentOpacity,

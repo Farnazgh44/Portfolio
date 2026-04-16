@@ -48,7 +48,7 @@ export function Navbar() {
       <div className="flex items-center gap-2">
         <GlassCard
           intensity="medium"
-          className="nav-glass-hover w-14 h-14 3xl:w-24 3xl:h-24 flex items-center justify-center rounded-xl cursor-pointer overflow-hidden"
+          className="nav-glass-hover nav-logo-glass w-14 h-14 3xl:w-24 3xl:h-24 flex items-center justify-center rounded-xl cursor-pointer overflow-hidden"
           onClick={() => navigate("home")}
         >
           <img src="/images/logo.png" alt="FG Logo" className="w-10 h-10 3xl:w-16 3xl:h-16 object-contain" />
@@ -81,29 +81,39 @@ export function Navbar() {
                 ${menuOpen ? "max-w-[400px] opacity-100 px-4" : "max-w-0 opacity-0 px-0"}
               `}
             >
-              {NAV_LINKS.map((link) => (
-                <button
-                  key={link.label}
-                  className="nav-link-gradient text-white/80 text-sm font-medium whitespace-nowrap transition-all duration-300 px-3 py-1.5 rounded-full bg-transparent border-none cursor-pointer"
-                  onClick={() => {
-                    setMenuOpen(false)
-                    if (link.type === "route") {
-                      navigate(link.href)
-                    } else if (!isHome) {
-                      navigate("home")
-                      setTimeout(() => {
+              {NAV_LINKS.map((link) => {
+                const isActive = page === link.href
+                return (
+                  <button
+                    key={link.label}
+                    className="nav-link-gradient text-white/80 text-sm font-medium whitespace-nowrap transition-all duration-300 px-3 py-1.5 rounded-full bg-transparent border-none cursor-pointer"
+                    style={isActive ? {
+                      background: "linear-gradient(90deg, #67B0FF, #CEB6FD)",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      filter: "drop-shadow(0 0 8px rgba(103, 176, 255, 0.3))",
+                    } : {}}
+                    onClick={() => {
+                      setMenuOpen(false)
+                      if (link.type === "route") {
+                        navigate(link.href)
+                      } else if (!isHome) {
+                        navigate("home")
+                        setTimeout(() => {
+                          const el = document.querySelector(link.href)
+                          if (el) el.scrollIntoView({ behavior: "smooth" })
+                        }, 200)
+                      } else {
                         const el = document.querySelector(link.href)
                         if (el) el.scrollIntoView({ behavior: "smooth" })
-                      }, 200)
-                    } else {
-                      const el = document.querySelector(link.href)
-                      if (el) el.scrollIntoView({ behavior: "smooth" })
-                    }
-                  }}
-                >
-                  {link.label}
-                </button>
-              ))}
+                      }
+                    }}
+                  >
+                    {link.label}
+                  </button>
+                )
+              })}
             </div>
 
             {/* Hamburger button */}
@@ -156,29 +166,39 @@ export function Navbar() {
             }}
           >
             <div className="flex flex-col p-2 gap-1">
-              {NAV_LINKS.map((link) => (
-                <button
-                  key={link.label}
-                  className="nav-link-gradient text-white/80 text-sm font-medium text-left px-4 py-2.5 rounded-xl bg-transparent border-none cursor-pointer hover:bg-white/10 transition-colors"
-                  onClick={() => {
-                    setMenuOpen(false)
-                    if (link.type === "route") {
-                      navigate(link.href)
-                    } else if (!isHome) {
-                      navigate("home")
-                      setTimeout(() => {
+              {NAV_LINKS.map((link) => {
+                const isActive = page === link.href
+                return (
+                  <button
+                    key={link.label}
+                    className="nav-link-gradient text-white/80 text-sm font-medium text-left px-4 py-2.5 rounded-xl bg-transparent border-none cursor-pointer hover:bg-white/10 transition-colors"
+                    style={isActive ? {
+                      background: "linear-gradient(90deg, #67B0FF, #CEB6FD)",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      filter: "drop-shadow(0 0 8px rgba(103, 176, 255, 0.3))",
+                    } : {}}
+                    onClick={() => {
+                      setMenuOpen(false)
+                      if (link.type === "route") {
+                        navigate(link.href)
+                      } else if (!isHome) {
+                        navigate("home")
+                        setTimeout(() => {
+                          const el = document.querySelector(link.href)
+                          if (el) el.scrollIntoView({ behavior: "smooth" })
+                        }, 200)
+                      } else {
                         const el = document.querySelector(link.href)
                         if (el) el.scrollIntoView({ behavior: "smooth" })
-                      }, 200)
-                    } else {
-                      const el = document.querySelector(link.href)
-                      if (el) el.scrollIntoView({ behavior: "smooth" })
-                    }
-                  }}
-                >
-                  {link.label}
-                </button>
-              ))}
+                      }
+                    }}
+                  >
+                    {link.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -210,7 +230,6 @@ export function Navbar() {
                   key={key}
                   onClick={() => {
                     setTheme(key)
-                    setPaletteOpen(false)
                   }}
                   className={`w-7 h-7 rounded-full shrink-0 transition-all duration-300 hover:scale-110 ${
                     themeName === key ? "ring-2 ring-white ring-offset-1 ring-offset-transparent scale-110" : ""
