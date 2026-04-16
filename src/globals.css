@@ -72,10 +72,10 @@
     font-family: var(--font-poppins);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    cursor: none;
+    cursor: default;
   }
 
-  /* Interactive elements show pointer; blob cursor hides itself via JS */
+  /* Interactive elements show pointer */
   a, button, [role="button"] {
     cursor: pointer !important;
   }
@@ -83,10 +83,6 @@
     cursor: text !important;
   }
 
-  /* Text elements show I-beam cursor for copy UX */
-  h1, h2, h3, h4, h5, h6, p, span, li, blockquote, label, td, th {
-    cursor: text;
-  }
   /* Exclude text inside interactive elements */
   a h1, a h2, a h3, a h4, a h5, a h6, a p, a span,
   button h1, button h2, button h3, button h4, button h5, button h6, button p, button span,
@@ -614,15 +610,19 @@ html {
    Targets navbar header elements specifically to avoid collateral changes.
 ─────────────────────────────────────────────────────────────────────────── */
 @media (min-width: 1920px) {
-  /* Logo card + Scroll Progress outer glass box */
-  header .nav-glass-hover {
+  /* Logo card only — fixed square size */
+  header .nav-logo-glass {
     width: 96px !important;
     height: 96px !important;
   }
   /* Logo image */
-  header .nav-glass-hover img {
+  header .nav-logo-glass img {
     width: 64px !important;
     height: 64px !important;
+  }
+  /* Pill containers (hamburger + palette) — height only, allow width to expand freely */
+  header .nav-glass-hover:not(.nav-logo-glass) {
+    height: 96px !important;
   }
   /* Scroll progress ring inner container */
   .scroll-progress-ring {

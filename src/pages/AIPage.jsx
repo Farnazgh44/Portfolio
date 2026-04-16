@@ -35,6 +35,9 @@ const PS  = "/images/toolkit-photoshop.png"
 const AE  = "/images/toolkit-aftereffects.png"
 const DIM = "/images/toolkit-dimension.png"
 const TIN = "/images/toolkit-tinkercad.png"
+const MAY = "/images/Maya.png"
+const NEO = "/images/Project_Neo.png"
+const CHA = "/images/character-animator.png"
 
 /* ── Gallery data ──────────────────────────────────────────────── */
 const GALLERY_ITEMS = [
@@ -43,14 +46,14 @@ const GALLERY_ITEMS = [
     category: ["3D"], col: 0,
     name: "3D Perfume Bottle",
     desc: "The bottle was modeled in Maya, refined in Adobe Dimension, and finalized in Adobe Photoshop.",
-    tools: [T("Maya"), T("Adobe Dimension", DIM), T("Photoshop", PS)],
+    tools: [T("Maya", MAY), T("Adobe Dimension", DIM), T("Photoshop", PS)],
   },
   {
     type: "image", src: "/images/Draft (2).png", alt: "Draft 2",
     category: ["Illustration", "3D"], col: 1,
     name: "3D Lighthouse",
     desc: "Created in Project Neo using a combination of shapes and techniques, then refined and composited with a background in Adobe Illustrator.",
-    tools: [T("Project Neo"), T("Adobe Illustrator", AI)],
+    tools: [T("Project Neo", NEO), T("Adobe Illustrator", AI)],
   },
   {
     type: "video", src: "/videos/Draft (1).mp4", alt: "Draft V1",
@@ -78,7 +81,7 @@ const GALLERY_ITEMS = [
     category: ["Motion graphic"], col: 2,
     name: "Cartoony Introduction",
     desc: "Created using Adobe Character Animator, then enhanced with a live background and additional animations in After Effects.",
-    tools: [T("Adobe Character Animator"), T("Adobe After Effects", AE)],
+    tools: [T("Adobe Character Animator", CHA), T("Adobe After Effects", AE)],
   },
   {
     type: "image", src: "/images/Draft (5).png", alt: "Draft 5",
@@ -108,9 +111,81 @@ const GALLERY_ITEMS = [
     desc: "Designed in Photoshop as an open layout, then assembled in After Effects by positioning each side to create a 3D box.",
     tools: [T("Adobe Photoshop", PS), T("Adobe After Effects", AE)],
   },
+  {
+    type: "image", src: "/images/AI1.png", alt: "Glass Strawberry F",
+    category: ["AI Generated"], col: 0,
+    name: "Glass Strawberry \"F\"",
+    desc: "",
+    prompt: "A hyper-realistic 3D render of the letter \"F\" formed as a transparent glass container filled with fresh, ripe strawberries. The glass is crystal-clear with smooth edges, subtle thickness, and visible water droplets on the surface, creating a fresh and glossy look. Inside the container, vibrant red strawberries with green leaves are tightly packed, showing natural texture and slight imperfections. The lighting is soft studio lighting with gentle highlights and reflections on the glass, creating a clean, premium aesthetic. The background is a soft pastel gradient (light lavender to pale blue), slightly blurred, giving a minimal and modern feel. The composition is centered, with sharp focus and high detail, photorealistic rendering, shallow depth of field, and soft shadows beneath the object.",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI2.png", alt: "Toronto Map Tear",
+    category: ["AI Generated"], col: 1,
+    name: "Toronto Map Tear",
+    desc: "",
+    prompt: "A highly detailed 3D illustration of a torn vintage world map revealing a miniature modern city of Toronto inside the ripped opening. The edges of the tear are rough, curled, and textured like aged paper, exposing a vibrant cityscape beneath. At the center stands the iconic CN Tower, surrounded by realistic downtown skyscrapers, including glass high-rises and recognizable urban architecture. In the foreground, a waterfront scene with deep blue water, small boats, and a clean shoreline is visible. Large, bold, 3D white text reading \"TORONTO\" is placed prominently at the front of the city, casting soft shadows. The background is an antique-style world map with warm tones, slightly worn texture, and geographic details. The lighting is cinematic with a warm sunset sky behind the city, featuring dramatic clouds and golden highlights reflecting on buildings. The composition is centered, with depth and perspective emphasizing the \"paper tear portal\" effect. Ultra-realistic textures, sharp focus, high detail, soft shadows, and a polished, travel-poster aesthetic.",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI3.png", alt: "Beach Conditioner Bottles",
+    category: ["AI Generated"], col: 2,
+    name: "Beach Conditioner Bottles",
+    desc: "",
+    prompt: "A hyper-realistic product photography shot of two premium cosmetic bottles placed upright on a sandy beach near the shoreline. The bottles are cylindrical with smooth matte-glass texture and soft gradients in turquoise and aqua blue tones, featuring subtle liquid swirl patterns inside. Each bottle has a metallic silver screw cap. One bottle displays minimal elegant branding text reading \"function of hailey,\" while the other has vertical typography reading \"CONDITIONER,\" both in clean white modern fonts. The setting is a bright, sunny beach with gentle ocean waves softly washing onto the sand. Around the bottles are natural seashells and a small starfish, partially embedded in wet sand with realistic reflections and moisture. The background shows a calm turquoise sea and a clear blue sky with a soft horizon line. Lighting is natural sunlight, slightly diffused, creating soft highlights, reflections on the glass surface, and subtle shadows on the sand. The composition is centered, with shallow depth of field, crisp focus on the bottles, and a slightly blurred background for a premium lifestyle product aesthetic.",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI4.png", alt: "Kawaii Onigiri",
+    category: ["AI Generated"], col: 0,
+    name: "Kawaii Onigiri",
+    desc: "",
+    prompt: "Prompt available upon request",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI5.png", alt: "Elegant Jewelry Portrait",
+    category: ["AI Generated"], col: 1,
+    name: "Elegant Jewelry Portrait",
+    desc: "",
+    prompt: "Prompt available upon request",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI6.png", alt: "Colorful Sunset Landscape",
+    category: ["AI Generated"], col: 2,
+    name: "Colorful Sunset Landscape",
+    desc: "",
+    prompt: "Prompt available upon request",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI7.png", alt: "Dreamy Cake",
+    category: ["AI Generated"], col: 0,
+    name: "Dreamy Cake",
+    desc: "",
+    prompt: "Prompt available upon request",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI8.png", alt: "Illustrated Girl with Drink",
+    category: ["AI Generated"], col: 1,
+    name: "Illustrated Girl with Drink",
+    desc: "",
+    prompt: "Prompt available upon request",
+    tools: [],
+  },
+  {
+    type: "image", src: "/images/AI9.png", alt: "Spring Bridge Scene",
+    category: ["AI Generated"], col: 2,
+    name: "Spring Bridge Scene",
+    desc: "",
+    prompt: "Prompt available upon request",
+    tools: [],
+  },
 ]
 
-const CATEGORIES = ["All", "Illustration", "Motion graphic", "3D"]
+const CATEGORIES = ["All", "Illustration", "Motion graphic", "3D", "AI Generated"]
 
 /* ── Single gallery card with hover overlay ─────────────────────── */
 function GalleryItem({ item, globalIdx, ci, galleryVisible, onOpen }) {
@@ -166,7 +241,9 @@ function GalleryItem({ item, globalIdx, ci, galleryVisible, onOpen }) {
         justifyContent:       "flex-end",
         padding:              "14px",
         gap:                  "6px",
-        pointerEvents:        "none",
+        pointerEvents:        hov && item.prompt ? "auto" : "none",
+        overflowY:            hov && item.prompt ? "auto"  : "hidden",
+        cursor:               "default",
       }}>
         {/* Name */}
         <p style={{
@@ -179,13 +256,43 @@ function GalleryItem({ item, globalIdx, ci, galleryVisible, onOpen }) {
         </p>
 
         {/* Description */}
-        <p style={{
-          margin: 0, color: "rgba(255,255,255,0.75)",
-          fontSize: "clamp(0.68rem, 0.9vw, 0.78rem)",
-          lineHeight: 1.5,
-        }}>
-          {item.desc}
-        </p>
+        {item.desc && (
+          <p style={{
+            margin: 0, color: "rgba(255,255,255,0.75)",
+            fontSize: "clamp(0.68rem, 0.9vw, 0.78rem)",
+            lineHeight: 1.5,
+          }}>
+            {item.desc}
+          </p>
+        )}
+
+        {/* Prompt */}
+        {item.prompt && (
+          <p style={{
+            margin: 0,
+            fontSize: "clamp(0.58rem, 0.72vw, 0.67rem)",
+            lineHeight: 1.55,
+            color: item.prompt === "Prompt available upon request"
+              ? "rgba(255,255,255,0.45)"
+              : "rgba(255,255,255,0.65)",
+            fontStyle: item.prompt === "Prompt available upon request" ? "italic" : "normal",
+            userSelect: "text",
+            WebkitUserSelect: "text",
+            MozUserSelect: "text",
+            cursor: "text",
+          }}>
+            <span style={{
+              color: "rgba(180,100,255,0.95)",
+              fontWeight: 700,
+              fontStyle: "normal",
+              marginRight: "4px",
+              userSelect: "none",
+            }}>
+              Prompt:
+            </span>
+            {item.prompt}
+          </p>
+        )}
 
         {/* Toolkit pills */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginTop: "2px" }}>

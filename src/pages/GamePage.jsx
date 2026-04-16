@@ -276,7 +276,8 @@ function CollapsedStepRow({ step, isLast, onClick, grow }) {
 }
 
 /* ─── Open step box ──────────────────────────────────────────────────────── */
-function OpenStepBox({ step }) {
+function OpenStepBox({ step, onClose }) {
+  const [closeHov, setCloseHov] = useState(false)
   return (
     <div style={{ display: "flex" }}>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "48px", flexShrink: 0 }}>
@@ -301,10 +302,29 @@ function OpenStepBox({ step }) {
         backdropFilter:       "blur(12px)", WebkitBackdropFilter: "blur(12px)",
         overflow:             "hidden",
       }}>
-        <div style={{ padding: "14px 18px", borderBottom: `1px solid rgba(99,210,255,0.22)` }}>
+        {/* Header row with title + close button */}
+        <div style={{ padding: "14px 14px 14px 18px", borderBottom: `1px solid rgba(99,210,255,0.22)`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
           <span style={{ color: "#fff", fontSize: "clamp(0.93rem,1.3vw,1.05rem)", fontWeight: 700 }}>
             {step.title}
           </span>
+          <button
+            onClick={onClose}
+            onMouseEnter={() => setCloseHov(true)}
+            onMouseLeave={() => setCloseHov(false)}
+            title="Close"
+            style={{
+              flexShrink: 0,
+              width: "28px", height: "28px", borderRadius: "50%",
+              border:     `1px solid ${closeHov ? CYAN : CYAN_MID}`,
+              background: closeHov ? "rgba(99,210,255,0.25)" : CYAN_DIM,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", transition: "all 0.22s ease",
+            }}
+          >
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <path d="M2 9l7-7M9 9L2 2" stroke={closeHov ? "#fff" : CYAN} strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
         <div style={{
           height: `${STEP_CONTENT_H}px`, overflowY: "auto",
@@ -663,8 +683,7 @@ export function GamePage() {
                 </div>
               ) : (
                 <>
-                  <OpenStepBox step={STEPS[openIndex]} />
-                  <CloseArrow onClick={closeStep} />
+                  <OpenStepBox step={STEPS[openIndex]} onClose={closeStep} />
                 </>
               )}
             </div>

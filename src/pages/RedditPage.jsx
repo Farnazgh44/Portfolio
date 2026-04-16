@@ -1008,12 +1008,13 @@ function CollapsedStepRow({ step, isLast, onClick, grow }) {
 }
 
 /* ─── Open step box (single-step expanded view) ──────────────────────────────── */
-function OpenStepBox({ step }) {
-  const orange  = "rgba(249,115,22,1)"
+function OpenStepBox({ step, onClose }) {
+  const orange = "rgba(249,115,22,1)"
+  const [closeHov, setCloseHov] = useState(false)
 
   return (
     <div style={{ display: "flex" }}>
-      {/* Orange circle + connector going down to the close arrow */}
+      {/* Orange circle + connector */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "48px", flexShrink: 0 }}>
         <div style={{
           width: "38px", height: "38px", borderRadius: "50%",
@@ -1038,10 +1039,11 @@ function OpenStepBox({ step }) {
         backdropFilter:       "blur(12px)", WebkitBackdropFilter: "blur(12px)",
         overflow:             "hidden",
       }}>
-        {/* Title row */}
+        {/* Title row with close button */}
         <div style={{
-          padding: "14px 18px",
+          padding: "14px 14px 14px 18px",
           borderBottom: "1px solid rgba(249,115,22,0.20)",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px",
         }}>
           <span style={{
             color: "#fff", fontSize: "clamp(0.93rem, 1.3vw, 1.05rem)",
@@ -1049,6 +1051,24 @@ function OpenStepBox({ step }) {
           }}>
             {step.title}
           </span>
+          <button
+            onClick={onClose}
+            onMouseEnter={() => setCloseHov(true)}
+            onMouseLeave={() => setCloseHov(false)}
+            title="Close"
+            style={{
+              flexShrink: 0,
+              width: "28px", height: "28px", borderRadius: "50%",
+              border:     `1px solid ${closeHov ? orange : "rgba(249,115,22,0.45)"}`,
+              background: closeHov ? "rgba(249,115,22,0.25)" : "rgba(249,115,22,0.12)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", transition: "all 0.22s ease",
+            }}
+          >
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+              <path d="M2 9l7-7M9 9L2 2" stroke={closeHov ? "#fff" : orange} strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
         {/* Scrollable description */}
         <div style={{
@@ -1184,7 +1204,7 @@ function CaseStudyStepper() {
               ))}
             </div>
           ) : (
-            <><OpenStepBox step={STEPS[openIndex]} /><CloseArrow onClick={closeStep} /></>
+            <OpenStepBox step={STEPS[openIndex]} onClose={closeStep} />
           )}
         </div>
 

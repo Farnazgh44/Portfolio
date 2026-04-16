@@ -240,7 +240,7 @@ function MockupCarousel() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <div style={{ width: "100%", maxWidth: "900px", height: "clamp(460px, 68vh, 700px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ width: "100%", maxWidth: "720px", height: "clamp(380px, 56vh, 580px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <img
           key={idx}
           src={MOCKUPS[idx].src}
@@ -473,6 +473,62 @@ function LaptopVideoMockup() {
 }
 
 /* ── Right-panel visual: single image or mini carousel ───────────────────── */
+/* ── Open Image button ───────────────────────────────────────────────────── */
+function OpenImageBtn({ onClick }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: "6px",
+        padding: "6px 14px", borderRadius: "999px",
+        background: hov ? "rgba(232,121,160,0.28)" : PINK_DIM,
+        border: `1px solid ${hov ? PINK : PINK_MID}`,
+        color: hov ? "#fff" : "rgba(255,255,255,0.85)",
+        fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.04em",
+        cursor: "pointer", transition: "all 0.22s ease",
+        transform: hov ? "translateY(-1px)" : "translateY(0)",
+        flexShrink: 0,
+      }}
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M4.5 1.5H2a.5.5 0 00-.5.5v2.5M7.5 1.5H10a.5.5 0 01.5.5v2.5M4.5 10.5H2a.5.5 0 01-.5-.5V7.5M7.5 10.5H10a.5.5 0 00.5-.5V7.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+      Open Image
+    </button>
+  )
+}
+
+/* ── Open Video button ───────────────────────────────────────────────────── */
+function OpenVideoBtn({ onClick }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: "6px",
+        padding: "6px 14px", borderRadius: "999px",
+        background: hov ? "rgba(232,121,160,0.28)" : PINK_DIM,
+        border: `1px solid ${hov ? PINK : PINK_MID}`,
+        color: hov ? "#fff" : "rgba(255,255,255,0.85)",
+        fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.04em",
+        cursor: "pointer", transition: "all 0.22s ease",
+        transform: hov ? "translateY(-1px)" : "translateY(0)",
+        flexShrink: 0,
+      }}
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M1.5 2.5a.5.5 0 01.5-.5h.5v7.5H2a.5.5 0 01-.5-.5V2.5zM4.5 2.5l6 3-6 3V2.5z" fill="currentColor"/>
+      </svg>
+      Open Video
+    </button>
+  )
+}
+
 function StepVisual({ step, openLightbox, isMobile }) {
   const [visible,  setVisible]  = useState(true)
   const [slideIdx, setSlideIdx] = useState(0)
@@ -549,44 +605,11 @@ function StepVisual({ step, openLightbox, isMobile }) {
       justifyContent:       "center",
       height:               isMobile ? "220px" : `${STEP_BOX_H}px`,
       minHeight:            isMobile ? "220px" : `${STEP_BOX_H}px`,
-      position:             "sticky",
     }}>
 
-      {/* Video laptop mockup — Step 6 only */}
-      {isVideo && (
-        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <LaptopVideoMockup />
-        </div>
-      )}
-
-      {/* Image area — all other steps */}
-      {!isVideo && <div style={{ position: "relative", width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: multi ? "24px 56px" : "40px" }}>
-        {multi && <NavBtn dir={-1} />}
-        <img
-          key={slideIdx}
-          src={slides[slideIdx]}
-          alt={`Step ${s?.number} — ${slideIdx + 1}`}
-          onClick={() => openLightbox && slides[slideIdx] && openLightbox({ type: "image", src: slides[slideIdx] })}
-          style={{
-            maxWidth:   "100%",
-            maxHeight:  `${STEP_BOX_H - (multi ? 100 : 80)}px`,
-            width:      "auto",
-            height:     "auto",
-            objectFit:  "contain",
-            display:    "block",
-            filter:     "drop-shadow(0 8px 28px rgba(0,0,0,0.40))",
-            opacity:    imgAnim ? 1 : 0,
-            transform:  imgAnim ? "scale(1)" : "scale(0.97)",
-            transition: "opacity 0.25s ease, transform 0.25s ease",
-            cursor:     "zoom-in",
-          }}
-        />
-        {multi && <NavBtn dir={1} />}
-      </div>}
-
-      {/* Dot indicators — only shown for multi-image */}
+      {/* Dot indicators — absolutely pinned to top center, only for multi-image */}
       {!isVideo && multi && (
-        <div style={{ display: "flex", gap: "7px", paddingBottom: "18px" }}>
+        <div style={{ position: "absolute", top: "14px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "7px", zIndex: 5 }}>
           {slides.map((_, i) => (
             <button key={i} onClick={() => goSlide(i)} style={{
               width: i === slideIdx ? "10px" : "7px",
@@ -597,6 +620,54 @@ function StepVisual({ step, openLightbox, isMobile }) {
               transition: "all 0.25s ease",
             }} />
           ))}
+        </div>
+      )}
+
+      {/* Video laptop mockup — Step 6 only */}
+      {isVideo && (
+        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <LaptopVideoMockup />
+        </div>
+      )}
+
+      {/* Image area — all other steps */}
+      {!isVideo && (
+        <div style={{ position: "relative", width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: multi ? "32px 56px" : "40px" }}>
+          {multi && <NavBtn dir={-1} />}
+          <img
+            key={slideIdx}
+            src={slides[slideIdx]}
+            alt={`Step ${s?.number} — ${slideIdx + 1}`}
+            onClick={() => openLightbox && slides[slideIdx] && openLightbox({ type: "image", src: slides[slideIdx] })}
+            style={{
+              maxWidth:   "100%",
+              maxHeight:  `${STEP_BOX_H - (multi ? 100 : 80)}px`,
+              width:      "auto",
+              height:     "auto",
+              objectFit:  "contain",
+              display:    "block",
+              filter:     "drop-shadow(0 8px 28px rgba(0,0,0,0.40))",
+              opacity:    imgAnim ? 1 : 0,
+              transform:  imgAnim ? "scale(1)" : "scale(0.97)",
+              transition: "opacity 0.25s ease, transform 0.25s ease",
+              cursor:     "zoom-in",
+            }}
+          />
+          {multi && <NavBtn dir={1} />}
+        </div>
+      )}
+
+      {/* Open Image button — absolutely pinned to bottom center */}
+      {!isVideo && slides[slideIdx] && (
+        <div style={{ position: "absolute", bottom: "14px", left: "50%", transform: "translateX(-50%)", zIndex: 5 }}>
+          <OpenImageBtn onClick={() => openLightbox && openLightbox({ type: "image", src: slides[slideIdx] })} />
+        </div>
+      )}
+
+      {/* Open Video button — absolutely pinned to bottom center, Outcome step only */}
+      {isVideo && (
+        <div style={{ position: "absolute", bottom: "14px", left: "50%", transform: "translateX(-50%)", zIndex: 5 }}>
+          <OpenVideoBtn onClick={() => openLightbox && openLightbox({ type: "video", src: "/videos/Sugar_Video.mp4" })} />
         </div>
       )}
     </div>
@@ -1348,129 +1419,128 @@ export function SugarCloudPage() {
           {/* ── Info panel — BOTTOM centered on mobile, LEFT on desktop ─ */}
           <div style={{
             order:         isMobile ? 0 : 0,
-            width:         isMobile ? "100%" : "clamp(220px, 32%, 380px)",
+            width:         isMobile ? "100%" : "clamp(280px, 40%, 460px)",
             flexShrink:    0,
             display:       "flex",
             flexDirection: "column",
             alignItems:    isMobile ? "center" : "flex-start",
             textAlign:     isMobile ? "center" : "left",
+            gap:           "0px",
             opacity:       heroIn ? 1 : 0,
             transform:     heroIn ? "translateX(0)" : "translateX(-50px)",
             transition:    "opacity 0.8s ease, transform 0.8s ease",
           }}>
-            {/* Logo */}
-            <img
-              src="/images/SugarcloudLogo.png"
-              alt="SugarCloud Cupcakes"
-              style={{
-                width:        isMobile ? "80px" : "clamp(80px, 12vw, 130px)",
-                height:       "auto",
-                objectFit:    "contain",
-                marginBottom: "16px",
-                filter:       "drop-shadow(0 4px 20px rgba(232,121,160,0.40))",
-              }}
-            />
 
-            {/* Name */}
-            <h1 style={{ margin: "0 0 10px", lineHeight: 1.1 }}>
-              <span style={{
-                display:    "block",
-                fontFamily: "'Dancing Script', cursive",
-                fontSize:   isMobile ? "1.8rem" : "clamp(2rem, 3.5vw, 3.2rem)",
-                fontWeight: 700,
-                color:      "#fff",
-              }}>
-                SugarCloud
-              </span>
-              <span style={{
-                display:    "block",
-                fontSize:   isMobile ? "1.4rem" : "clamp(1.6rem, 2.8vw, 2.6rem)",
-                fontWeight: 600,
-                color:      "#fff",
-              }}>
-                Cupcakes
-              </span>
-            </h1>
+            {/* Logo + Name row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "10px", justifyContent: isMobile ? "center" : "flex-start" }}>
+              <img
+                src="/images/SugarcloudLogo.png"
+                alt="SugarCloud Cupcakes"
+                style={{
+                  width:     isMobile ? "52px" : "clamp(52px, 7vw, 72px)",
+                  height:    "auto",
+                  objectFit: "contain",
+                  flexShrink: 0,
+                  filter:    "drop-shadow(0 4px 16px rgba(232,121,160,0.45))",
+                }}
+              />
+              <h1 style={{ margin: 0, lineHeight: 1.1 }}>
+                <span style={{
+                  display:    "block",
+                  fontFamily: "'Dancing Script', cursive",
+                  fontSize:   isMobile ? "1.7rem" : "clamp(1.8rem, 2.8vw, 2.6rem)",
+                  fontWeight: 700,
+                  color:      "#fff",
+                  whiteSpace: "nowrap",
+                }}>
+                  SugarCloud Cupcakes
+                </span>
+              </h1>
+            </div>
 
-            {/* Category badge */}
-            <div style={{
-              display:       "inline-flex",
-              alignSelf:     isMobile ? "center" : "flex-start",
-              padding:       "5px 16px",
-              borderRadius:  "999px",
-              background:    PINK_DIM,
-              border:        `1px solid ${PINK_MID}`,
+            {/* Subtitle */}
+            <p style={{
+              margin:        "0 0 12px",
               color:         PINK,
-              fontSize:      isMobile ? "0.65rem" : "0.75rem",
+              fontSize:      isMobile ? "0.75rem" : "clamp(0.78rem, 1vw, 0.90rem)",
               fontWeight:    600,
-              letterSpacing: "0.08em",
+              letterSpacing: "0.07em",
               textTransform: "uppercase",
-              marginBottom:  "20px",
-              whiteSpace:    "nowrap",
             }}>
-              UI/UX · Branding · Product Design
+              Cupcake Ordering Website
+            </p>
+
+            {/* Description */}
+            <p style={{
+              margin:     "0 0 22px",
+              color:      "rgba(255,255,255,0.55)",
+              fontSize:   isMobile ? "0.78rem" : "clamp(0.78rem, 1vw, 0.86rem)",
+              lineHeight: 1.70,
+              maxWidth:   "400px",
+            }}>
+              A cupcake ordering app that replicates a real online shopping experience, featuring dynamic cart updates, item selection, and a complete checkout flow, along with interactive login and contact pages.
+            </p>
+
+            {/* Divider */}
+            <div style={{ width: "100%", maxWidth: "400px", height: "1px", background: "rgba(255,255,255,0.09)", marginBottom: "18px", alignSelf: isMobile ? "center" : "flex-start" }} />
+
+            {/* Tools row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
+              <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Tools</span>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
+                {TOOLS.map(t => <ToolIcon key={t.name} {...t} />)}
+              </div>
             </div>
 
-            {/* Tool icons */}
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
-              {TOOLS.map(t => <ToolIcon key={t.name} {...t} />)}
+            {/* Role row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
+              <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Role</span>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start" }}>
+                {["UI/UX", "Branding", "Product Designer"].map(r => (
+                  <span key={r} style={{
+                    padding: "3px 11px", borderRadius: "999px",
+                    background: PINK_DIM, border: `1px solid ${PINK_MID}`,
+                    color: "rgba(255,255,255,0.85)", fontSize: "0.71rem", fontWeight: 600,
+                  }}>{r}</span>
+                ))}
+              </div>
             </div>
 
-            {/* Figma buttons */}
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start", marginTop: "20px" }}>
-              <a
-                href="https://www.figma.com/design/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=340-4540&t=O3BGVudJqnWothys-1"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: "7px",
-                  padding: "9px 18px", borderRadius: "999px",
-                  background: PINK_DIM, border: `1px solid ${PINK_MID}`,
-                  color: "rgba(255,255,255,0.90)",
-                  fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
-                  textDecoration: "none", transition: "all 0.22s ease",
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = "rgba(232,121,160,0.28)"
-                  e.currentTarget.style.borderColor = PINK
-                  e.currentTarget.style.transform = "translateY(-2px)"
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = PINK_DIM
-                  e.currentTarget.style.borderColor = PINK_MID
-                  e.currentTarget.style.transform = "translateY(0)"
-                }}
-              >
-                <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                Figma File
-              </a>
-              <a
-                href="https://www.figma.com/proto/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=487-2571&t=j1rZPXVPC3aiuZmU-1&scaling=scale-down&content-scaling=fixed&page-id=340%3A4540"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: "7px",
-                  padding: "9px 18px", borderRadius: "999px",
-                  background: PINK_DIM, border: `1px solid ${PINK_MID}`,
-                  color: "rgba(255,255,255,0.90)",
-                  fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
-                  textDecoration: "none", transition: "all 0.22s ease",
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = "rgba(232,121,160,0.28)"
-                  e.currentTarget.style.borderColor = PINK
-                  e.currentTarget.style.transform = "translateY(-2px)"
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = PINK_DIM
-                  e.currentTarget.style.borderColor = PINK_MID
-                  e.currentTarget.style.transform = "translateY(0)"
-                }}
-              >
-                <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                Figma Prototype
-              </a>
+            {/* Timeline row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "26px", justifyContent: isMobile ? "center" : "flex-start" }}>
+              <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Timeline</span>
+              <span style={{ color: "rgba(255,255,255,0.88)", fontSize: "0.82rem", fontWeight: 600 }}>5 Weeks</span>
             </div>
+
+            {/* Figma Prototype button */}
+            <a
+              href="https://www.figma.com/proto/ST0WcHHTo9lmOlJTD7e8IK/Untitled?node-id=487-2571&t=j1rZPXVPC3aiuZmU-1&scaling=scale-down&content-scaling=fixed&page-id=340%3A4540"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                padding: "10px 22px", borderRadius: "999px",
+                background: PINK_DIM, border: `1px solid ${PINK_MID}`,
+                color: "rgba(255,255,255,0.92)",
+                fontSize: "0.84rem", fontWeight: 600, letterSpacing: "0.04em",
+                textDecoration: "none", transition: "all 0.22s ease",
+                alignSelf: isMobile ? "center" : "flex-start",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(232,121,160,0.28)"
+                e.currentTarget.style.borderColor = PINK
+                e.currentTarget.style.transform = "translateY(-2px)"
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = PINK_DIM
+                e.currentTarget.style.borderColor = PINK_MID
+                e.currentTarget.style.transform = "translateY(0)"
+              }}
+            >
+              <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+              Figma Prototype
+            </a>
+
           </div>
 
         </section>

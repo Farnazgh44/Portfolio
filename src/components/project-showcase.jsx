@@ -13,7 +13,7 @@ const allProjects = [
 
 function ProjectCard({ project }) {
   return (
-    <a href={`#project-${project.id}`} className="block shrink-0 group">
+    <a href={`#project-${project.id}`} className="block shrink-0 group mr-4 sm:mr-5 md:mr-6">
       <div
         className="w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 overflow-hidden relative cursor-pointer rounded-2xl"
         style={{
@@ -67,7 +67,7 @@ function InfiniteRow({ projects, direction }) {
   return (
     <div className="overflow-hidden w-full">
       <div
-        className={`flex gap-4 sm:gap-5 md:gap-6 ${direction === "left" ? "animate-scroll-left" : "animate-scroll-right"}`}
+        className={`flex ${direction === "left" ? "animate-scroll-left" : "animate-scroll-right"}`}
         style={{ width: "max-content" }}
       >
         {doubled.map((project, i) => (
@@ -119,7 +119,7 @@ export function ProjectShowcase() {
         <InfiniteRow projects={allProjects} direction="left" />
       </div>
 
-      <div className="relative z-10 text-center mt-8">
+      <div className="relative z-10 text-center mt-16">
         <BlobButton
           onClick={() => navigate("projects")}
           className="pill-btn-hover inline-block px-8 py-2.5 rounded-full text-sm font-medium text-white/80 cursor-pointer"
