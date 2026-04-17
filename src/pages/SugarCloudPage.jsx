@@ -70,33 +70,6 @@ const STEPS = [
   },
   {
     number: 3,
-    title:  "User Interface",
-    visuals: [
-      "/images/Sugar_Interface.png",
-      "/images/Var1.png",
-      "/images/Var2.png",
-      "/images/Var3.png",
-      "/images/Style.png",
-    ],
-    content: [
-      { type: "heading", text: "Design Approach" },
-      { type: "para",    text: "The UI for SugarCloud Cupcakes was designed to feel soft, modern, and visually engaging — while maintaining simplicity and clarity throughout. Every decision was guided by one goal: let the product shine, and get out of the way." },
-      { type: "heading", text: "Visual Language" },
-      { type: "bullets", items: [
-        "Rounded cards and soft shadows to create a warm, approachable feel",
-        "A pastel color palette that reflects the brand's sweet and premium identity",
-        "Typography balanced between decorative and readable — personality without sacrificing usability",
-      ]},
-      { type: "heading", text: "Built for Consistency" },
-      { type: "para",    text: "To ensure scalability across the entire product, I built the interface in Figma using Auto Layout and a fully reusable component system. This allowed layouts to flex naturally across key sections — homepage, menu, cart, and checkout — without losing visual cohesion." },
-      { type: "heading", text: "Powered by Figma Variables" },
-      { type: "para",    text: "A key part of this project was integrating Figma Variables to bring real logic into the prototype. Variables were created for product prices, item quantities, cart count, total cost, and cart state — giving the interface the ability to respond dynamically to user actions." },
-      { type: "highlight", text: "When users add or remove cupcakes, the cart icon updates in real time and the total price automatically recalculates — transforming the design from a static mockup into a logic-driven, interactive experience." },
-      { type: "para",    text: "The result is a UI that goes beyond aesthetics. It simulates real product behavior, creating a prototype that feels less like a design file and more like a working product." },
-    ],
-  },
-  {
-    number: 4,
     title:  "Brand Identity",
     visuals: [
       "/images/Sugar_Interface2.png",
@@ -123,6 +96,33 @@ const STEPS = [
         "Inter for body text and UI elements — clean, highly readable, and built for digital screens",
       ]},
       { type: "meta",    items: [ "Inter was chosen specifically for its performance across interfaces — ensuring clarity in product descriptions, navigation, and form inputs while keeping the overall feel polished and professional." ]},
+    ],
+  },
+  {
+    number: 4,
+    title:  "User Interface",
+    visuals: [
+      "/images/Sugar_Interface.png",
+      "/images/Var1.png",
+      "/images/Var2.png",
+      "/images/Var3.png",
+      "/images/Style.png",
+    ],
+    content: [
+      { type: "heading", text: "Design Approach" },
+      { type: "para",    text: "The UI for SugarCloud Cupcakes was designed to feel soft, modern, and visually engaging — while maintaining simplicity and clarity throughout. Every decision was guided by one goal: let the product shine, and get out of the way." },
+      { type: "heading", text: "Visual Language" },
+      { type: "bullets", items: [
+        "Rounded cards and soft shadows to create a warm, approachable feel",
+        "A pastel color palette that reflects the brand's sweet and premium identity",
+        "Typography balanced between decorative and readable — personality without sacrificing usability",
+      ]},
+      { type: "heading", text: "Built for Consistency" },
+      { type: "para",    text: "To ensure scalability across the entire product, I built the interface in Figma using Auto Layout and a fully reusable component system. This allowed layouts to flex naturally across key sections — homepage, menu, cart, and checkout — without losing visual cohesion." },
+      { type: "heading", text: "Powered by Figma Variables" },
+      { type: "para",    text: "A key part of this project was integrating Figma Variables to bring real logic into the prototype. Variables were created for product prices, item quantities, cart count, total cost, and cart state — giving the interface the ability to respond dynamically to user actions." },
+      { type: "highlight", text: "When users add or remove cupcakes, the cart icon updates in real time and the total price automatically recalculates — transforming the design from a static mockup into a logic-driven, interactive experience." },
+      { type: "para",    text: "The result is a UI that goes beyond aesthetics. It simulates real product behavior, creating a prototype that feels less like a design file and more like a working product." },
     ],
   },
   {
