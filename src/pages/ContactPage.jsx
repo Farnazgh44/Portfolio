@@ -133,12 +133,16 @@ function ContactInfoItem({ item }) {
           onClick={handleCopy}
           onMouseEnter={() => setBtnHovered(true)}
           onMouseLeave={() => setBtnHovered(false)}
-          className="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300 cursor-pointer shrink-0"
+          className="rounded-full font-medium transition-all duration-300 cursor-pointer shrink-0"
           style={{
-            background: copied ? "rgba(100,255,180,0.2)" : btnHovered ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.12)",
-            color: copied ? "#6fffb4" : btnHovered ? "white" : "rgba(255,255,255,0.7)",
-            border: `1px solid ${copied ? "rgba(100,255,180,0.3)" : btnHovered ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.15)"}`,
-            transform: btnHovered ? "scale(1.05)" : "scale(1)",
+            background:   copied ? "rgba(100,255,180,0.2)" : btnHovered ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.12)",
+            color:        copied ? "#6fffb4" : btnHovered ? "white" : "rgba(255,255,255,0.7)",
+            border:       `1px solid ${copied ? "rgba(100,255,180,0.3)" : btnHovered ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.15)"}`,
+            transform:    btnHovered ? "scale(1.05)" : "scale(1)",
+            padding:      "11px 26px",
+            borderRadius: "999px",
+            fontSize:     "0.85rem",
+            fontWeight:   500,
           }}
         >
           {copied ? "Copied!" : "Copy"}
@@ -148,12 +152,16 @@ function ContactInfoItem({ item }) {
           onClick={handleView}
           onMouseEnter={() => setBtnHovered(true)}
           onMouseLeave={() => setBtnHovered(false)}
-          className="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300 cursor-pointer shrink-0"
+          className="rounded-full font-medium transition-all duration-300 cursor-pointer shrink-0"
           style={{
-            background: btnHovered ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.12)",
-            color: btnHovered ? "white" : "rgba(255,255,255,0.7)",
-            border: `1px solid ${btnHovered ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.15)"}`,
-            transform: btnHovered ? "scale(1.05)" : "scale(1)",
+            background:   btnHovered ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.12)",
+            color:        btnHovered ? "white" : "rgba(255,255,255,0.7)",
+            border:       `1px solid ${btnHovered ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.15)"}`,
+            transform:    btnHovered ? "scale(1.05)" : "scale(1)",
+            padding:      "11px 26px",
+            borderRadius: "999px",
+            fontSize:     "0.85rem",
+            fontWeight:   500,
           }}
         >
           View
@@ -164,12 +172,16 @@ function ContactInfoItem({ item }) {
           download
           onMouseEnter={() => setBtnHovered(true)}
           onMouseLeave={() => setBtnHovered(false)}
-          className="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300 shrink-0 no-underline"
+          className="rounded-full font-medium transition-all duration-300 shrink-0 no-underline"
           style={{
-            background: btnHovered ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.12)",
-            color: btnHovered ? "white" : "rgba(255,255,255,0.7)",
-            border: `1px solid ${btnHovered ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.15)"}`,
-            transform: btnHovered ? "scale(1.05)" : "scale(1)",
+            background:   btnHovered ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.12)",
+            color:        btnHovered ? "white" : "rgba(255,255,255,0.7)",
+            border:       `1px solid ${btnHovered ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.15)"}`,
+            transform:    btnHovered ? "scale(1.05)" : "scale(1)",
+            padding:      "11px 26px",
+            borderRadius: "999px",
+            fontSize:     "0.85rem",
+            fontWeight:   500,
           }}
         >
           Download
@@ -228,7 +240,7 @@ function ContactSection() {
 
   return (
     <section
-      className="relative min-h-screen flex items-center py-24 overflow-hidden"
+      className="relative min-h-screen flex items-center pt-24 pb-6 overflow-hidden"
       id="contact-form"
     >
       {/* Form + info card */}
@@ -298,8 +310,8 @@ function ContactSection() {
                 <BlobButton
                   type="submit"
                   disabled={sending}
-                  className="pill-btn-hover w-full py-3 rounded-lg text-white text-sm font-semibold transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))", border: "1px solid rgba(160,120,255,0.5)" }}
+                  className="pill-btn-hover w-full rounded-full text-white font-medium transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))", border: "1px solid rgba(160,120,255,0.5)", padding: "11px 26px", borderRadius: "999px", fontSize: "0.85rem", fontWeight: 500 }}
                   wrapperStyle={{ width: "100%" }}
                 >
                   {sending ? "Sending..." : "Send Message"}

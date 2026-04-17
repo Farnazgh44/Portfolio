@@ -160,23 +160,22 @@ export function ProjectDetailPage({ projectId }) {
         {/* ── Back button ── */}
         <button
           onClick={() => navigate("projects")}
+          className="left-4 md:left-8 3xl:left-20"
           style={{
             position:             "fixed",
             top:                  "24px",
-            left:                 "50%",
-            transform:            "translateX(-50%)",
             zIndex:               50,
             display:              "flex",
             alignItems:           "center",
             gap:                  "8px",
-            padding:              "10px 22px",
+            padding:              "11px 26px",
             borderRadius:         "999px",
             background:           "rgba(255,255,255,0.10)",
             backdropFilter:       "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
             border:               "1px solid rgba(255,255,255,0.22)",
             color:                "rgba(255,255,255,0.88)",
-            fontSize:             "0.88rem",
+            fontSize:             "0.85rem",
             fontWeight:           500,
             cursor:               "pointer",
             letterSpacing:        "0.04em",

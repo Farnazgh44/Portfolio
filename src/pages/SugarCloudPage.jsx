@@ -32,7 +32,7 @@ const STEPS = [
   {
     number: 1,
     title:  "Project Overview",
-    visual: "/images/Sugar_Laptop.png",
+    visual: "/images/Compa.png",
     content: [
       { type: "heading", text: "The Project" },
       { type: "para",    text: "SugarCloud Cupcakes is a modern UI/UX and branding project designed to reimagine how users discover and order desserts online. The goal was to craft a visually engaging, playful, and premium digital experience — while keeping the ordering process simple and intuitive." },
@@ -71,7 +71,13 @@ const STEPS = [
   {
     number: 3,
     title:  "User Interface",
-    visual: "/images/Sugar_Interface.png",
+    visuals: [
+      "/images/Sugar_Interface.png",
+      "/images/Var1.png",
+      "/images/Var2.png",
+      "/images/Var3.png",
+      "/images/Style.png",
+    ],
     content: [
       { type: "heading", text: "Design Approach" },
       { type: "para",    text: "The UI for SugarCloud Cupcakes was designed to feel soft, modern, and visually engaging — while maintaining simplicity and clarity throughout. Every decision was guided by one goal: let the product shine, and get out of the way." },
@@ -93,7 +99,6 @@ const STEPS = [
     number: 4,
     title:  "Brand Identity",
     visuals: [
-      "/images/Sugar_Interface.png",
       "/images/Sugar_Interface2.png",
       "/images/Sugar_Interface3.png",
     ],
@@ -123,7 +128,25 @@ const STEPS = [
   {
     number: 5,
     title:  "User Experience",
-    visual: "/images/Sugar_Experience.png",
+    visuals: [
+      "/images/Sugar_Experience.png",
+      "/images/ProtoSugar.png",
+      "/images/HighFi (1).png",
+      "/images/HighFi (2).png",
+      "/images/HighFi (3).png",
+      "/images/HighFi (4).png",
+      "/images/HighFi (5).png",
+      "/images/HighFi (6).png",
+      "/images/HighFi (7).png",
+      "/images/HighFi (8).png",
+      "/images/HighFi (9).png",
+      "/images/HighFi (10).png",
+      "/images/HighFi (11).png",
+      "/images/HighFi (12).png",
+      "/images/HighFi (13).png",
+      "/images/HighFi (14).png",
+      "/images/HighFi (15).png",
+    ],
     content: [
       { type: "heading", text: "Interactive Prototype" },
       { type: "para",    text: "Rather than building simple screen-to-screen navigation, I designed a fully logic-based interactive system using Figma Variables — one that responds to user actions the way a real product would." },
@@ -156,7 +179,8 @@ const STEPS = [
   {
     number: 6,
     title:  "Outcome",
-    component: "laptopVideo",
+    visual: "/images/Sugarcloud.gif",
+    wideVisual: true,
     content: [
       { type: "para",    text: "SugarCloud Cupcakes came together as a complete digital brand experience — not just a set of screens, but a cohesive product that spans design, identity, interaction, and storytelling." },
       { type: "heading", text: "What Was Delivered" },
@@ -546,8 +570,9 @@ function StepVisual({ step, openLightbox, isMobile }) {
   }, [step])
 
   const s      = prevStep.current
-  const isVideo = s?.component === "laptopVideo"
-  const slides = s?.visuals ?? (s?.visual ? [s.visual] : [])
+  const isVideo    = s?.component === "laptopVideo"
+  const wideVisual = s?.wideVisual ?? false
+  const slides     = s?.visuals ?? (s?.visual ? [s.visual] : [])
   const multi  = slides.length > 1
 
   const goSlide = (next) => {
@@ -632,7 +657,7 @@ function StepVisual({ step, openLightbox, isMobile }) {
 
       {/* Image area — all other steps */}
       {!isVideo && (
-        <div style={{ position: "relative", width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: multi ? "32px 56px" : "40px" }}>
+        <div style={{ position: "relative", width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: wideVisual ? "12px 14px 44px" : multi ? "32px 56px" : "40px" }}>
           {multi && <NavBtn dir={-1} />}
           <img
             key={slideIdx}
@@ -640,8 +665,8 @@ function StepVisual({ step, openLightbox, isMobile }) {
             alt={`Step ${s?.number} — ${slideIdx + 1}`}
             onClick={() => openLightbox && slides[slideIdx] && openLightbox({ type: "image", src: slides[slideIdx] })}
             style={{
-              maxWidth:   "100%",
-              maxHeight:  `${STEP_BOX_H - (multi ? 100 : 80)}px`,
+              maxWidth:   wideVisual ? "94%" : "100%",
+              maxHeight:  wideVisual ? `${STEP_BOX_H - 80}px` : `${STEP_BOX_H - (multi ? 100 : 80)}px`,
               width:      "auto",
               height:     "auto",
               objectFit:  "contain",
@@ -941,7 +966,7 @@ const BRAND_ITEMS = [
 const ITEM_H = 300 /* px — fixed height for every card */
 /* How many scroll-pixels are needed per gallery-pixel of movement.
    6 → you scroll 6× further to move the gallery the same distance (slower/smoother). */
-const GALLERY_SCROLL_RATIO = 6
+const GALLERY_SCROLL_RATIO = 4.5
 
 function BrandInRealLife({ openLightbox }) {
   const wrapperRef    = useRef(null)
@@ -1234,7 +1259,7 @@ function CaseStudyStepper({ openLightbox }) {
   return (
     <div style={{
       width: "100%", boxSizing: "border-box",
-      paddingTop: "80px", paddingBottom: "32px",
+      paddingTop: "80px", paddingBottom: "0px",
       paddingLeft:  isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
       paddingRight: isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
     }}>
@@ -1325,6 +1350,19 @@ export function SugarCloudPage() {
   const [lightboxItem, setLightboxItem] = useState(null)
   const [isMobile,     setIsMobile]     = useState(() => window.innerWidth < 640)
   const openLightbox = (item) => setLightboxItem(item)
+  const backBtnRef = useRef(null)
+
+  useEffect(() => {
+    const syncLeft = () => {
+      const header = document.querySelector("header")
+      const btn    = backBtnRef.current
+      if (!header || !btn) return
+      btn.style.left = window.getComputedStyle(header).paddingLeft
+    }
+    syncLeft()
+    window.addEventListener("resize", syncLeft)
+    return () => window.removeEventListener("resize", syncLeft)
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => setHeroIn(true), 60)
@@ -1345,23 +1383,23 @@ export function SugarCloudPage() {
 
         {/* ── Back button ──────────────────────────────────────────────── */}
         <button
+          ref={backBtnRef}
           onClick={() => navigate("projects")}
           style={{
             position:             "fixed",
             top:                  "clamp(110px,13vh,140px)",
-            left:                 "clamp(20px,2.5vw,44px)",
             zIndex:               50,
             display:              "flex",
             alignItems:           "center",
             gap:                  "8px",
-            padding:              "9px 20px",
+            padding:              "11px 26px",
             borderRadius:         "999px",
             background:           "rgba(255,255,255,0.10)",
             backdropFilter:       "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
             border:               "1px solid rgba(255,255,255,0.22)",
             color:                "rgba(255,255,255,0.88)",
-            fontSize:             "0.86rem",
+            fontSize:             "0.85rem",
             fontWeight:           500,
             cursor:               "pointer",
             transition:           "background 0.2s ease",
@@ -1392,28 +1430,27 @@ export function SugarCloudPage() {
             flex:       isMobile ? "none" : 1,
             width:      isMobile ? "100%" : undefined,
             minWidth:   isMobile ? undefined : 0,
+            display:    "flex",
+            alignItems: "center",
+            justifyContent: "center",
             opacity:    heroIn ? 1 : 0,
             transform:  heroIn ? "translateX(0)" : "translateX(60px)",
             transition: "opacity 0.8s 0.12s ease, transform 0.8s 0.12s ease",
           }}>
-            {isMobile ? (
-              /* Mobile: just the laptop, bigger, no phone mockup */
-              <img
-                src="/images/Sugar_Laptop.png"
-                alt="SugarCloud desktop mockup"
-                style={{
-                  width:      "100%",
-                  maxWidth:   "420px",
-                  height:     "auto",
-                  display:    "block",
-                  margin:     "0 auto",
-                  filter:     "drop-shadow(0 16px 48px rgba(0,0,0,0.55))",
-                  objectFit:  "contain",
-                }}
-              />
-            ) : (
-              <MockupCarousel />
-            )}
+            <img
+              src="/images/Sugarcloud.gif"
+              alt="SugarCloud desktop mockup"
+              style={{
+                width:      "100%",
+                maxWidth:   isMobile ? "420px" : "1140px",
+                height:     "auto",
+                display:    "block",
+                margin:     "0 auto",
+                marginTop:  isMobile ? "0" : "-110px",
+                filter:     "drop-shadow(0 24px 64px rgba(0,0,0,0.60))",
+                objectFit:  "contain",
+              }}
+            />
           </div>
 
           {/* ── Info panel — BOTTOM centered on mobile, LEFT on desktop ─ */}
@@ -1431,29 +1468,46 @@ export function SugarCloudPage() {
             transition:    "opacity 0.8s ease, transform 0.8s ease",
           }}>
 
-            {/* Logo + Name row */}
-            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "10px", justifyContent: isMobile ? "center" : "flex-start" }}>
+            {/* Logo on top, Name below */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", gap: "10px", marginBottom: "10px" }}>
               <img
                 src="/images/SugarcloudLogo.png"
                 alt="SugarCloud Cupcakes"
                 style={{
-                  width:     isMobile ? "52px" : "clamp(52px, 7vw, 72px)",
-                  height:    "auto",
+                  height:    isMobile ? "80px" : "clamp(100px, 12vw, 150px)",
+                  width:     "auto",
                   objectFit: "contain",
-                  flexShrink: 0,
                   filter:    "drop-shadow(0 4px 16px rgba(232,121,160,0.45))",
                 }}
               />
-              <h1 style={{ margin: 0, lineHeight: 1.1 }}>
+              <h1 style={{
+                margin: 0,
+                lineHeight: 1.05,
+                textAlign: isMobile ? "center" : "left",
+                display: "flex",
+                alignItems: "baseline",
+                gap: "0.3em",
+                flexWrap: "nowrap",
+                whiteSpace: "nowrap",
+              }}>
                 <span style={{
-                  display:    "block",
                   fontFamily: "'Dancing Script', cursive",
-                  fontSize:   isMobile ? "1.7rem" : "clamp(1.8rem, 2.8vw, 2.6rem)",
+                  fontSize:   isMobile ? "2rem" : "clamp(2.4rem, 4vw, 3.8rem)",
                   fontWeight: 700,
                   color:      "#fff",
                   whiteSpace: "nowrap",
                 }}>
-                  SugarCloud Cupcakes
+                  SugarCloud
+                </span>
+                <span style={{
+                  fontFamily: "'Open Sans', sans-serif",
+                  fontSize:   isMobile ? "2rem" : "clamp(2.4rem, 4vw, 3.8rem)",
+                  fontWeight: 400,
+                  color:      "rgba(255,255,255,0.85)",
+                  letterSpacing: "0.01em",
+                  whiteSpace: "nowrap",
+                }}>
+                  Cupcakes
                 </span>
               </h1>
             </div>
@@ -1468,17 +1522,6 @@ export function SugarCloudPage() {
               textTransform: "uppercase",
             }}>
               Cupcake Ordering Website
-            </p>
-
-            {/* Description */}
-            <p style={{
-              margin:     "0 0 22px",
-              color:      "rgba(255,255,255,0.55)",
-              fontSize:   isMobile ? "0.78rem" : "clamp(0.78rem, 1vw, 0.86rem)",
-              lineHeight: 1.70,
-              maxWidth:   "400px",
-            }}>
-              A cupcake ordering app that replicates a real online shopping experience, featuring dynamic cart updates, item selection, and a complete checkout flow, along with interactive login and contact pages.
             </p>
 
             {/* Divider */}
@@ -1519,10 +1562,10 @@ export function SugarCloudPage() {
               rel="noopener noreferrer"
               style={{
                 display: "inline-flex", alignItems: "center", gap: "8px",
-                padding: "10px 22px", borderRadius: "999px",
+                padding: "11px 26px", borderRadius: "999px",
                 background: PINK_DIM, border: `1px solid ${PINK_MID}`,
                 color: "rgba(255,255,255,0.92)",
-                fontSize: "0.84rem", fontWeight: 600, letterSpacing: "0.04em",
+                fontSize: "0.85rem", fontWeight: 500, letterSpacing: "0.04em",
                 textDecoration: "none", transition: "all 0.22s ease",
                 alignSelf: isMobile ? "center" : "flex-start",
               }}
@@ -1557,7 +1600,9 @@ export function SugarCloudPage() {
 
       </main>
 
-      <Footer />
+      <div style={{ marginTop: "-40px" }}>
+        <Footer />
+      </div>
 
       {/* ── Lightbox — renders above everything ──────────────────────── */}
       <Lightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />

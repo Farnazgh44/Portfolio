@@ -40,6 +40,8 @@ function ProjectCard({ project }) {
             src={project.image}
             alt={project.name}
             className="w-full h-full"
+            loading="eager"
+            fetchPriority="high"
             style={{ objectFit: "cover", ...project.imageStyle }}
           />
         )}
@@ -122,11 +124,16 @@ export function ProjectShowcase() {
       <div className="relative z-10 text-center mt-16">
         <BlobButton
           onClick={() => navigate("projects")}
-          className="pill-btn-hover inline-block px-8 py-2.5 rounded-full text-sm font-medium text-white/80 cursor-pointer"
+          className="pill-btn-hover inline-flex items-center gap-2 rounded-full cursor-pointer"
           style={{
-            background: "rgba(255,255,255,0.12)",
+            background:    "rgba(255,255,255,0.12)",
             backdropFilter: "blur(10px)",
-            border: "1px solid rgba(255,255,255,0.2)",
+            border:        "1px solid rgba(255,255,255,0.2)",
+            padding:       "11px 26px",
+            borderRadius:  "999px",
+            fontSize:      "0.85rem",
+            fontWeight:    500,
+            color:         "rgba(255,255,255,0.80)",
           }}
         >
           All Projects

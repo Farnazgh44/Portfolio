@@ -797,6 +797,19 @@ function HeroPhoneStack() {
 export function AlpineLinkPage() {
   const { navigate } = useRouter()
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
+  const backBtnRef = useRef(null)
+
+  useEffect(() => {
+    const syncLeft = () => {
+      const header = document.querySelector("header")
+      const btn    = backBtnRef.current
+      if (!header || !btn) return
+      btn.style.left = window.getComputedStyle(header).paddingLeft
+    }
+    syncLeft()
+    window.addEventListener("resize", syncLeft)
+    return () => window.removeEventListener("resize", syncLeft)
+  }, [])
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 640)
@@ -856,16 +869,16 @@ export function AlpineLinkPage() {
 
             {/* ← Back — fixed so always visible while scrolling */}
             <button
+              ref={backBtnRef}
               onClick={() => navigate("projects")}
               style={{
                 position:             "fixed",
                 top:                  "clamp(110px,13vh,140px)",
-                left:                 "clamp(24px,3vw,48px)",
                 zIndex:               50,
                 display:              "flex",
                 alignItems:           "center",
                 gap:                  "7px",
-                padding:              "9px 20px",
+                padding:              "11px 26px",
                 borderRadius:         "999px",
                 background:           "rgba(255,255,255,0.10)",
                 backdropFilter:       "blur(16px)",
@@ -979,10 +992,10 @@ export function AlpineLinkPage() {
                 rel="noopener noreferrer"
                 style={{
                   display: "inline-flex", alignItems: "center", gap: "8px",
-                  padding: "10px 22px", borderRadius: "999px",
+                  padding: "11px 26px", borderRadius: "999px",
                   background: BLUE12, border: `1px solid ${BLUE30}`,
                   color: "rgba(255,255,255,0.92)",
-                  fontSize: "0.84rem", fontWeight: 600, letterSpacing: "0.04em",
+                  fontSize: "0.85rem", fontWeight: 500, letterSpacing: "0.04em",
                   textDecoration: "none", transition: "all 0.22s ease",
                   alignSelf: isMobile ? "center" : "flex-start",
                   animation: "alSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.66s both",

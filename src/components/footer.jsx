@@ -6,7 +6,7 @@ const socialLinks = [
     label: "Email",
     href: "mailto:farnaz.gholami7900@gmail.com",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="4" width="20" height="16" rx="2" />
         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
       </svg>
@@ -16,7 +16,7 @@ const socialLinks = [
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/farnaz-gholami-4165b9345",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
         <rect width="4" height="12" x="2" y="9" />
         <circle cx="4" cy="4" r="2" />
@@ -28,7 +28,7 @@ const socialLinks = [
     href: "contact",
     isRoute: true,
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
       </svg>
     ),
@@ -37,7 +37,7 @@ const socialLinks = [
     label: "Instagram",
     href: "https://instagram.com",
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
         <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
@@ -49,7 +49,7 @@ const socialLinks = [
     href: "resume",
     isRoute: true,
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
         <polyline points="14 2 14 8 20 8" />
         <line x1="16" x2="8" y1="13" y2="13" />
@@ -64,7 +64,7 @@ export function Footer() {
   const { navigate } = useRouter()
 
   return (
-    <footer className="relative pt-40 pb-12 px-4 overflow-hidden" id="contact">
+    <footer className="relative pt-10 pb-12 px-4 overflow-hidden" id="contact">
       {/* Subtle lava blobs */}
       <div
         className="absolute w-32 h-32 opacity-15 blur-[40px] pointer-events-none"
@@ -110,7 +110,7 @@ export function Footer() {
               {link.label}
             </span>
             <div
-              className="icon-btn-hover w-12 h-12 flex items-center justify-center rounded-xl text-white/60 hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer"
+              className="icon-btn-hover w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center rounded-xl text-white/60 hover:text-white transition-all duration-300 hover:scale-110 cursor-pointer"
               style={{
                 background: "rgba(255,255,255,0.08)",
                 backdropFilter: "blur(16px)",
