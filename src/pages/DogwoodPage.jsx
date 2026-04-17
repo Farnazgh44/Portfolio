@@ -901,6 +901,17 @@ export function DogwoodPage() {
     return () => window.removeEventListener("resize", syncLeft)
   }, [])
 
+  // Preload ALL step images on mount so switching steps is instant
+  useEffect(() => {
+    STEPS.forEach(s => {
+      const srcs = s.visuals ?? (s.visual ? [s.visual] : [])
+      srcs.forEach(src => {
+        const img = new window.Image()
+        img.src = src
+      })
+    })
+  }, [])
+
   useEffect(() => {
     const t = setTimeout(() => setHeroIn(true), 60)
     return () => clearTimeout(t)
