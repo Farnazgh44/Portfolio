@@ -124,7 +124,7 @@ export function Footer() {
         ))}
       </div>
 
-      <p className="relative z-10 text-center text-white/40 text-xs tracking-wider">
+      <p className="relative z-10 text-center text-white/40 tracking-wider" style={{ fontSize: "0.6rem" }}>
         FARNAZ GHOLAMI | 2026
       </p>
     </footer>
