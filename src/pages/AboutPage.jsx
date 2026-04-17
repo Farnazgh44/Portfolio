@@ -97,19 +97,33 @@ const HOBBIES = [
       "/images/hobby-game-6.jpg",
       "/images/hobby-game-7.webp",
       "/images/hobby-game-8.jpg",
+      "/images/Game1.jpg",
+      "/images/Game2.jpg",
+      "/images/Game3.jpg",
+      "/images/Game4.png",
+      "/images/Game5.jpg",
+      "/images/Game6.jpg",
+      "/images/Game7.jpg",
+      "/images/Game8.jpg",
+      "/images/Game9.jpg",
+      "/images/Game10.jpg",
+      "/images/Game11.jpg",
+      "/images/Game12.jpg",
     ],
   },
   {
-    label: "Travel",
+    label: "Outdoors",
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+        <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
       </svg>
     ),
     images: [
       "/images/hobby-travel-1.jpeg",
       "/images/hobby-travel-2.jpeg",
-      null, null, null,
+      "/images/Travel1.jpeg",
+      "/images/Travel2.jpeg",
+      "/images/Travel3.jpeg",
     ],
   },
   {
@@ -144,7 +158,7 @@ const HOBBIES = [
       "/images/hobby-food-2.jpeg",
       "/images/hobby-food-3.jpeg",
       "/images/hobby-food-4.jpeg",
-      "/images/hobby-food-5.jpeg",
+      "/images/Foodnew.jpeg",
     ],
   },
 ]
@@ -229,9 +243,9 @@ function AboutHero() {
   const slideEase = "transform 0.85s cubic-bezier(0.23, 1, 0.32, 1)"
 
   return (
-    <section className="relative h-screen flex items-start sm:items-center px-4 md:px-8 pt-20 sm:pt-20 overflow-hidden">
+    <section className="relative h-screen flex items-start sm:items-center pt-20 sm:pt-20 overflow-hidden">
       {/* Mobile: photo on top, text+buttons below. Desktop: side-by-side */}
-      <div className="max-w-6xl mx-auto w-full flex flex-col sm:flex-row items-stretch gap-3 md:gap-8">
+      <div className="content-wrap w-full flex flex-col sm:flex-row items-stretch gap-3 md:gap-8">
 
         {/* Photo — TOP on mobile (order-1), RIGHT on desktop (order-2) */}
         <div
@@ -253,8 +267,7 @@ function AboutHero() {
 
         {/* Text — BOTTOM on mobile (order-2), LEFT on desktop (order-1) */}
         <div
-          className="order-2 sm:order-1 flex-none flex flex-col gap-2 sm:gap-0 sm:justify-between
-                     w-full sm:w-[50%] md:w-[50%] h-auto sm:h-[400px] md:h-[560px] p-0 sm:p-4 md:p-5"
+          className="order-2 sm:order-1 flex-none flex flex-col gap-2 sm:gap-4 w-full sm:w-[50%] md:w-[50%] h-auto p-0 sm:pt-4 sm:pr-4 sm:pb-4 md:pt-5 md:pr-5 md:pb-5"
         >
           {/* Heading */}
           <div
@@ -289,7 +302,7 @@ function AboutHero() {
           >
             <VariableProximity
               label="Welcome to my portfolio — I'm Farnaz Gholami, a UI/UX & Digital Designer based in Vancouver, BC."
-              className="text-white/80 text-[10px] sm:text-base leading-tight sm:leading-relaxed mb-1 sm:mb-3 font-medium"
+              className="text-white/80 text-[10px] sm:text-lg leading-tight sm:leading-relaxed mb-1 sm:mb-3 font-medium"
               fromFontVariationSettings="'wght' 300"
               toFontVariationSettings="'wght' 800"
               containerRef={proximityRef}
@@ -331,7 +344,7 @@ function AboutHero() {
             {!isMobile && (
               <VariableProximity
                 label="With a strong background in art — something that has been part of my life since childhood — and my education in New Media Design and Web Development at BCIT, I've been able to combine creativity with technology."
-                className="text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
+                className="text-white/70 text-lg leading-relaxed mt-1 sm:mt-3"
                 fromFontVariationSettings="'wght' 300"
                 toFontVariationSettings="'wght' 800"
                 containerRef={proximityRef}
@@ -342,7 +355,7 @@ function AboutHero() {
             {!isMobile && (
               <VariableProximity
                 label="I'm passionate about designing user-friendly, visually engaging experiences that are not only beautiful, but meaningful. I enjoy creating designs that balance aesthetics with functionality to truly connect with users."
-                className="text-white/70 text-base leading-relaxed mt-1 sm:mt-3"
+                className="text-white/70 text-lg leading-relaxed mt-1 sm:mt-3"
                 fromFontVariationSettings="'wght' 300"
                 toFontVariationSettings="'wght' 800"
                 containerRef={proximityRef}
@@ -353,7 +366,7 @@ function AboutHero() {
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-4 flex-wrap" style={{ zIndex: 10 }}>
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap" style={{ zIndex: 10, marginTop: "32px" }}>
             {[
               { label: "Why Liquid Morphism?", id: "my-story" },
               { label: "Values",               id: "values"   },
@@ -361,15 +374,20 @@ function AboutHero() {
             ].map(({ label, id }, i) => (
               <BlobButton
                 key={id}
-                className="pill-btn-hover px-4 sm:px-8 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium text-white/80 cursor-pointer whitespace-nowrap"
+                className="pill-btn-hover rounded-full cursor-pointer whitespace-nowrap"
                 onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
                 style={{
-                  background: "rgba(255,255,255,0.12)",
+                  background:    "rgba(255,255,255,0.12)",
                   backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  opacity: showButtons ? 1 : 0,
-                  transform: showButtons ? "translateY(0)" : "translateY(16px)",
-                  transition: `opacity 0.4s ${i * 0.1}s ease, transform 0.4s ${i * 0.1}s cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                  border:        "1px solid rgba(255,255,255,0.2)",
+                  opacity:       showButtons ? 1 : 0,
+                  transform:     showButtons ? "translateY(0)" : "translateY(16px)",
+                  transition:    `opacity 0.4s ${i * 0.1}s ease, transform 0.4s ${i * 0.1}s cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                  padding:       "11px 26px",
+                  borderRadius:  "999px",
+                  fontSize:      "0.85rem",
+                  fontWeight:    500,
+                  color:         "rgba(255,255,255,0.80)",
                 }}
               >
                 {label}
@@ -421,7 +439,7 @@ function MyStorySection() {
             return (
               <div
                 key={i}
-                className="absolute inset-0 flex flex-col justify-center px-4 sm:px-8 md:px-14 transition-all duration-700 ease-out"
+                className="absolute inset-0 flex flex-col justify-center px-4 sm:px-8 md:px-14 pt-16 sm:pt-20 pb-16 transition-all duration-700 ease-out overflow-visible"
                 style={{
                   opacity: isActive ? 1 : 0,
                   transform: isActive
@@ -438,12 +456,12 @@ function MyStorySection() {
                 <h2 className="text-white text-lg sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-6 text-balance">{section.title}</h2>
                 <div className="w-10 sm:w-16 h-px bg-white/20 mb-2 sm:mb-6" />
                 {Array.isArray(section.paragraphs)
-                  ? <div className="flex flex-col gap-2 sm:gap-3 max-w-md overflow-y-auto" style={{ maxHeight: "55vh" }}>
+                  ? <div className="flex flex-col gap-2 sm:gap-3 max-w-md">
                       {section.paragraphs.map((para, pi) => (
-                        <p key={pi} className="text-white/70 text-[10px] sm:text-sm md:text-base leading-snug sm:leading-relaxed">{para}</p>
+                        <p key={pi} className="text-white/70 text-[10px] sm:text-sm md:text-lg leading-snug sm:leading-relaxed">{para}</p>
                       ))}
                     </div>
-                  : <p className="text-white/70 text-[10px] sm:text-sm md:text-base leading-snug sm:leading-relaxed max-w-md">{section.text}</p>
+                  : <p className="text-white/70 text-[10px] sm:text-sm md:text-lg leading-snug sm:leading-relaxed max-w-md">{section.text}</p>
                 }
               </div>
             )
@@ -720,14 +738,14 @@ function NavySection() {
                 ...glassStyle,
                 top:     "12%",   /* ← move up/down */
                 left:    "15%",    /* ← move left/right */
-                width:   "clamp(240px, 42%, 480px)",
+                width:   "clamp(280px, 50%, 580px)",
                 opacity:   missionVisible ? 1 : 0,
                 transform: missionVisible ? "translateX(0)" : "translateX(-150vw)",
                 zIndex: 20,
               }}
             >
-              <h3 className="text-white text-sm md:text-xl font-bold mb-2 md:mb-3">Mission</h3>
-              <p className="text-white/70 text-[10px] md:text-sm leading-relaxed">
+              <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-2 md:mb-3">Mission</h3>
+              <p className="text-white/70 text-lg leading-relaxed">
                 To create digital experiences that balance beauty and clarity, designs that feel intuitive, accessible, and meaningful to the people who use them.
               </p>
             </div>
@@ -740,30 +758,33 @@ function NavySection() {
                 top:   "37%",    /* ← move up/down */
                 left:  "50%",    /* ← move left/right */
                 transform: valuesVisible ? "translateX(-50%)" : "translateX(150vw)",
-                width: "clamp(240px, 42%, 480px)",
+                width: "clamp(280px, 50%, 580px)",
                 opacity:   valuesVisible ? 1 : 0,
                 zIndex: 20,
               }}
             >
-              <h3 className="text-white text-sm md:text-xl font-bold mb-2 md:mb-3">Values</h3>
+              <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-2 md:mb-3">Values</h3>
               <div className="flex gap-1 md:gap-2 mb-2 md:mb-4 relative z-30 flex-wrap">
                 {Object.keys(VALUES_DATA).map((key) => (
                   <BlobButton
                     key={key}
                     stopProp
                     onClick={() => setValuesTab(key)}
-                    className="pill-btn-hover px-2 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-medium transition-all duration-300 cursor-pointer relative z-30"
+                    className="pill-btn-hover rounded-full font-medium transition-all duration-300 cursor-pointer relative z-30"
                     style={{
                       background: valuesTab === key ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.06)",
                       color: valuesTab === key ? "white" : "rgba(255,255,255,0.5)",
                       border: `1px solid ${valuesTab === key ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.1)"}`,
+                      padding: "11px 26px",
+                      fontSize: "0.85rem",
+                      borderRadius: "999px",
                     }}
                   >
                     {key}
                   </BlobButton>
                 ))}
               </div>
-              <p className="text-white/70 text-[10px] md:text-sm leading-relaxed transition-opacity duration-300">{VALUES_DATA[valuesTab]}</p>
+              <p className="text-white/70 text-lg leading-relaxed transition-opacity duration-300">{VALUES_DATA[valuesTab]}</p>
             </div>
 
             {/* Goals — BOTTOM RIGHT, slides in from BOTTOM */}
@@ -773,25 +794,28 @@ function NavySection() {
                 ...glassStyle,
                 top:   "70%",    /* ← move up/down */
                 right: "15%",     /* ← move left/right (uses right, not left) */
-                width: "clamp(240px, 42%, 480px)",
+                width: "clamp(280px, 50%, 580px)",
                 opacity:   goalsVisible ? 1 : 0,
                 transform: goalsVisible ? "translateY(0)" : "translateY(120vh)",
                 zIndex: 20,
               }}
             >
               <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-3 flex-wrap">
-                <h3 className="text-white text-sm md:text-xl font-bold">Goals</h3>
+                <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold">Goals</h3>
                 <div className="flex gap-1 md:gap-2 relative z-30 flex-wrap">
                   {Object.keys(GOALS_DATA).map((key) => (
                     <BlobButton
                       key={key}
                       stopProp
                       onClick={() => setGoalsTab(key)}
-                      className="pill-btn-hover px-2 py-1 md:px-4 md:py-1.5 rounded-full text-[9px] md:text-xs font-medium transition-all duration-300 cursor-pointer relative z-30"
+                      className="pill-btn-hover rounded-full font-medium transition-all duration-300 cursor-pointer relative z-30"
                       style={{
                         background: goalsTab === key ? "linear-gradient(135deg, rgba(100,80,255,0.7), rgba(180,60,200,0.7))" : "rgba(255,255,255,0.06)",
                         color: goalsTab === key ? "white" : "rgba(255,255,255,0.5)",
                         border: `1px solid ${goalsTab === key ? "rgba(160,120,255,0.5)" : "rgba(255,255,255,0.1)"}`,
+                        padding: "11px 26px",
+                        fontSize: "0.85rem",
+                        borderRadius: "999px",
                       }}
                     >
                       {key}
@@ -799,7 +823,7 @@ function NavySection() {
                   ))}
                 </div>
               </div>
-              <p className="text-white/70 text-[10px] md:text-sm leading-relaxed transition-opacity duration-300">{GOALS_DATA[goalsTab]}</p>
+              <p className="text-white/70 text-lg leading-relaxed transition-opacity duration-300">{GOALS_DATA[goalsTab]}</p>
             </div>
 
           </div>
@@ -833,7 +857,7 @@ function HobbiesSection() {
   }, [lightboxImg])
 
   return (
-    <section className="relative py-10 sm:py-20 px-4 md:px-8" id="hobbies">
+    <section className="relative py-6 sm:py-10 px-4 md:px-8" id="hobbies">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-8 text-center">Hobbies</h2>
 

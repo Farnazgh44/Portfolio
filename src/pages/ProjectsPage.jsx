@@ -23,7 +23,7 @@ const PROJECTS = [
     id:          "sugarcloud",
     pageId:      "project-sugarcloud",
     image:       "/images/Laptop_Feature.png",
-    imageScale:  1.03,
+    imageScale:  1.02,
     logo:        "/images/SugarcloudLogo.png",
     logoHeight:  "clamp(60px, 7vw, 90px)",
     nameScript:  "SugarCloud",
@@ -58,7 +58,7 @@ const PROJECTS = [
     id:          "dogwood",
     pageId:      "project-dogwood",
     image:       "/images/Dogwood.png",
-    imageScale:  1.5,
+    imageScale:  1.2,
     logo:        null,
     name:        "Dogwood Landscaping & Gardening",
     category:    "Web Design & UX Case Study",
@@ -69,7 +69,7 @@ const PROJECTS = [
     id:          "game",
     pageId:      "project-game",
     image:       "/images/Game.png",
-    imageScale:  1.5,
+    imageScale:  1.2,
     logo:        null,
     name:        "Space Shipper",
     category:    "Game UI",
@@ -215,17 +215,16 @@ function CardOverlay({ project, onViewProject }) {
         onClick={e => { e.stopPropagation(); onViewProject() }}
         style={{
           marginTop:            "28px",
-          padding:              "12px 34px",
+          padding:              "11px 26px",
           borderRadius:         "999px",
           background:           "rgba(255,255,255,0.15)",
           backdropFilter:       "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
           border:               "1px solid rgba(255,255,255,0.35)",
           color:                "#fff",
-          fontSize:             "0.88rem",
-          fontWeight:           600,
-          letterSpacing:        "0.07em",
-          textTransform:        "uppercase",
+          fontSize:             "0.85rem",
+          fontWeight:           500,
+          letterSpacing:        "0.04em",
           cursor:               "pointer",
           transition:           "background 0.25s ease, transform 0.2s ease",
           flexShrink:           0,
@@ -246,13 +245,13 @@ function CardOverlay({ project, onViewProject }) {
 }
 
 /* ─── Arrow button ──────────────────────────────────────────────────────────── */
-function ArrowBtn({ onClick, dir, isMobile }) {
+function ArrowBtn({ onClick, dir, isMobile, navPadding }) {
   return (
     <button
       onClick={onClick}
       style={{
         position:             "absolute",
-        [dir === "left" ? "left" : "right"]: isMobile ? "3vw" : "2.5vw",
+        [dir === "left" ? "left" : "right"]: `${navPadding}px`,
         top:                  "50%",
         transform:            "translateY(-50%)",
         zIndex:               20,
@@ -301,6 +300,20 @@ export function ProjectsPage() {
     const check = () => setIsMobile(window.innerWidth < 640)
     window.addEventListener("resize", check)
     return () => window.removeEventListener("resize", check)
+  }, [])
+
+  /* Arrow offset — aligns with navbar edges then nudges slightly inward */
+  const getNavPadding = () => {
+    const w = window.innerWidth
+    if (w < 640)  return 20   // mobile
+    if (w < 1920) return 68   // desktop: navbar 32px + 36px extra inward
+    return 120                // wide: navbar 80px + 40px extra inward
+  }
+  const [navPadding, setNavPadding] = useState(() => getNavPadding())
+  useEffect(() => {
+    const onResize = () => setNavPadding(getNavPadding())
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
   }, [])
 
   const prev = () => setCurrent(i => (i - 1 + N) % N)
@@ -533,8 +546,8 @@ export function ProjectsPage() {
           })}
 
           {/* ── Navigation arrows ── */}
-          <ArrowBtn onClick={prev} dir="left"  isMobile={isMobile} />
-          <ArrowBtn onClick={next} dir="right" isMobile={isMobile} />
+          <ArrowBtn onClick={prev} dir="left"  isMobile={isMobile} navPadding={navPadding} />
+          <ArrowBtn onClick={next} dir="right" isMobile={isMobile} navPadding={navPadding} />
 
           {/* ── Dot indicators ── */}
           <div style={{

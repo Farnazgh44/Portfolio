@@ -521,9 +521,9 @@ export function AIPage() {
                 key={cat}
                 onClick={() => setActiveTab(cat)}
                 style={{
-                  padding:      "6px 20px",
+                  padding:      "11px 26px",
                   borderRadius: "999px",
-                  fontSize:     "clamp(0.75rem, 1vw, 0.875rem)",
+                  fontSize:     "0.85rem",
                   fontWeight:   500,
                   cursor:       "pointer",
                   transition:   "all 0.25s ease",

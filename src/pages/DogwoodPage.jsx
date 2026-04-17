@@ -17,7 +17,7 @@ const STEP_CONTENT_H = 420
 
 /* ─── Brand gallery constants ────────────────────────────────────────────── */
 const ITEM_H             = 300   /* px — card height */
-const GALLERY_SCROLL_RATIO = 6
+const GALLERY_SCROLL_RATIO = 1.5
 
 /* ─── Brand gallery items — images go in public/images/, videos in public/videos/ ── */
 const BRAND_ITEMS = [
@@ -33,49 +33,148 @@ const BRAND_ITEMS = [
 
 /* ─── Toolkit ────────────────────────────────────────────────────────────── */
 const TOOLS = [
-  { name: "Figma",    icon: "/images/toolkit-figma.png"   },
-  { name: "Canva",    icon: "/images/toolkit-canva.png"   },
-  { name: "React",    icon: null                          },
-  { name: "VS Code",  icon: "/images/toolkit-vscode.png" },
+  { name: "Figma",       icon: "/images/toolkit-figma.png"        },
+  { name: "Illustrator", icon: "/images/toolkit-illustrator.png"  },
+  { name: "Photoshop",   icon: "/images/toolkit-photoshop.png"    },
+  { name: "Canva",       icon: "/images/toolkit-canva.png"        },
 ]
 
 /* ─── Design process steps ───────────────────────────────────────────────── */
 const STEPS = [
   {
     number: 1,
-    title:  "Project Overview",
-    visual: "/images/Dogwood.png",
-    content: [{ type: "para", text: "Content coming soon." }],
+    title:  "Defining the Foundation",
+    visual: "/images/Flowers.png",
+    content: [
+      { type: "heading", text: "Brand Roots" },
+      { type: "para", text: "The project began with shaping a brand that reflects both nature and locality. The goal was to create an identity that feels authentic to British Columbia, while clearly communicating the company's services." },
+      { type: "heading", text: "A Symbol Worth Building On" },
+      { type: "para", text: "Research into native plants led to the discovery of the Dogwood flower — a recognizable and meaningful symbol in BC. Its simplicity and elegance aligned perfectly with the desired brand tone: natural, refined, and trustworthy." },
+      { type: "highlight", text: "The Dogwood flower is British Columbia's provincial floral emblem — making it the perfect anchor for a locally rooted landscaping brand." },
+      { type: "heading", text: "Naming the Brand" },
+      { type: "para", text: "The name \"Dogwood Landscaping & Gardening\" was chosen to balance uniqueness with clarity, ensuring it remains both memorable and professionally descriptive." },
+    ],
   },
   {
     number: 2,
-    title:  "Research & Discovery",
-    visual: "/images/Dogwood.png",
-    content: [{ type: "para", text: "Content coming soon." }],
+    title:  "Building the Brand Identity",
+    visuals: [
+      "/images/WhiteBlack.png",
+      "/images/Color.png",
+      "/images/Typo.png",
+    ],
+    content: [
+      { type: "heading", text: "Visual Direction" },
+      { type: "para", text: "The visual identity was designed to feel calm, organic, and premium — while still approachable. The logo concept centers around the dogwood flower, framed within a circular structure to create a sense of balance and continuity." },
+      { type: "highlight", text: "Typography wraps around the circular form, giving it a timeless, seal-like aesthetic that reinforces trust and craftsmanship." },
+      { type: "heading", text: "Colour Palette" },
+      { type: "bullets", items: [
+        "Warm neutrals → #E2CFA9, #F6EDE0, #FFFBF8",
+        "Earthy greens → #6F9A73, #585E47",
+        "Accent tones → #E4AEB5, #111111",
+      ]},
+      { type: "heading", text: "Typography System" },
+      { type: "bullets", items: [
+        "Libre Baskerville — headings (classic, refined)",
+        "Roboto — body text (clean, highly readable)",
+      ]},
+    ],
   },
   {
     number: 3,
-    title:  "UX Strategy",
-    visual: "/images/Dogwood.png",
-    content: [{ type: "para", text: "Content coming soon." }],
+    title:  "UX Research & Insights",
+    visual: "/images/Competitive.png",
+    content: [
+      { type: "heading", text: "Competitive Landscape" },
+      { type: "para", text: "A review of existing landscaping websites revealed a consistent pattern across the industry:" },
+      { type: "bullets", items: [
+        "Heavy focus on information, low attention to visual experience",
+        "Poor hierarchy and overwhelming text blocks",
+        "Limited emotional engagement with the user",
+      ]},
+      { type: "highlight", text: "Opportunity: Create a website that is not only informative, but also visually engaging and easy to navigate." },
+      { type: "heading", text: "Key UX Goals" },
+      { type: "bullets", items: [
+        "Make services instantly visible and scannable",
+        "Reduce friction in contacting or booking",
+        "Use visuals to build trust and showcase quality",
+        "Keep the experience simple, calm, and intuitive",
+      ]},
+    ],
   },
   {
     number: 4,
-    title:  "Visual Design",
-    visual: "/images/Dogwood.png",
-    content: [{ type: "para", text: "Content coming soon." }],
+    title:  "Structure & Wireframing",
+    visuals: [
+      "/images/Low1.png",
+      "/images/Low2.png",
+    ],
+    content: [
+      { type: "heading", text: "Low-Fidelity Exploration" },
+      { type: "para", text: "The layout was explored through low-fidelity wireframes, focusing on core structural principles:" },
+      { type: "bullets", items: [
+        "Clear content hierarchy",
+        "Logical user flow",
+        "Section-based navigation",
+      ]},
+      { type: "heading", text: "Layout Decisions" },
+      { type: "para", text: "Different layout variations were tested before settling on a structure that emphasizes:" },
+      { type: "bullets", items: [
+        "Immediate access to services",
+        "Strong visual entry through the hero section",
+        "Easy transitions to gallery and contact",
+      ]},
+      { type: "highlight", text: "Once validated, the design moved into high-fidelity wireframes — applying brand elements and refining spacing, typography, and visual balance." },
+    ],
   },
   {
     number: 5,
-    title:  "Development",
-    visual: "/images/Dogwood.png",
-    content: [{ type: "para", text: "Content coming soon." }],
+    title:  "Designing the Experience",
+    visuals: [
+      "/images/Home Page.png",
+      "/images/Services.png",
+      "/images/About.png",
+      "/images/Gallery.png",
+      "/images/Contact.png",
+      "/images/Booking.png",
+      "/images/Booking2.png",
+      "/images/Booking3.png",
+      "/images/Booking4.png",
+    ],
+    content: [
+      { type: "heading", text: "Final UI Decisions" },
+      { type: "para", text: "The final UI was designed to feel clean, modern, and natural, while maintaining strong usability across all devices." },
+      { type: "bullets", items: [
+        "Hero section communicates value instantly with a clear headline and CTA",
+        "Services are presented in simple, scannable cards",
+        "Gallery showcases real outcomes to build credibility",
+        "Contact & booking flow is straightforward and step-based",
+        "Consistent visual language across desktop and mobile",
+      ]},
+      { type: "heading", text: "Designed for Action" },
+      { type: "para", text: "The design ensures users can understand the service quickly, navigate without confusion, and take action — contact or book — with minimal effort." },
+      { type: "highlight", text: "Responsiveness was considered from the beginning, adapting layouts and spacing to maintain clarity and usability on mobile devices." },
+    ],
   },
   {
     number: 6,
-    title:  "Outcome & Reflection",
-    visual: "/images/Dogwood.png",
-    content: [{ type: "para", text: "Content coming soon." }],
+    title:  "Enhancing Engagement & Usability",
+    visuals: [
+      "/images/Dogwood.gif",
+      "/images/Prototype.png",
+    ],
+    wideVisual: true,
+    content: [
+      { type: "heading", text: "Beyond Core Structure" },
+      { type: "para", text: "Additional features were designed to improve interaction quality and drive conversion:" },
+      { type: "bullets", items: [
+        "Simple booking flow broken into clear steps (date → service → details)",
+        "Notification element for promotions (e.g., new customer discounts)",
+        "Supporting materials — business cards and posters — to extend the brand beyond digital",
+        "Full interactive prototyping to demonstrate smooth navigation and user flow",
+      ]},
+      { type: "highlight", text: "The result is a cohesive experience that feels intentional, polished, and easy to use — reflecting the quality and care of the service itself." },
+    ],
   },
 ]
 
@@ -139,22 +238,90 @@ function StepContent({ blocks }) {
   )
 }
 
-/* ─── Right-panel glass visual ───────────────────────────────────────────── */
-function StepVisual({ step, isMobile }) {
-  const [visible, setVisible] = useState(true)
-  const [imgAnim, setImgAnim] = useState(true)
-  const prevStep              = useRef(step)
+/* ─── Open Image button ──────────────────────────────────────────────────── */
+function OpenImageBtn({ onClick }) {
+  const [hov, setHov] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: "6px",
+        padding: "6px 14px", borderRadius: "999px",
+        background: hov ? "rgba(134,197,120,0.28)" : GREEN_DIM,
+        border: `1px solid ${hov ? GREEN : GREEN_MID}`,
+        color: hov ? "#fff" : "rgba(255,255,255,0.85)",
+        fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.04em",
+        cursor: "pointer", transition: "all 0.22s ease",
+        transform: hov ? "translateY(-1px)" : "translateY(0)",
+        flexShrink: 0,
+      }}
+    >
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M4.5 1.5H2a.5.5 0 00-.5.5v2.5M7.5 1.5H10a.5.5 0 01.5.5v2.5M4.5 10.5H2a.5.5 0 01-.5-.5V7.5M7.5 10.5H10a.5.5 0 00.5-.5V7.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+      Open Image
+    </button>
+  )
+}
 
+/* ─── Right-panel glass visual ───────────────────────────────────────────── */
+function StepVisual({ step, isMobile, openLightbox }) {
+  const [visible,  setVisible]  = useState(true)
+  const [slideIdx, setSlideIdx] = useState(0)
+  const [imgAnim,  setImgAnim]  = useState(true)
+  const prevStep                = useRef(step)
+
+  /* Reset slide index and fade when step changes */
   useEffect(() => {
     if (prevStep.current?.number !== step?.number) {
-      setVisible(false); setImgAnim(false)
+      setVisible(false)
+      setSlideIdx(0)
       const t = setTimeout(() => { prevStep.current = step; setVisible(true); setImgAnim(true) }, 180)
       return () => clearTimeout(t)
     }
   }, [step])
 
-  const s      = prevStep.current
-  const slides = s?.visuals ?? (s?.visual ? [s.visual] : [])
+  const s          = prevStep.current
+  const slides     = s?.visuals ?? (s?.visual ? [s.visual] : [])
+  const multi      = slides.length > 1
+  const wideVisual = s?.wideVisual ?? false
+
+  const goSlide = (next) => {
+    setImgAnim(false)
+    setTimeout(() => {
+      setSlideIdx((next + slides.length) % slides.length)
+      setImgAnim(true)
+    }, 150)
+  }
+
+  /* Arrow nav button */
+  const NavBtn = ({ dir }) => {
+    const [hov, setHov] = useState(false)
+    return (
+      <button
+        onClick={() => goSlide(slideIdx + dir)}
+        onMouseEnter={() => setHov(true)}
+        onMouseLeave={() => setHov(false)}
+        style={{
+          position: "absolute", top: "50%", transform: "translateY(-50%)",
+          [dir === -1 ? "left" : "right"]: "14px",
+          zIndex: 10,
+          width: "34px", height: "34px", borderRadius: "50%",
+          background: hov ? "rgba(134,197,120,0.28)" : "rgba(255,255,255,0.12)",
+          backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+          border: `1px solid ${hov ? GREEN_MID : "rgba(255,255,255,0.20)"}`,
+          color: hov ? GREEN : "rgba(255,255,255,0.80)",
+          cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "1.2rem", lineHeight: 1,
+          transition: "all 0.2s ease",
+        }}
+      >
+        {dir === -1 ? "‹" : "›"}
+      </button>
+    )
+  }
 
   return (
     <div style={{
@@ -172,18 +339,62 @@ function StepVisual({ step, isMobile }) {
       height:    isMobile ? "220px" : `${STEP_BOX_H}px`,
       minHeight: isMobile ? "220px" : `${STEP_BOX_H}px`,
     }}>
-      <div style={{ position: "relative", width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "40px" }}>
-        {slides[0] && (
-          <img src={slides[0]} alt={`Step ${s?.number}`} style={{
-            maxWidth: "100%", maxHeight: `${STEP_BOX_H - 80}px`,
-            width: "auto", height: "auto", objectFit: "contain", display: "block",
-            filter: "drop-shadow(0 8px 28px rgba(0,0,0,0.40))",
-            opacity:   imgAnim ? 1 : 0,
-            transform: imgAnim ? "scale(1)" : "scale(0.97)",
-            transition: "opacity 0.25s ease, transform 0.25s ease",
-          }} />
+
+      {/* Dot indicators — top center, only for multi-image */}
+      {multi && (
+        <div style={{ position: "absolute", top: "14px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "7px", zIndex: 5 }}>
+          {slides.map((_, i) => (
+            <button key={i} onClick={() => goSlide(i)} style={{
+              width: i === slideIdx ? "10px" : "7px",
+              height: i === slideIdx ? "10px" : "7px",
+              borderRadius: "50%",
+              background: i === slideIdx ? GREEN : "rgba(255,255,255,0.30)",
+              border: "none", padding: 0, cursor: "pointer",
+              transition: "all 0.25s ease",
+            }} />
+          ))}
+        </div>
+      )}
+
+      {/* Image area */}
+      <div style={{ position: "relative", width: "100%", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: wideVisual ? "12px 14px 44px" : multi ? "32px 56px 48px" : "32px 40px 48px", }}>
+        {slides[slideIdx] && (
+          <img
+            src={slides[slideIdx]}
+            alt={`Step ${s?.number} — ${slideIdx + 1}`}
+            onClick={() => openLightbox && openLightbox({ type: "image", src: slides[slideIdx] })}
+            style={{
+              maxWidth: wideVisual ? "94%" : "100%", maxHeight: wideVisual ? `${STEP_BOX_H - 80}px` : `${STEP_BOX_H - 100}px`,
+              width: "auto", height: "auto", objectFit: "contain", display: "block",
+              filter: "drop-shadow(0 8px 28px rgba(0,0,0,0.40))",
+              opacity:   imgAnim ? 1 : 0,
+              transform: imgAnim ? "scale(1)" : "scale(0.97)",
+              transition: "opacity 0.25s ease, transform 0.25s ease",
+              cursor: openLightbox ? "zoom-in" : "default",
+            }}
+            onMouseEnter={e => { if (openLightbox) e.currentTarget.style.filter = "drop-shadow(0 8px 28px rgba(0,0,0,0.40)) brightness(1.05)" }}
+            onMouseLeave={e => { e.currentTarget.style.filter = "drop-shadow(0 8px 28px rgba(0,0,0,0.40))" }}
+          />
         )}
+
+        {/* Arrow buttons — only when multiple slides */}
+        {multi && <NavBtn dir={-1} />}
+        {multi && <NavBtn dir={1} />}
       </div>
+
+      {/* Slide counter — bottom right, above button */}
+      {multi && (
+        <div style={{ position: "absolute", bottom: "44px", right: "16px", color: "rgba(255,255,255,0.35)", fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.06em" }}>
+          {slideIdx + 1} / {slides.length}
+        </div>
+      )}
+
+      {/* Open Image button — pinned to bottom center */}
+      {slides[slideIdx] && (
+        <div style={{ position: "absolute", bottom: "14px", left: "50%", transform: "translateX(-50%)", zIndex: 5 }}>
+          <OpenImageBtn onClick={() => openLightbox && openLightbox({ type: "image", src: slides[slideIdx] })} />
+        </div>
+      )}
     </div>
   )
 }
@@ -676,6 +887,19 @@ export function DogwoodPage() {
   const [lightboxItem, setLightboxItem] = useState(null)
   const openLightbox = (item) => setLightboxItem(item)
   const headingRef = useRef(null)
+  const backBtnRef = useRef(null)
+
+  useEffect(() => {
+    const syncLeft = () => {
+      const header = document.querySelector("header")
+      const btn    = backBtnRef.current
+      if (!header || !btn) return
+      btn.style.left = window.getComputedStyle(header).paddingLeft
+    }
+    syncLeft()
+    window.addEventListener("resize", syncLeft)
+    return () => window.removeEventListener("resize", syncLeft)
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => setHeroIn(true), 60)
@@ -738,10 +962,10 @@ export function DogwoodPage() {
         }}>
 
           {/* ← Back */}
-          <button onClick={() => navigate("projects")} style={{
-            position: "fixed", top: "clamp(110px,13vh,140px)", left: "clamp(24px,3vw,48px)",
+          <button ref={backBtnRef} onClick={() => navigate("projects")} style={{
+            position: "fixed", top: "clamp(110px,13vh,140px)",
             zIndex: 50, display: "flex", alignItems: "center", gap: "7px",
-            padding: "9px 20px", borderRadius: "999px",
+            padding: "11px 26px", borderRadius: "999px",
             background: "rgba(255,255,255,0.10)",
             backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
             border: "1px solid rgba(255,255,255,0.22)",
@@ -781,7 +1005,7 @@ export function DogwoodPage() {
                 margin: 0, lineHeight: 1.05,
                 animation: "dwSlideLeft 0.70s cubic-bezier(0.25,0.46,0.45,0.94) 0.25s both",
               }}>
-                <span style={{ display: "block", color: "#fff", fontSize: "clamp(2.4rem,4vw,3.8rem)", fontWeight: 800, letterSpacing: "-0.01em" }}>
+                <span style={{ display: "block", color: "#fff", fontSize: "clamp(2.4rem,4vw,3.8rem)", fontWeight: 700, letterSpacing: "-0.01em", fontFamily: "'Libre Baskerville', serif" }}>
                   Dogwood
                 </span>
                 <span style={{ display: "block", color: "rgba(255,255,255,0.75)", fontSize: "clamp(1rem,1.6vw,1.4rem)", fontWeight: 500, letterSpacing: "0.02em", marginTop: "2px" }}>
@@ -804,84 +1028,82 @@ export function DogwoodPage() {
               {/* Divider */}
               <div style={{ width: "44px", height: "2px", background: "rgba(255,255,255,0.22)", borderRadius: "2px", animation: "dwSlideLeft 0.55s ease 0.52s both" }} />
 
-              {/* Toolkit */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-                {TOOLS.map((t, i) => (
-                  <ToolIcon key={t.name} {...t} animDelay={`${0.58 + i * 0.10}s`} />
-                ))}
+              {/* Tools row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Tools</span>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  {TOOLS.map((t, i) => (
+                    <ToolIcon key={t.name} {...t} animDelay={`${0.58 + i * 0.10}s`} />
+                  ))}
+                </div>
               </div>
 
-              {/* Figma buttons */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                <a
-                  href="https://www.figma.com/design/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=0-1&t=O3BGVudJqnWothys-1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "7px",
-                    padding: "9px 18px", borderRadius: "999px",
-                    background: GREEN_DIM, border: `1px solid ${GREEN_MID}`,
-                    color: "rgba(255,255,255,0.90)",
-                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
-                    textDecoration: "none", transition: "all 0.22s ease",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(134,197,120,0.28)"
-                    e.currentTarget.style.borderColor = GREEN
-                    e.currentTarget.style.transform = "translateY(-2px)"
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = GREEN_DIM
-                    e.currentTarget.style.borderColor = GREEN_MID
-                    e.currentTarget.style.transform = "translateY(0)"
-                  }}
-                >
-                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                  Figma File
-                </a>
-                <a
-                  href="https://www.figma.com/proto/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=4-4&t=7pTLCSUb9lWlAy5s-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=28%3A12"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "7px",
-                    padding: "9px 18px", borderRadius: "999px",
-                    background: GREEN_DIM, border: `1px solid ${GREEN_MID}`,
-                    color: "rgba(255,255,255,0.90)",
-                    fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
-                    textDecoration: "none", transition: "all 0.22s ease",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(134,197,120,0.28)"
-                    e.currentTarget.style.borderColor = GREEN
-                    e.currentTarget.style.transform = "translateY(-2px)"
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = GREEN_DIM
-                    e.currentTarget.style.borderColor = GREEN_MID
-                    e.currentTarget.style.transform = "translateY(0)"
-                  }}
-                >
-                  <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-                  Figma Prototype
-                </a>
+              {/* Role row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Role</span>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                  {["Web Design", "UX Case Study"].map(r => (
+                    <span key={r} style={{
+                      padding: "3px 11px", borderRadius: "999px",
+                      background: GREEN_DIM, border: `1px solid ${GREEN_MID}`,
+                      color: "rgba(255,255,255,0.85)", fontSize: "0.71rem", fontWeight: 600,
+                    }}>{r}</span>
+                  ))}
+                </div>
               </div>
+
+              {/* Timeline row */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", minWidth: "58px", flexShrink: 0 }}>Timeline</span>
+                <span style={{ color: "rgba(255,255,255,0.88)", fontSize: "0.82rem", fontWeight: 600 }}>4 Weeks</span>
+              </div>
+
+              {/* Figma Prototype button */}
+              <a
+                href="https://www.figma.com/proto/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=4-4&t=7pTLCSUb9lWlAy5s-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=28%3A12"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: "7px",
+                  padding: "9px 18px", borderRadius: "999px",
+                  background: GREEN_DIM, border: `1px solid ${GREEN_MID}`,
+                  color: "rgba(255,255,255,0.90)",
+                  fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.04em",
+                  textDecoration: "none", transition: "all 0.22s ease",
+                  alignSelf: "flex-start",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = "rgba(134,197,120,0.28)"
+                  e.currentTarget.style.borderColor = GREEN
+                  e.currentTarget.style.transform = "translateY(-2px)"
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = GREEN_DIM
+                  e.currentTarget.style.borderColor = GREEN_MID
+                  e.currentTarget.style.transform = "translateY(0)"
+                }}
+              >
+                <img src="/images/toolkit-figma.png" alt="Figma" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                Figma Prototype
+              </a>
 
             </div>
           </div>
 
           {/* ── RIGHT PANEL — project image ── */}
           <div style={{
-            flex: 1, position: "relative", height: "100%", overflow: "hidden",
+            flex: 1, position: "relative",
+            height: "calc(100% + 80px)", marginTop: "-125px",
+            overflow: "hidden",
             display: "flex", alignItems: "center", justifyContent: "center",
             opacity:    heroIn ? 1 : 0,
             transform:  heroIn ? "translateX(0)" : "translateX(60px)",
             transition: "opacity 0.8s 0.12s ease, transform 0.8s 0.12s ease",
           }}>
             <img
-              src="/images/Dogwood.png"
+              src="/images/Dogwood.gif"
               alt="Dogwood Land & Gardening"
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center", display: "block" }}
             />
           </div>
 
@@ -890,7 +1112,7 @@ export function DogwoodPage() {
         {/* ══ DESIGN PROCESS ════════════════════════════════════════════════ */}
         <div style={{
           width: "100%", boxSizing: "border-box",
-          paddingTop: "80px", paddingBottom: "32px",
+          paddingTop: "80px", paddingBottom: "0px",
           paddingLeft:  isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
           paddingRight: isMobile ? "16px" : "clamp(32px, 5vw, 72px)",
         }}>
@@ -927,7 +1149,7 @@ export function DogwoodPage() {
               transform:  hdVisible ? "translateX(0)" : "translateX(48px)",
               transition: "opacity 0.65s ease 0.48s, transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94) 0.48s",
             }}>
-              <StepVisual step={openIndex !== null ? STEPS[openIndex] : STEPS[0]} isMobile={isMobile} />
+              <StepVisual step={openIndex !== null ? STEPS[openIndex] : STEPS[0]} isMobile={isMobile} openLightbox={openLightbox} />
             </div>
 
             {/* Steps list */}

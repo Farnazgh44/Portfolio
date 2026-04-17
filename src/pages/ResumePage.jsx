@@ -26,10 +26,14 @@ export function ResumePage() {
           {/* Back button */}
           <button
             onClick={() => navigate("home")}
-            className="pill-btn-hover flex items-center gap-2 px-4 py-2 rounded-full text-sm text-white/70 hover:text-white"
+            className="pill-btn-hover flex items-center gap-2 rounded-full text-white/70 hover:text-white"
             style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
+              background:   "rgba(255,255,255,0.08)",
+              border:       "1px solid rgba(255,255,255,0.15)",
+              padding:      "11px 26px",
+              borderRadius: "999px",
+              fontSize:     "0.85rem",
+              fontWeight:   500,
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -50,10 +54,14 @@ export function ResumePage() {
             href={RESUME_PDF_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="pill-btn-hover flex items-center gap-2 px-4 py-2 rounded-full text-sm text-white/70 hover:text-white"
+            className="pill-btn-hover flex items-center gap-2 rounded-full text-white/70 hover:text-white"
             style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
+              background:   "rgba(255,255,255,0.08)",
+              border:       "1px solid rgba(255,255,255,0.15)",
+              padding:      "11px 26px",
+              borderRadius: "999px",
+              fontSize:     "0.85rem",
+              fontWeight:   500,
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -68,10 +76,14 @@ export function ResumePage() {
           <a
             href={RESUME_PDF_URL}
             download="FarnazGholamiResume.pdf"
-            className="pill-btn-hover flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium text-white"
+            className="pill-btn-hover flex items-center gap-2 rounded-full text-white"
             style={{
-              background: "rgba(139, 92, 246, 0.4)",
-              border: "1px solid rgba(139, 92, 246, 0.5)",
+              background:   "rgba(139, 92, 246, 0.4)",
+              border:       "1px solid rgba(139, 92, 246, 0.5)",
+              padding:      "11px 26px",
+              borderRadius: "999px",
+              fontSize:     "0.85rem",
+              fontWeight:   500,
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

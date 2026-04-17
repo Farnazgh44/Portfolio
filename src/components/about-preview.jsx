@@ -265,13 +265,19 @@ export function AboutPreview() {
           >
             <BlobButton
               onClick={() => navigate("about")}
-              className="pill-btn-hover inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-medium text-white/90 cursor-pointer"
+              className="pill-btn-hover inline-flex items-center gap-2 rounded-full cursor-pointer"
               style={{
                 background:     "rgba(255,255,255,0.12)",
                 backdropFilter: "blur(14px)",
                 WebkitBackdropFilter: "blur(14px)",
                 border:         "1px solid rgba(255,255,255,0.22)",
                 whiteSpace:     "nowrap",
+                padding:        "11px 26px",
+                borderRadius:   "999px",
+                fontSize:       "0.85rem",
+                fontWeight:     500,
+                lineHeight:     "1.4",
+                color:          "rgba(255,255,255,0.90)",
               }}
             >
               About me

@@ -53,7 +53,7 @@ export function ScrollProgress() {
         Scroll to explore
       </span>
       <div
-        className="nav-glass-hover w-14 h-14 3xl:w-24 3xl:h-24 flex items-center justify-center rounded-xl cursor-pointer"
+        className="nav-glass-hover w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center rounded-xl cursor-pointer"
         style={{
           background: "rgba(255,255,255,0.08)",
           backdropFilter: "blur(20px)",
@@ -61,7 +61,7 @@ export function ScrollProgress() {
           border: "1px solid rgba(255,255,255,0.12)",
         }}
       >
-      <div className="scroll-progress-ring relative w-11 h-11 3xl:w-20 3xl:h-20 flex items-center justify-center">
+      <div className="scroll-progress-ring relative w-8 h-8 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center">
         <svg width="100%" height="100%" viewBox="0 0 44 44" className="absolute">
           {/* Background circle track */}
           <circle
@@ -92,7 +92,7 @@ export function ScrollProgress() {
         </svg>
         {/* Percentage text */}
         <span
-          className="text-white font-bold relative z-10 text-[8px] 3xl:text-[14px]"
+          className="text-white font-bold relative z-10 text-[7px] sm:text-[8px]"
           style={{ letterSpacing: "-0.3px" }}
         >
           {progress}%

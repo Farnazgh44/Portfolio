@@ -447,6 +447,19 @@ function ToolIcon({ name, icon, animDelay = "0s" }) {
 export function CatHolderPage() {
   const { navigate }                    = useRouter()
   const [lightboxItem, setLightboxItem] = useState(null)
+  const backBtnRef = useRef(null)
+
+  useEffect(() => {
+    const syncLeft = () => {
+      const header = document.querySelector("header")
+      const btn    = backBtnRef.current
+      if (!header || !btn) return
+      btn.style.left = window.getComputedStyle(header).paddingLeft
+    }
+    syncLeft()
+    window.addEventListener("resize", syncLeft)
+    return () => window.removeEventListener("resize", syncLeft)
+  }, [])
 
   return (
     <>
@@ -473,8 +486,8 @@ export function CatHolderPage() {
           {/* LEFT PANEL */}
           <div style={{ width: "32vw", minWidth: "300px", flexShrink: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 clamp(36px,5vw,72px)", position: "relative", zIndex: 2 }}>
 
-            <button onClick={() => navigate("projects")}
-              style={{ position: "fixed", top: "clamp(72px,9vh,96px)", left: "clamp(24px,3vw,48px)", zIndex: 50, display: "flex", alignItems: "center", gap: "7px", padding: "9px 20px", borderRadius: "999px", background: "rgba(255,255,255,0.10)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.22)", color: "rgba(255,255,255,0.88)", fontSize: "0.85rem", fontWeight: 500, cursor: "pointer", letterSpacing: "0.04em", transition: "background 0.2s ease" }}
+            <button ref={backBtnRef} onClick={() => navigate("projects")}
+              style={{ position: "fixed", top: "clamp(72px,9vh,96px)", zIndex: 50, display: "flex", alignItems: "center", gap: "7px", padding: "11px 26px", borderRadius: "999px", background: "rgba(255,255,255,0.10)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.22)", color: "rgba(255,255,255,0.88)", fontSize: "0.85rem", fontWeight: 500, cursor: "pointer", letterSpacing: "0.04em", transition: "background 0.2s ease" }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.18)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.10)"}
             >← Back</button>

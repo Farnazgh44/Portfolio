@@ -355,6 +355,19 @@ function PerfumeViewer3D() {
 /* ─── Main page ──────────────────────────────────────────────────────────────── */
 export function PerfumePage() {
   const { navigate } = useRouter()
+  const backBtnRef = useRef(null)
+
+  useEffect(() => {
+    const syncLeft = () => {
+      const header = document.querySelector("header")
+      const btn    = backBtnRef.current
+      if (!header || !btn) return
+      btn.style.left = window.getComputedStyle(header).paddingLeft
+    }
+    syncLeft()
+    window.addEventListener("resize", syncLeft)
+    return () => window.removeEventListener("resize", syncLeft)
+  }, [])
 
   return (
     <>
@@ -402,16 +415,16 @@ export function PerfumePage() {
 
             {/* ← Back — fixed so always visible while scrolling */}
             <button
+              ref={backBtnRef}
               onClick={() => navigate("projects")}
               style={{
                 position:             "fixed",
                 top:                  "clamp(72px,9vh,96px)",
-                left:                 "clamp(24px,3vw,48px)",
                 zIndex:               50,
                 display:              "flex",
                 alignItems:           "center",
                 gap:                  "7px",
-                padding:              "9px 20px",
+                padding:              "11px 26px",
                 borderRadius:         "999px",
                 background:           "rgba(255,255,255,0.10)",
                 backdropFilter:       "blur(16px)",

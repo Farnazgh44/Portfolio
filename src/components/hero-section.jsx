@@ -264,6 +264,12 @@ export function HeroSection() {
           from { opacity: 0; transform: translateY(-10px); }
           to   { opacity: 1; transform: translateY(0);     }
         }
+        /* Buttons slide up — ends at transform:none so no stacking context
+           remains after completion, letting backdrop-filter reach the blobs */
+        @keyframes heroBtnIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; }
+        }
       `}</style>
 
       {/* ── Mobile only: blobs float freely behind text ── */}
@@ -309,7 +315,7 @@ export function HeroSection() {
             text="Farnaz"
             className="font-bold text-white mb-2"
             style={isWide
-              ? { fontSize: "10rem", marginBottom: "1.5rem", marginTop: "-0.12em", marginLeft: "-0.04em" }
+              ? { fontSize: "10rem", marginBottom: "1.5rem", marginTop: "-0.22em", marginLeft: "-0.04em" }
               : isMobile
                 ? { fontSize: "3.8rem", marginTop: "-0.08em", marginLeft: "-0.03em" }
                 : { fontSize: "clamp(2.2rem, 7vw, 6rem)", marginTop: "-0.08em", marginLeft: "-0.04em" }
@@ -356,42 +362,51 @@ export function HeroSection() {
             Based in Vancouver, creating visually engaging and user-centered digital experiences.
           </p>
 
-          {/* CTA buttons — always in DOM, opacity/transform only so no layout shift */}
+          {/* CTA buttons — CSS animation so transform is gone after it ends,
+              leaving no stacking context that would break backdrop-filter */}
           <div
             style={{
               display: "flex",
               gap: isMobile ? "12px" : "16px",
               flexWrap: "wrap",
-              opacity: showButtons ? 1 : 0,
-              transform: showButtons ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.7s cubic-bezier(0.215,0.61,0.355,1), transform 0.7s cubic-bezier(0.215,0.61,0.355,1)",
-              willChange: "opacity, transform",
+              opacity: showButtons ? undefined : 0,
+              animation: showButtons
+                ? "heroBtnIn 0.7s cubic-bezier(0.215,0.61,0.355,1) both"
+                : "none",
             }}
           >
             <BlobButton
               onClick={() => navigate("projects")}
-              className="pill-btn-hover px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-sm font-medium text-white/80"
+              className="pill-btn-hover rounded-full font-medium text-white/80"
               style={{
-                background: "rgba(255,255,255,0.13)",
-                backdropFilter: "blur(22px)",
+                background:           "rgba(255,255,255,0.13)",
+                backdropFilter:       "blur(22px)",
                 WebkitBackdropFilter: "blur(22px)",
-                border: "1px solid rgba(255,255,255,0.20)",
-                willChange: "backdrop-filter",
-                ...(isWide ? { fontSize: "1.3rem", padding: "18px 52px" } : {}),
+                border:               "1px solid rgba(255,255,255,0.20)",
+                willChange:           "backdrop-filter",
+                padding:              "11px 26px",
+                borderRadius:         "999px",
+                fontSize:             "0.85rem",
+                fontWeight:           500,
+                lineHeight:           "1.4",
               }}
             >
               View Projects
             </BlobButton>
             <BlobButton
               onClick={() => navigate("about")}
-              className="pill-btn-hover px-5 sm:px-8 py-2 sm:py-2.5 rounded-full text-sm font-medium text-white/80"
+              className="pill-btn-hover rounded-full font-medium text-white/80"
               style={{
-                background: "rgba(255,255,255,0.13)",
-                backdropFilter: "blur(22px)",
+                background:           "rgba(255,255,255,0.13)",
+                backdropFilter:       "blur(22px)",
                 WebkitBackdropFilter: "blur(22px)",
-                border: "1px solid rgba(255,255,255,0.20)",
-                willChange: "backdrop-filter",
-                ...(isWide ? { fontSize: "1.3rem", padding: "18px 52px" } : {}),
+                border:               "1px solid rgba(255,255,255,0.20)",
+                willChange:           "backdrop-filter",
+                padding:              "11px 26px",
+                borderRadius:         "999px",
+                fontSize:             "0.85rem",
+                fontWeight:           500,
+                lineHeight:           "1.4",
               }}
             >
               About Me

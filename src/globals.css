@@ -610,42 +610,42 @@ html {
    Targets navbar header elements specifically to avoid collateral changes.
 ─────────────────────────────────────────────────────────────────────────── */
 @media (min-width: 1920px) {
-  /* Logo card only — fixed square size */
+  /* Logo card — same size as hobby boxes for consistency */
   header .nav-logo-glass {
-    width: 96px !important;
-    height: 96px !important;
-  }
-  /* Logo image */
-  header .nav-logo-glass img {
     width: 64px !important;
     height: 64px !important;
   }
-  /* Pill containers (hamburger + palette) — height only, allow width to expand freely */
+  /* Logo image */
+  header .nav-logo-glass img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  /* Pill containers (hamburger + palette) — height matches hobby boxes */
   header .nav-glass-hover:not(.nav-logo-glass) {
-    height: 96px !important;
+    height: 64px !important;
   }
   /* Scroll progress ring inner container */
   .scroll-progress-ring {
-    width: 80px !important;
-    height: 80px !important;
-  }
-  /* Scroll progress percentage text */
-  .scroll-progress-ring span {
-    font-size: 14px !important;
-  }
-  /* Hamburger + Palette icon buttons */
-  header .icon-btn-hover {
-    width: 96px !important;
-    height: 96px !important;
-  }
-  /* Palette SVG icon */
-  header .icon-btn-hover > svg {
     width: 48px !important;
     height: 48px !important;
   }
-  /* Hamburger bars — wider & thicker */
+  /* Scroll progress percentage text */
+  .scroll-progress-ring span {
+    font-size: 8px !important;
+  }
+  /* Hamburger + Palette icon buttons — same as hobby boxes */
+  header .icon-btn-hover {
+    width: 64px !important;
+    height: 64px !important;
+  }
+  /* Palette SVG icon */
+  header .icon-btn-hover > svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  /* Hamburger bars */
   .hamburger-bar {
-    height: 3px !important;
+    height: 2px !important;
   }
   /* Header padding */
   header {
@@ -705,13 +705,13 @@ html[data-wide="true"] .pill-btn-hover {
 
 /* ── Icon buttons (footer social links + any other icon-btn-hover) ── */
 html[data-wide="true"] .icon-btn-hover {
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
 }
 
 html[data-wide="true"] .icon-btn-hover svg {
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
 }
 
 /* ── Footer spacing + text at 1920px ── */
