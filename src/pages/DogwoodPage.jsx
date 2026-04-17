@@ -1071,7 +1071,7 @@ export function DogwoodPage() {
 
               {/* Figma Prototype button */}
               <a
-                href="https://www.figma.com/proto/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=4-4&t=7pTLCSUb9lWlAy5s-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=28%3A12"
+                href="https://www.figma.com/proto/zD1GsYOdFiCGlnZNI9vAQg/Untitled?node-id=115-774&t=92EpkJyUeqZnOCkK-1&scaling=scale-down&content-scaling=fixed&page-id=115%3A773&starting-point-node-id=115%3A1257"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
